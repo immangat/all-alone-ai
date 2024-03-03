@@ -59,11 +59,13 @@ class Displayer:
         for tag, (cx, cy) in self.circle_ids.items():
             if (event.x - cx) ** 2 + (event.y - cy) ** 2 <= self.r ** 2:
                 if self.selected_circle is None:
-                    # print(self.selected_circle)
-                    # First circle selected, highlight it
-                    self.selected_circle = tag
-                    self.highlight_circle(tag, True)
-                    # self.selected_circle = None  # Reset the selection
+                    # Check if the circle contains a black or light gray marble before selecting
+                    circle = self.board.getCircle(tag[0], int(tag[1:]))
+                    # print(circle.getMarble().getColor())
+                    if circle.getMarble() is not None and circle.getMarble().getColor() in ['Black', 'White']:
+                        # First circle selected, highlight it
+                        self.selected_circle = tag
+                        self.highlight_circle(tag, True)
                 else:
                     # Second circle selected, try to make a move
                     from_circle = (self.selected_circle[0], int(self.selected_circle[1:]))
@@ -73,6 +75,7 @@ class Displayer:
                     self.manager.moveMarble(from_circle, to_circle)
                     self.highlight_circle(tag, False)
                     break
+
     # Highlight function to visually mark selected circles
     def highlight_circle(self, tag, select):
         circle = self.circle_objects[tag]
