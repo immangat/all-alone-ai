@@ -70,10 +70,17 @@ class Displayer:
                     # Second circle selected, try to make a move
                     from_circle = (self.selected_circle[0], int(self.selected_circle[1:]))
                     to_circle = (tag[0], int(tag[1:]))
-                    self.selected_circle = None  # Reset the selection
-                    print(self.selected_circle)
-                    self.manager.moveMarble(from_circle, to_circle)
-                    self.highlight_circle(tag, False)
+                    print(self.board.get_neighbors(*from_circle))
+                    if to_circle in self.board.get_neighbors(*from_circle):
+                        # Proceed with the move if the destination is a neighbor
+                        self.selected_circle = None  # Reset the selection
+                        print(self.selected_circle)
+                        self.manager.moveMarble(from_circle, to_circle)
+                        self.highlight_circle(tag, False)
+                    else:
+                        print("Invalid move")
+                        self.highlight_circle(self.selected_circle, False)
+                        self.selected_circle = None
                     break
 
     # Highlight function to visually mark selected circles

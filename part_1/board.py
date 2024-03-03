@@ -24,8 +24,16 @@ class Board:
         return self.circles.get((row, col))
 
     def isWithinBounds(self, row, col):
-        # Implement logic to check if the given row and col are within the bounds of the board
-        pass
+        # Check if the row and col are within the hexagonal board bounds
+        if row in 'ABCDEFG' and 1 <= col <= 9:
+            index = 'ABCDEFG'.index(row)
+            if index < 3:  # Rows A, B, C
+                return col <= 5 + index
+            elif index < 5:  # Rows D, E
+                return True
+            else:  # Rows F, G
+                return col >= index - 4
+        return False
 
     def setupBoard(self, setup_type="default"):
         self.clearBoard()
@@ -104,3 +112,21 @@ class Board:
         # Helper method to place a marble on the board at the specified position
         position = (row, col)
         self.circles[position].setMarble(marble)
+
+    def get_neighbors(self, row, col):
+        directions = [
+            ('left', (0, -1)),
+            ('right', (0, 1)),
+            ('up_left', (1, 0)),
+            ('up_right', (1, 1)),
+            ('down_left', (-1, -1)),
+            ('down_right', (-1, 0)),
+        ]
+        neighbors = []
+        for direction, (dr, dc) in directions:
+            neighbor_row = chr(ord(row) + dr)
+            neighbor_col = col + dc
+            if self.isWithinBounds(neighbor_row, neighbor_col):
+                neighbors.append((neighbor_row, neighbor_col))
+        return neighbors
+
