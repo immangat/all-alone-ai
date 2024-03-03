@@ -23,7 +23,6 @@ class Manager:
         # Check if the game is over (implement logic later)
         pass
 
-
     def displayBoard(self):
         self.displayer.updateBoard(self.board)
 
@@ -64,6 +63,11 @@ class Manager:
         # For example, marbles cannot move against the direction of push, etc.
 
         return True  # The move is valid
+
+    def switchTurns(self):
+        # Switches the turn from one player to the other
+        self.player1.flipTurn()
+        self.player2.flipTurn()
 
     def switchTurns(self):
         # Switches the turn from one player to the other

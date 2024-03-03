@@ -1,8 +1,10 @@
 import tkinter as tk
 import math
 
+
 class Displayer:
     def __init__(self, manager=None):
+        self.selected_circles = []
         self.window = tk.Tk()
         self.window.title("Abalone Game")
         self.canvas = tk.Canvas(self.window, width=800, height=700, bg='white')
@@ -37,57 +39,47 @@ class Displayer:
 
         return circle
 
-    # def on_canvas_click(self, event):
-    #     # Check if the click is within the radius of any circle
-    #     for tag, (cx, cy) in self.circle_ids.items():
-    #         if (event.x - cx) ** 2 + (event.y - cy) ** 2 <= self.r ** 2:
-    #             print(f"Circle {tag} clicked")
-    #             row, col = tag[:-1], int(tag[-1])
-    #             print(f"Row: {row}, Column: {col}")
-    #
-    #             circle = self.circle_objects[tag]
-    #             current_fill_color = self.canvas.itemcget(circle, 'fill')
-    #
-    #             # Toggle the fill color
-    #             new_fill_color = "blue" if current_fill_color == "white" else "white"
-    #             self.canvas.itemconfig(circle, fill=new_fill_color)
-    #
-    #             break
-
     # Modified on_canvas_click method
     def on_canvas_click(self, event):
         for tag, (cx, cy) in self.circle_ids.items():
             if (event.x - cx) ** 2 + (event.y - cy) ** 2 <= self.r ** 2:
                 if self.selected_circle is None:
-                    # Check if the circle contains a black or light gray marble before selecting
-                    circle = self.board.getCircle(tag[0], int(tag[1:]))
-                    # print(circle.getMarble().getColor())
-                    if circle.getMarble() is not None and circle.getMarble().getColor() in ['Black', 'White']:
-                        # First circle selected, highlight it
-                        self.selected_circle = tag
-                        self.highlight_circle(tag, True)
+                    self.select_marble(tag)
                 else:
-                    # Second circle selected, try to make a move
-                    from_circle = (self.selected_circle[0], int(self.selected_circle[1:]))
-                    to_circle = (tag[0], int(tag[1:]))
-                    print(self.board.get_neighbors(*from_circle))
-                    if to_circle in self.board.get_neighbors(*from_circle):
-                        # Proceed with the move if the destination is a neighbor
-                        self.selected_circle = None  # Reset the selection
-                        print(self.selected_circle)
-                        self.manager.moveMarble(from_circle, to_circle)
-                        self.highlight_circle(tag, False)
-                    else:
-                        print("Invalid move")
-                        self.highlight_circle(self.selected_circle, False)
-                        self.selected_circle = None
+                    self.attempt_move(tag)
                     break
 
     # Highlight function to visually mark selected circles
     def highlight_circle(self, tag, select):
+        tag = f"{tag[0]}{tag[1]}"
+        print(tag)
         circle = self.circle_objects[tag]
         outline_color = "red" if select else "black"
         self.canvas.itemconfig(circle, outline=outline_color)
+
+    def select_marble(self, tag):
+        circle = self.board.getCircle(tag[0], int(tag[1:]))
+        # print(circle.getMarble().getColor())
+        if circle.getMarble() is not None and circle.getMarble().getColor() in ['Black', 'White']:
+            # First circle selected, highlight it
+            self.selected_circle = tag
+            self.highlight_circle(tag, True)
+
+    def attempt_move(self, tag):
+        # Second circle selected, try to make a move
+        from_circle = (self.selected_circle[0], int(self.selected_circle[1:]))
+        to_circle = (tag[0], int(tag[1:]))
+        print(self.board.get_neighbors(*from_circle))
+        if to_circle in self.board.get_neighbors(*from_circle):
+            # Proceed with the move if the destination is a neighbor
+            self.selected_circle = None  # Reset the selection
+            print(self.selected_circle)
+            self.manager.moveMarble(from_circle, to_circle)
+            self.highlight_circle(tag, False)
+        else:
+            print("Invalid move")
+            self.highlight_circle(self.selected_circle, False)
+            self.selected_circle = None
 
     def draw_board(self):
         if self.board is not None:
@@ -110,7 +102,6 @@ class Displayer:
                         if marble is not None:
                             circle_color = 'black' if marble.getColor().lower() == 'black' else 'lightgray'
 
-
                     self.draw_circle(x + (self.r * 2 * j), y, self.r, tag, outline='black', text=tag,
                                      marble_color=circle_color)
                     # Track the circle with its board coordinate
@@ -120,4 +111,3 @@ class Displayer:
 
     def run(self):
         self.window.mainloop()
-
