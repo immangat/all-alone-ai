@@ -50,11 +50,20 @@ class Manager:
             print("Invalid move")
 
     def isValidMove(self, from_circle, to_circle, marble):
-        # Implement the logic to validate the move
-        # Check if the target circle is within bounds and is empty
-        # Check if the path is clear for in-line moves or side-steps
-        # Check if the move is in accordance with the rules (like not moving more than 3 marbles)
-        return True  # Placeholder, real implementation needed
+        # Check if the to_circle is one of the valid neighbors of from_circle
+        valid_neighbors = self.board.get_neighbors(*from_circle)
+        if to_circle not in valid_neighbors:
+            return False  # to_circle is not adjacent to from_circle
+
+        # Check if the to_circle is empty
+        to_circle_marble = self.board.getCircle(*to_circle).getMarble()
+        if to_circle_marble is not None:
+            return False  # to_circle is not empty
+
+        # Add any additional rules specific to Abalone here
+        # For example, marbles cannot move against the direction of push, etc.
+
+        return True  # The move is valid
 
     def switchTurns(self):
         # Switches the turn from one player to the other
