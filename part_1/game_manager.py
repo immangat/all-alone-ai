@@ -44,8 +44,8 @@ class Manager:
             # Update the display
             self.displayBoard()
 
-            # Switch turns
-            self.switchTurns()
+            # # Switch turns
+            # self.switchTurns()
         else:
             print("Invalid move")
 
