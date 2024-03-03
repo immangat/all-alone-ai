@@ -2,7 +2,7 @@ import tkinter as tk
 import math
 
 
-class AbaloneGame:
+class Displayer:
     def __init__(self, window):
         self.window = window
         self.window.title("Abalone Game")
@@ -55,5 +55,5 @@ class AbaloneGame:
 
 if __name__ == "__main__":
     window = tk.Tk()
-    game = AbaloneGame(window)
+    game = Displayer(window)
     game.run()
