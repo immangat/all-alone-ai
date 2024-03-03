@@ -2,7 +2,7 @@ import tkinter as tk
 import math
 
 class Displayer:
-    def __init__(self):
+    def __init__(self, manager=None):
         self.window = tk.Tk()
         self.window.title("Abalone Game")
         self.canvas = tk.Canvas(self.window, width=800, height=700, bg='white')
@@ -15,6 +15,9 @@ class Displayer:
 
         # Bind the click event to the canvas
         self.canvas.bind('<Button-1>', self.on_canvas_click)
+
+        self.selected_circle = None  # To keep track of the first selected circle
+        self.manager = manager  # Reference to the game manager
 
     def updateBoard(self, board):
         # Update the display based on the provided Board object
@@ -34,22 +37,50 @@ class Displayer:
 
         return circle
 
+    # def on_canvas_click(self, event):
+    #     # Check if the click is within the radius of any circle
+    #     for tag, (cx, cy) in self.circle_ids.items():
+    #         if (event.x - cx) ** 2 + (event.y - cy) ** 2 <= self.r ** 2:
+    #             print(f"Circle {tag} clicked")
+    #             row, col = tag[:-1], int(tag[-1])
+    #             print(f"Row: {row}, Column: {col}")
+    #
+    #             circle = self.circle_objects[tag]
+    #             current_fill_color = self.canvas.itemcget(circle, 'fill')
+    #
+    #             # Toggle the fill color
+    #             new_fill_color = "blue" if current_fill_color == "white" else "white"
+    #             self.canvas.itemconfig(circle, fill=new_fill_color)
+    #
+    #             break
+
+    # Modified on_canvas_click method
     def on_canvas_click(self, event):
-        # Check if the click is within the radius of any circle
         for tag, (cx, cy) in self.circle_ids.items():
             if (event.x - cx) ** 2 + (event.y - cy) ** 2 <= self.r ** 2:
-                print(f"Circle {tag} clicked")
-                row, col = tag[:-1], int(tag[-1])
-                print(f"Row: {row}, Column: {col}")
-
-                circle = self.circle_objects[tag]
-                current_fill_color = self.canvas.itemcget(circle, 'fill')
-
-                # Toggle the fill color
-                new_fill_color = "blue" if current_fill_color == "white" else "white"
-                self.canvas.itemconfig(circle, fill=new_fill_color)
-
+                if self.selected_circle is None:
+                    # First circle selected, highlight it
+                    self.selected_circle = tag
+                    self.highlight_circle(tag, True)
+                else:
+                    # Second circle selected, try to make a move
+                    from_circle = (self.selected_circle[0], int(self.selected_circle[1:]))
+                    to_circle = (tag[0], int(tag[1:]))
+                    if self.manager.moveMarble(from_circle, to_circle):
+                        self.highlight_circle(self.selected_circle, False)
+                        self.selected_circle = None  # Reset the selection
+                    else:
+                        # If the move is invalid, provide feedback
+                        self.highlight_circle(self.selected_circle, False)
+                        self.selected_circle = None  # Reset the selection
+                        # Optionally show an error message to the user
                 break
+
+    # Highlight function to visually mark selected circles
+    def highlight_circle(self, tag, select):
+        circle = self.circle_objects[tag]
+        outline_color = "red" if select else "black"
+        self.canvas.itemconfig(circle, outline=outline_color)
 
     def draw_board(self):
         if self.board is not None:
