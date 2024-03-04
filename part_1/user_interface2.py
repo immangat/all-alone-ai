@@ -41,25 +41,20 @@ class Displayer:
 
     # Modified on_canvas_click method
     def on_canvas_click(self, event):
+
         clicked_circle = self.get_clicked_circle_tag(event)
         circle = self.board.getCircle(clicked_circle[0], int(clicked_circle[1:]))
-        print(circle.getMarble())
-        print(clicked_circle)
         if clicked_circle:
-            print(self.selected_circles)
-
             if clicked_circle not in self.selected_circles:  # selecting marbles
                 self.select_marble(clicked_circle)
-                print("1st")
             else:
                 # If the same circle is clicked again, deselect it
                 self.deselect_marble(clicked_circle)
-                print("3rd")
 
             if circle.getMarble() is None:  # selecting an empty circle
                 if 3 >= len(self.selected_circles) >= 0:
-                    print("2nd")
-                    self.attempt_move(self.selected_circles, clicked_circle)
+                    # self.attempt_move(self.selected_circles, clicked_circle)
+                    self.attempt_move2(self.selected_circles, clicked_circle)
 
     def get_clicked_circle_tag(self, event):
         for tag, (cx, cy) in self.circle_ids.items():
@@ -70,7 +65,6 @@ class Displayer:
     # Highlight function to visually mark selected circles
     def highlight_circle(self, tag, select):
         tag = f"{tag[0]}{tag[1]}"
-        print(tag)
         circle = self.circle_objects[tag]
         outline_color = "red" if select else "black"
         self.canvas.itemconfig(circle, outline=outline_color)
@@ -88,17 +82,66 @@ class Displayer:
         self.selected_circles.remove(tag)
         self.highlight_circle(tag, False)
 
+    def _get_move_direction(self, first_clicked_marble, to_circle):
+        marble_clicked_row = first_clicked_marble[0]
+        marble_clicked_number = first_clicked_marble[1]
+        to_circle_row = to_circle[0]
+        to_circle_number = to_circle[1]
+        number_sum = to_circle_number - marble_clicked_number
+        row_sum = ord(to_circle_row) - ord(marble_clicked_row)
+        if row_sum == 0 and number_sum == 0:
+            return 'Invalid'
+        elif row_sum == 0 and number_sum > 0:
+            return "R"
+        elif row_sum == 0 and number_sum < 0:
+            return "L"
+        elif row_sum > 0 and number_sum == 0:
+            return "UL"
+        elif row_sum > 0 and number_sum > 0:
+            return "UR"
+        elif row_sum < 0 and number_sum == 0:
+            return "DR"
+        elif row_sum < 0 and number_sum < 0:
+            return "DL"
+
+    def attempt_move2(self, tags, to_circle_tag):
+        if len(tags) >= 1:
+            to_circle = (to_circle_tag[0], int(to_circle_tag[1:]))
+            marbles = [(tag[0], int(tag[1:])) for tag in tags]
+            can_all_be_moved = True
+            for marble in marbles:
+                move_direction_for_marble = self._get_move_direction(marble, to_circle)
+                if not self.manager.isValidMove2(marble, move_direction_for_marble):
+                    can_all_be_moved = False
+                    break
+            print(move_direction_for_marble, can_all_be_moved)
+            if can_all_be_moved:
+                for marble in marbles:
+                    self.manager.move_marble2(marble, move_direction_for_marble)
+            for tag in tags:
+                self.highlight_circle(tag, False)
+            self.selected_circles = []
+            print("selectedtags", self.selected_circles)
+            """
+            
+                for each marble
+                    check if each marble can be moved in that direction
+                if not all marbles can be moved, raise exception
+                else:
+                    move all marbles            
+            """
+
     def attempt_move(self, tags, to_circle_tag):
         # Second circle selected, try to make a move
         marbles = []
         neighbors = []
+
         to_circle = (to_circle_tag[0], int(to_circle_tag[1:]))
         if len(tags) == 1:
             marbles.append((tags[0][0], int(tags[0][1:])))
             if to_circle in self.board.get_neighbors(*marbles[0]):
                 # Proceed with the move if the destination is a neighbor
                 self.selected_circles = []  # Reset the selection
-                print(self.selected_circles)
                 self.manager.moveMarble(marbles[0], to_circle)
                 self.highlight_circle(tags[0], False)
             else:
@@ -111,7 +154,7 @@ class Displayer:
 
         for marble in marbles:
             neighbors.append(self.board.get_neighbors(*marble))
-        neighbors = [item for sublist in neighbors for item in sublist] # flatten to 1D list
+        neighbors = [item for sublist in neighbors for item in sublist]  # flatten to 1D list
         print(f"Neighbours: {neighbors}")
 
         if to_circle in neighbors:
