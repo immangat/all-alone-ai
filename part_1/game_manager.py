@@ -26,6 +26,7 @@ class Manager:
     def displayBoard(self):
         self.displayer.updateBoard(self.board)
 
+    #TODO Only works for single marbles and the top two rows have issues, need to fix
     def moveMarble(self, selected_circles, to_circle):
         # Get the marble object from the starting circle
         if isinstance(selected_circles, tuple): # handles the case when only one marble is selected
@@ -39,8 +40,9 @@ class Manager:
                 self.displayBoard()
             else:
                 print("Invalid move")
+
         else: # handles the case when multiple marbles are selected
-            # This logic is currently not functional
+            # TODO This logic is currently not functional
             print("list of marbles selected")
             for marble in selected_circles:
                 if self.isValidMove(marble, to_circle, marble):
@@ -74,10 +76,6 @@ class Manager:
         self.player1.flipTurn()
         self.player2.flipTurn()
 
-    def switchTurns(self):
-        # Switches the turn from one player to the other
-        self.player1.flipTurn()
-        self.player2.flipTurn()
 
 
 if __name__ == "__main__":
