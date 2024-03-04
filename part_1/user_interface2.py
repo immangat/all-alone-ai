@@ -18,7 +18,7 @@ class Displayer:
         # Bind the click event to the canvas
         self.canvas.bind('<Button-1>', self.on_canvas_click)
 
-        self.selected_circle = None  # To keep track of the first selected circle
+        self.selected_circles = []  # To keep track of the first selected circle
         self.manager = manager  # Reference to the game manager
 
     def updateBoard(self, board):
@@ -41,13 +41,31 @@ class Displayer:
 
     # Modified on_canvas_click method
     def on_canvas_click(self, event):
+        clicked_circle = self.get_clicked_circle_tag(event)
+        circle = self.board.getCircle(clicked_circle[0], int(clicked_circle[1:]))
+        print(circle.getMarble())
+        print(clicked_circle)
+        if clicked_circle:
+            print(self.selected_circles)
+
+            if clicked_circle not in self.selected_circles:  # selecting marbles
+                self.select_marble(clicked_circle)
+                print("1st")
+            else:
+                # If the same circle is clicked again, deselect it
+                self.deselect_marble(clicked_circle)
+                print("3rd")
+
+            if circle.getMarble() is None:  # selecting an empty circle
+                if 3 >= len(self.selected_circles) >= 0:
+                    print("2nd")
+                    self.attempt_move(self.selected_circles, clicked_circle)
+
+    def get_clicked_circle_tag(self, event):
         for tag, (cx, cy) in self.circle_ids.items():
             if (event.x - cx) ** 2 + (event.y - cy) ** 2 <= self.r ** 2:
-                if self.selected_circle is None:
-                    self.select_marble(tag)
-                else:
-                    self.attempt_move(tag)
-                    break
+                return tag
+        return None
 
     # Highlight function to visually mark selected circles
     def highlight_circle(self, tag, select):
@@ -62,24 +80,52 @@ class Displayer:
         # print(circle.getMarble().getColor())
         if circle.getMarble() is not None and circle.getMarble().getColor() in ['Black', 'White']:
             # First circle selected, highlight it
-            self.selected_circle = tag
+            self.selected_circles.append(tag)
             self.highlight_circle(tag, True)
 
-    def attempt_move(self, tag):
+    def deselect_marble(self, tag):
+        # Deselect the marble and unhighlight it
+        self.selected_circles.remove(tag)
+        self.highlight_circle(tag, False)
+
+    def attempt_move(self, tags, to_circle_tag):
         # Second circle selected, try to make a move
-        from_circle = (self.selected_circle[0], int(self.selected_circle[1:]))
-        to_circle = (tag[0], int(tag[1:]))
-        print(self.board.get_neighbors(*from_circle))
-        if to_circle in self.board.get_neighbors(*from_circle):
+        marbles = []
+        neighbors = []
+        to_circle = (to_circle_tag[0], int(to_circle_tag[1:]))
+        if len(tags) == 1:
+            marbles.append((tags[0][0], int(tags[0][1:])))
+            if to_circle in self.board.get_neighbors(*marbles[0]):
+                # Proceed with the move if the destination is a neighbor
+                self.selected_circles = []  # Reset the selection
+                print(self.selected_circles)
+                self.manager.moveMarble(marbles[0], to_circle)
+                self.highlight_circle(tags[0], False)
+            else:
+                print("Invalid move")
+                self.highlight_circle(tags[0], False)
+                self.selected_circles = []
+
+        for tag in tags:
+            marbles.append((tag[0], int(tag[1:])))
+
+        for marble in marbles:
+            neighbors.append(self.board.get_neighbors(*marble))
+        neighbors = [item for sublist in neighbors for item in sublist] # flatten to 1D list
+        print(f"Neighbours: {neighbors}")
+
+        if to_circle in neighbors:
             # Proceed with the move if the destination is a neighbor
-            self.selected_circle = None  # Reset the selection
-            print(self.selected_circle)
-            self.manager.moveMarble(from_circle, to_circle)
-            self.highlight_circle(tag, False)
+            self.selected_circles = []  # Reset the selection
+            print(self.selected_circles)
+            self.manager.moveMarble(marbles, to_circle)
+            for tag in tags:
+                self.highlight_circle(tag, False)
         else:
             print("Invalid move")
-            self.highlight_circle(self.selected_circle, False)
-            self.selected_circle = None
+            for tag in tags:
+                self.highlight_circle(tag, False)
+            self.selected_circles = []
 
     def draw_board(self):
         if self.board is not None:

@@ -26,27 +26,32 @@ class Manager:
     def displayBoard(self):
         self.displayer.updateBoard(self.board)
 
-    def moveMarble(self, from_circle, to_circle):
+    def moveMarble(self, selected_circles, to_circle):
         # Get the marble object from the starting circle
-        marble = self.board.getCircle(*from_circle).getMarble()
-
-        # Check if the move is valid (to be implemented)
-        if self.isValidMove(from_circle, to_circle, marble):
-            # If the move is valid, remove the marble from the starting circle
-            self.board.getCircle(*from_circle).setMarble(None)
-
-            # Then, place the marble in the ending circle
-            self.board.getCircle(*to_circle).setMarble(marble)
-
-            # Implement logic to handle pushing marbles off the board here
-
-            # Update the display
-            self.displayBoard()
-
-            # # Switch turns
-            # self.switchTurns()
-        else:
-            print("Invalid move")
+        if isinstance(selected_circles, tuple): # handles the case when only one marble is selected
+            marble = self.board.getCircle(*selected_circles).getMarble()
+            if self.isValidMove(selected_circles, to_circle, marble):
+                # If the move is valid, remove the marble from the starting circle
+                self.board.getCircle(*selected_circles).setMarble(None)
+                # Then, place the marble in the ending circle
+                self.board.getCircle(*to_circle).setMarble(marble)
+                # Update the display
+                self.displayBoard()
+            else:
+                print("Invalid move")
+        else: # handles the case when multiple marbles are selected
+            # This logic is currently not functional
+            print("list of marbles selected")
+            for marble in selected_circles:
+                if self.isValidMove(marble, to_circle, marble):
+                    # If the move is valid, remove the marble from the starting circle
+                    self.board.getCircle(*marble).setMarble(None)
+                    # Then, place the marble in the ending circle
+                    self.board.getCircle(*to_circle).setMarble(marble)
+                    # Update the display
+                    self.displayBoard()
+                else:
+                    print("Invalid move")
 
     def isValidMove(self, from_circle, to_circle, marble):
         # Check if the to_circle is one of the valid neighbors of from_circle
