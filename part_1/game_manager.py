@@ -1,4 +1,5 @@
 from board import Board
+from part_1.directions import Direction
 from user_interface2 import Displayer
 from player import Player
 
@@ -8,7 +9,8 @@ class Manager:
         self.player1 = None
         self.player2 = None
         self.board = None
-        self.selected_circles = []
+        # self.selected_circles = []
+        self.direction = None
         self.displayer = Displayer(manager=self)
 
     def startGame(self, setup="default"):
@@ -40,6 +42,10 @@ class Manager:
                 self.displayBoard()
             else:
                 print("Invalid move")
+        else:
+            print("trying to move multiple marbles")
+            self.moveMutipleMarbles(selected_circles)
+            self.displayBoard()
 
         # else: # handles the case when multiple marbles are selected
             # TODO This logic is currently not functional
@@ -75,6 +81,44 @@ class Manager:
         # Switches the turn from one player to the other
         self.player1.flipTurn()
         self.player2.flipTurn()
+
+    def moveMutipleMarbles(self, selected_circles):
+        i = 0
+        selected_circles.sort()
+        first_circle = selected_circles[0]
+        self.recursive_move(first_circle, Direction.UP_RIGHT)
+
+
+    def recursive_move(self, selected_circle, direction):
+        print(selected_circle)
+        print(direction.value)
+        print(selected_circle[0])
+        print(selected_circle[1])
+        next_char = chr(ord(selected_circle[0]) + direction.value[0])
+        print(next_char)
+        next_num = selected_circle[1] + direction.value[1]
+        print(next_num)
+        next_circle = (next_char, next_num)
+        curr_marble = self.board.getCircle(selected_circle[0], selected_circle[1]).marble
+        print(next_circle)
+        next_circle_from_board = self.board.getCircle(next_char, next_num)
+        curr_marble_from_board = self.board.getCircle(selected_circle[0], selected_circle[1]).marble
+        next_marble = self.board.getCircle(next_char, next_num)
+        print("this is the next circle from board {}".format(next_circle_from_board))
+        print(next_circle_from_board.marble)
+        if next_circle_from_board.marble is None:
+            print("no marble found, stop recursive move")
+            next_circle_from_board.marble = curr_marble
+            self.displayBoard()
+            return
+        else:
+            print("recursive move")
+            curr_marble_from_board = None
+            self.recursive_move(next_circle, direction)
+            self.displayBoard()
+        self.displayBoard()
+
+
 
 
 
