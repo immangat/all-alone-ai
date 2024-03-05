@@ -53,24 +53,34 @@ class Displayer:
         # if the circle selected is an opposing team or empty
         # then it will treat it as a move instead with a direction
         clicked_circle = self.get_clicked_circle_tag(event)
-        circle = self.board.getCircle(clicked_circle[0], int(clicked_circle[1:]))
-        print(circle.getMarble())
-        print(clicked_circle)
-        if clicked_circle:
-            print(self.selected_circles)
+        if clicked_circle in ["left", "right", "up_left", "up_right", "down_left", "down_right", "undo"]:
+            self.handle_special_action(clicked_circle)
+        elif clicked_circle is not None:
+            circle = self.board.getCircle(clicked_circle[0], int(clicked_circle[1:]))
+            print(circle.getMarble())
+            print(clicked_circle)
+            if clicked_circle:
+                print(self.selected_circles)
 
-            if clicked_circle not in self.selected_circles:  # selecting marbles
-                self.select_marble(clicked_circle)
-                print("1st")
-            else:
-                # If the same circle is clicked again, deselect it
-                self.deselect_marble(clicked_circle)
-                print("3rd")
+                if clicked_circle not in self.selected_circles:  # selecting marbles
+                    self.select_marble(clicked_circle)
+                    print("1st")
+                else:
+                    # If the same circle is clicked again, deselect it
+                    self.deselect_marble(clicked_circle)
+                    print("3rd")
 
-            if circle.getMarble() is None:  # selecting an empty circle
-                if 3 >= len(self.selected_circles) >= 0:
-                    print("2nd")
-                    self.attempt_move(self.selected_circles, clicked_circle)
+                if circle.getMarble() is None:  # selecting an empty circle
+                    if 3 >= len(self.selected_circles) >= 0:
+                        print("2nd")
+                        self.attempt_move(self.selected_circles, clicked_circle)
+
+    def handle_special_action(self, action):
+        if action == "undo":
+            print(f"Selected action: {action}")
+        else:
+            self.manager.direction = action
+            print(f"Selected direction: {self.manager.direction}")
 
     def get_clicked_circle_tag(self, event):
         for tag, (cx, cy) in self.circle_ids.items():
@@ -122,7 +132,7 @@ class Displayer:
 
         for marble in marbles:
             neighbors.append(self.board.get_neighbors(*marble))
-        neighbors = [item for sublist in neighbors for item in sublist] # flatten to 1D list
+        neighbors = [item for sublist in neighbors for item in sublist]  # flatten to 1D list
         print(f"Neighbours: {neighbors}")
 
         if to_circle in neighbors:
@@ -167,18 +177,24 @@ class Displayer:
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
 
         self.draw_circle(50, 450, 35, "left", "Left", "white", outline='black')
+        self.circle_ids["left"] = (50, 450)
         self.draw_circle(150, 450, 35, "right", "Right", "white", outline='black')
+        self.circle_ids["right"] = (150, 450)
         self.draw_circle(50, 375, 35, "up_left", "Up Left", "white", outline='black')
+        self.circle_ids["up_left"] = (50, 375)
         self.draw_circle(150, 375, 35, "up_right", "Up Right", "white", outline='black')
+        self.circle_ids["up_right"] = (150, 375)
         self.draw_circle(50, 525, 35, "down_left", "Down Left", "white", outline='black')
+        self.circle_ids["down_left"] = (50, 525)
         self.draw_circle(150, 525, 35, "down_right", "Down Right", "white", outline='black')
+        self.circle_ids["down_right"] = (150, 525)
         self.draw_circle(300, 525, 35, "undo", "Undo", "white", outline='black')
+        self.circle_ids["undo"] = (300, 525)
 
     def printInfo(self, scores, moves, playerColor):
         info_text = f"Black Score: {scores[0]} | White Score: {scores[1]} | " \
                     f"Black Moves: {moves[0]} | White Moves: {moves[1]} | " \
                     f"Current Player: {playerColor}"
-
 
         self.canvas.create_text(400, 650, text=info_text, font=('Arial', 12), anchor=tk.CENTER)
 
