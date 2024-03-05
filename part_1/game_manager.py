@@ -50,7 +50,6 @@ class Manager:
                 print("Invalid move")
         else:
             print("trying to move multiple marbles")
-            ####TODO @NICO!!! change Direction Parameter to take in a value from movement buttons
             print(self.direction)
             if self.direction == "left":
                 self.moveMutipleMarbles(selected_circles, Direction.LEFT)
