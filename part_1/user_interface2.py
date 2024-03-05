@@ -23,7 +23,7 @@ class Displayer:
         # and or whether to start the selection process
         # should include the letter axis, number axis, and the letter and number axis
         # make it an enum maybe
-        self.selected_direction = "number"
+        self.selected_direction = "right"
 
         self.manager = manager  # Reference to the game manager
 
@@ -80,7 +80,19 @@ class Displayer:
             print(f"Selected action: {action}")
         else:
             self.manager.direction = action
+            self.highlight_direction(action)
             print(f"Selected direction: {self.manager.direction}")
+
+    def highlight_direction(self, action_tag, select=True):
+        # Reset the highlight of the previously selected direction, if any
+        if self.selected_direction and self.selected_direction != action_tag:
+            self.canvas.itemconfig(self.circle_objects[self.selected_direction],
+                                   fill="white")  # Assuming default color is white
+        # Highlight the new selected direction
+        if select:
+            self.canvas.itemconfig(self.circle_objects[action_tag],
+                                   fill="gray")  # Change fill color to indicate selection
+        self.selected_direction = action_tag if select else None
 
     def get_clicked_circle_tag(self, event):
         for tag, (cx, cy) in self.circle_ids.items():
@@ -148,6 +160,27 @@ class Displayer:
                 self.highlight_circle(tag, False)
             self.selected_circles = []
 
+    def draw_direction_buttons(self):
+        directions = [
+            ("left", 50, 450),
+            ("right", 150, 450),  # Assuming "right" is highlighted by default
+            ("up_left", 50, 375),
+            ("up_right", 150, 375),
+            ("down_left", 50, 525),
+            ("down_right", 150, 525),
+            ("undo", 300, 525),
+        ]
+
+        for direction in directions:
+            tag, x, y = direction[:3]
+            fill_color = "white"
+            if len(direction) == 4:
+                fill_color = direction[3]  # Custom fill color if specified
+            elif tag == self.selected_direction:
+                fill_color = "gray"  # Highlighted color if this direction is selected
+
+            self.draw_circle(x, y, 35, tag, tag.replace("_", " ").title(), fill_color, outline='black')
+            self.circle_ids[tag] = (x, y)
     def draw_board(self):
         if self.board is not None:
             start_x = 400  # Center the board on the canvas
@@ -176,20 +209,7 @@ class Displayer:
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
 
-        self.draw_circle(50, 450, 35, "left", "Left", "white", outline='black')
-        self.circle_ids["left"] = (50, 450)
-        self.draw_circle(150, 450, 35, "right", "Right", "white", outline='black')
-        self.circle_ids["right"] = (150, 450)
-        self.draw_circle(50, 375, 35, "up_left", "Up Left", "white", outline='black')
-        self.circle_ids["up_left"] = (50, 375)
-        self.draw_circle(150, 375, 35, "up_right", "Up Right", "white", outline='black')
-        self.circle_ids["up_right"] = (150, 375)
-        self.draw_circle(50, 525, 35, "down_left", "Down Left", "white", outline='black')
-        self.circle_ids["down_left"] = (50, 525)
-        self.draw_circle(150, 525, 35, "down_right", "Down Right", "white", outline='black')
-        self.circle_ids["down_right"] = (150, 525)
-        self.draw_circle(300, 525, 35, "undo", "Undo", "white", outline='black')
-        self.circle_ids["undo"] = (300, 525)
+        self.draw_direction_buttons()
 
     def printInfo(self, scores, moves, playerColor):
         info_text = f"Black Score: {scores[0]} | White Score: {scores[1]} | " \

@@ -12,7 +12,7 @@ class Manager:
         self.player2 = None
         self.board = None
         # self.selected_circles = []
-        self.direction = None
+        self.direction = "right"
         self.displayer = Displayer(manager=self)
         self.states = States()
 
@@ -23,7 +23,6 @@ class Manager:
         self.player1.flipTurn()
         self.player2 = Player("White")
         self.displayBoard()
-        self.direction = "right"
 
     def isGameOver(self):
         # Check if the game is over (implement logic later)
