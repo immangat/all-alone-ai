@@ -34,7 +34,7 @@ class Manager:
         currentPlayerColor = self.player1.getColor()
         self.displayer.updateBoard(self.board, score, moves, currentPlayerColor)
 
-    #TODO Only works for single marbles and the top two rows have issues, need to fix
+    #TODO Lateral movement still needs to be implemented
     def moveMarble(self, selected_circles, to_circle):
         # Get the marble object from the starting circle
         if isinstance(selected_circles, tuple): # handles the case when only one marble is selected
