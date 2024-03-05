@@ -4,7 +4,6 @@ import math
 
 class Displayer:
     def __init__(self, manager=None):
-        self.selected_circles = []
         self.window = tk.Tk()
         self.window.title("Abalone Game")
         self.canvas = tk.Canvas(self.window, width=800, height=700, bg='white')
@@ -19,6 +18,13 @@ class Displayer:
         self.canvas.bind('<Button-1>', self.on_canvas_click)
 
         self.selected_circles = []  # To keep track of the first selected circle
+
+        # will be used to determine direction of movement of balls
+        # and or whether to start the selection process
+        # should include the letter axis, number axis, and the letter and number axis
+        # make it an enum maybe
+        self.selected_direction = "number"
+
         self.manager = manager  # Reference to the game manager
 
     def updateBoard(self, board, score, moves, playerColor):
@@ -42,6 +48,10 @@ class Displayer:
 
     # Modified on_canvas_click method
     def on_canvas_click(self, event):
+        # add logic here so that it will check if the circle has
+        # a marble of your team color and if it does then add it to selected circles
+        # if the circle selected is an opposing team or empty
+        # then it will treat it as a move instead with a direction
         clicked_circle = self.get_clicked_circle_tag(event)
         circle = self.board.getCircle(clicked_circle[0], int(clicked_circle[1:]))
         print(circle.getMarble())

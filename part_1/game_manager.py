@@ -1,15 +1,18 @@
+import copy
+
 from board import Board
+from part_1.directions import Direction
 from user_interface2 import Displayer
 from player import Player
 from states import States
-import copy
 
 class Manager:
     def __init__(self):
         self.player1 = None
         self.player2 = None
         self.board = None
-        self.selected_circles = []
+        # self.selected_circles = []
+        self.direction = None
         self.displayer = Displayer(manager=self)
         self.states = States()
 
@@ -45,6 +48,11 @@ class Manager:
                 self.displayBoard()
             else:
                 print("Invalid move")
+        else:
+            print("trying to move multiple marbles")
+            ####TODO @NICO!!! change Direction Parameter to take in a value from movement buttons
+            self.moveMutipleMarbles(selected_circles, Direction.DOWN_LEFT)
+            self.displayBoard()
 
         # else: # handles the case when multiple marbles are selected
             # TODO This logic is currently not functional
@@ -93,7 +101,49 @@ class Manager:
     def saveState(self):
         new_board = copy.deepcopy(self.board)
         self.states.add_state(new_board, (self.player1.getScore(), self.player2.getScore()))
+    def moveMutipleMarbles(self, selected_circles, direction_enum):
+        i = 0
+        selected_circles.sort()
+        if direction_enum in [Direction.DOWN_RIGHT, Direction.LEFT, Direction.DOWN_LEFT]:
+            selected_circles.reverse()
 
+        first_circle = selected_circles[0]
+        self.recursive_move(first_circle, direction_enum, None)
+
+    def recursive_move(self, selected_circle, direction, previous_marble=None):
+        next_char = chr(ord(selected_circle[0]) + direction.value[0])
+        next_num = selected_circle[1] + direction.value[1]
+        next_circle = (next_char, next_num)
+
+        curr_marble = self.board.getCircle(selected_circle[0], selected_circle[1]).marble
+
+        # Check if the current marble is the one to be moved, and there is no previous marble
+        if curr_marble is not None and previous_marble is None:
+            # This means we are at the first marble to be moved, so we should remove it after copying
+            self.board.getCircle(selected_circle[0], selected_circle[1]).marble = None
+
+        next_circle_from_board = self.board.getCircle(next_char, next_num)
+        print("This is the next circle from board {}".format(next_circle_from_board))
+
+        curr_marble_copy = copy.deepcopy(curr_marble)
+
+        # If there's no marble in the next position, move the current marble there
+        if next_circle_from_board.marble is None:
+            print("No marble found, stop recursive move")
+            next_circle_from_board.marble = curr_marble_copy
+            return
+        else:
+            print("Recursive move")
+            self.recursive_move(next_circle, direction, curr_marble_copy)
+
+        # print(selected_circle)
+        # print(direction.value)
+        # print(selected_circle[0])
+        # print(selected_circle[1])
+        # print(next_circle_from_board.marble)
+        # print(next_num)
+        # print(next_circle)
+        # print(next_char)
 
 if __name__ == "__main__":
     manager = Manager()

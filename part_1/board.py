@@ -138,3 +138,9 @@ class Board:
                 neighbors.append((neighbor_row, neighbor_col))
         return neighbors
 
+    def get_coordinates(self, circle):
+        for coord, circ in self.circles.items():
+            if circ == circle:
+                return coord
+        return None
+

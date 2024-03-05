@@ -22,6 +22,12 @@ class Circle:
         # Get the position of the circle as (letter, number)
         return self.letter, self.number
 
+    def __lt__(self, other):
+        # Compare circles based on their positions
+        if self.letter == other.letter:
+            return self.number < other.number
+        return self.letter < other.letter
+
     def __deepcopy__(self, memo):
         # Create a new instance of the Circle class with the same attributes
         new_circle = Circle(copy.deepcopy(self.letter, memo), copy.deepcopy(self.number, memo))
