@@ -46,7 +46,8 @@ class Manager:
                 print("Invalid move")
         else:
             print("trying to move multiple marbles")
-            self.moveMutipleMarbles(selected_circles)
+            #### change Direction Parameter to take in a value from movement buttons
+            self.moveMutipleMarbles(selected_circles, Direction.DOWN_LEFT)
             self.displayBoard()
 
         # else: # handles the case when multiple marbles are selected
@@ -84,11 +85,14 @@ class Manager:
         self.player1.flipTurn()
         self.player2.flipTurn()
 
-    def moveMutipleMarbles(self, selected_circles):
+    def moveMutipleMarbles(self, selected_circles, direction_enum):
         i = 0
         selected_circles.sort()
+        if direction_enum in [Direction.DOWN_RIGHT, Direction.LEFT, Direction.DOWN_LEFT]:
+            selected_circles.reverse()
+
         first_circle = selected_circles[0]
-        self.recursive_move(first_circle, Direction.UP_RIGHT, None)
+        self.recursive_move(first_circle, direction_enum, None)
 
     def recursive_move(self, selected_circle, direction, previous_marble=None):
         next_char = chr(ord(selected_circle[0]) + direction.value[0])
