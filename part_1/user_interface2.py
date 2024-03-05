@@ -166,6 +166,14 @@ class Displayer:
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
 
+        self.draw_circle(50, 450, 35, "left", "Left", "white", outline='black')
+        self.draw_circle(150, 450, 35, "right", "Right", "white", outline='black')
+        self.draw_circle(50, 375, 35, "up_left", "Up Left", "white", outline='black')
+        self.draw_circle(150, 375, 35, "up_right", "Up Right", "white", outline='black')
+        self.draw_circle(50, 525, 35, "down_left", "Down Left", "white", outline='black')
+        self.draw_circle(150, 525, 35, "down_right", "Down Right", "white", outline='black')
+        self.draw_circle(300, 525, 35, "undo", "Undo", "white", outline='black')
+
     def printInfo(self, scores, moves, playerColor):
         info_text = f"Black Score: {scores[0]} | White Score: {scores[1]} | " \
                     f"Black Moves: {moves[0]} | White Moves: {moves[1]} | " \
