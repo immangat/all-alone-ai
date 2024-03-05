@@ -1,3 +1,5 @@
+import copy
+
 from board import Board
 from part_1.directions import Direction
 from user_interface2 import Displayer
@@ -86,41 +88,42 @@ class Manager:
         i = 0
         selected_circles.sort()
         first_circle = selected_circles[0]
-        self.recursive_move(first_circle, Direction.UP_RIGHT)
+        self.recursive_move(first_circle, Direction.UP_RIGHT, None)
 
-
-    def recursive_move(self, selected_circle, direction):
-        print(selected_circle)
-        print(direction.value)
-        print(selected_circle[0])
-        print(selected_circle[1])
+    def recursive_move(self, selected_circle, direction, previous_marble=None):
         next_char = chr(ord(selected_circle[0]) + direction.value[0])
-        print(next_char)
         next_num = selected_circle[1] + direction.value[1]
-        print(next_num)
         next_circle = (next_char, next_num)
+
         curr_marble = self.board.getCircle(selected_circle[0], selected_circle[1]).marble
-        print(next_circle)
+
+        # Check if the current marble is the one to be moved, and there is no previous marble
+        if curr_marble is not None and previous_marble is None:
+            # This means we are at the first marble to be moved, so we should remove it after copying
+            self.board.getCircle(selected_circle[0], selected_circle[1]).marble = None
+
         next_circle_from_board = self.board.getCircle(next_char, next_num)
-        curr_marble_from_board = self.board.getCircle(selected_circle[0], selected_circle[1]).marble
-        next_marble = self.board.getCircle(next_char, next_num)
-        print("this is the next circle from board {}".format(next_circle_from_board))
-        print(next_circle_from_board.marble)
+        print("This is the next circle from board {}".format(next_circle_from_board))
+
+        curr_marble_copy = copy.deepcopy(curr_marble)
+
+        # If there's no marble in the next position, move the current marble there
         if next_circle_from_board.marble is None:
-            print("no marble found, stop recursive move")
-            next_circle_from_board.marble = curr_marble
-            self.displayBoard()
+            print("No marble found, stop recursive move")
+            next_circle_from_board.marble = curr_marble_copy
             return
         else:
-            print("recursive move")
-            curr_marble_from_board = None
-            self.recursive_move(next_circle, direction)
-            self.displayBoard()
-        self.displayBoard()
+            print("Recursive move")
+            self.recursive_move(next_circle, direction, curr_marble_copy)
 
-
-
-
+        # print(selected_circle)
+        # print(direction.value)
+        # print(selected_circle[0])
+        # print(selected_circle[1])
+        # print(next_circle_from_board.marble)
+        # print(next_num)
+        # print(next_circle)
+        # print(next_char)
 
 if __name__ == "__main__":
     manager = Manager()
