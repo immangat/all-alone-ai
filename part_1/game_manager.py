@@ -1,7 +1,8 @@
 from board import Board
 from user_interface2 import Displayer
 from player import Player
-
+from states import States
+import copy
 
 class Manager:
     def __init__(self):
@@ -10,6 +11,7 @@ class Manager:
         self.board = None
         self.selected_circles = []
         self.displayer = Displayer(manager=self)
+        self.states = States()
 
     def startGame(self, setup="default"):
         self.board = Board()
@@ -24,7 +26,10 @@ class Manager:
         pass
 
     def displayBoard(self):
-        self.displayer.updateBoard(self.board)
+        score = (self.player1.getScore(), self.player2.getScore())
+        moves = (self.player1.getMoves(), self.player2.getMoves())
+        currentPlayerColor = self.player1.getColor()
+        self.displayer.updateBoard(self.board, score, moves, currentPlayerColor)
 
     #TODO Only works for single marbles and the top two rows have issues, need to fix
     def moveMarble(self, selected_circles, to_circle):
@@ -76,6 +81,18 @@ class Manager:
         self.player1.flipTurn()
         self.player2.flipTurn()
 
+    def undoMove(self):
+        self.board = self.states.get_last_board_state()
+        score = self.states.get_last_score_state()
+        self.player1.setScore(score[0])
+        self.player2.setScore(score[1])
+        self.switchTurns()
+        self.states.remove_last_states()
+        self.displayBoard()
+
+    def saveState(self):
+        new_board = copy.deepcopy(self.board)
+        self.states.add_state(new_board, (self.player1.getScore(), self.player2.getScore()))
 
 
 if __name__ == "__main__":
