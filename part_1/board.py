@@ -1,5 +1,6 @@
 from circle import Circle
 from marble import Marble
+import copy
 
 class Board:
     def __init__(self):
@@ -90,6 +91,13 @@ class Board:
         for position in white_positions:
             self.placeMarble(position[0], position[1], Marble("White"))
 
+    def __deepcopy__(self, memo):
+        # Create a new Board with deep copies of circles
+        new_board = Board()
+        new_board.circles = {pos: copy.deepcopy(circle, memo) for pos, circle in self.circles.items()}
+        memo[id(self)] = new_board
+        return new_board
+
     @staticmethod
     def flower_positions(lst):
         new_list = []
@@ -129,4 +137,10 @@ class Board:
             if self.isWithinBounds(neighbor_row, neighbor_col):
                 neighbors.append((neighbor_row, neighbor_col))
         return neighbors
+
+    def get_coordinates(self, circle):
+        for coord, circ in self.circles.items():
+            if circ == circle:
+                return coord
+        return None
 
