@@ -26,13 +26,13 @@ class Board:
 
     def isWithinBounds(self, row, col):
         # Check if the row and col are within the hexagonal board bounds
-        if row in 'ABCDEFG' and 1 <= col <= 9:
-            index = 'ABCDEFG'.index(row)
+        if row in 'ABCDEFGHI' and 1 <= col <= 9:
+            index = 'ABCDEFGHI'.index(row)
             if index < 3:  # Rows A, B, C
                 return col <= 5 + index
             elif index < 5:  # Rows D, E
                 return True
-            else:  # Rows F, G
+            else:  # Rows F, G, I, H
                 return col >= index - 4
         return False
 

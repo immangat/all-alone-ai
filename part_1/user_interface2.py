@@ -126,8 +126,10 @@ class Displayer:
         marbles = []
         neighbors = []
         to_circle = (to_circle_tag[0], int(to_circle_tag[1:]))
+        for tag in tags:
+            marbles.append((tag[0], int(tag[1:])))
         if len(tags) == 1:
-            marbles.append((tags[0][0], int(tags[0][1:])))
+            # marbles.append((tags[0][0], int(tags[0][1:])))
             if to_circle in self.board.get_neighbors(*marbles[0]):
                 # Proceed with the move if the destination is a neighbor
                 self.selected_circles = []  # Reset the selection
@@ -139,26 +141,25 @@ class Displayer:
                 self.highlight_circle(tags[0], False)
                 self.selected_circles = []
 
-        for tag in tags:
-            marbles.append((tag[0], int(tag[1:])))
+        else:  # logic for multiple marbles
+            for marble in marbles:
+                neighbors.append(self.board.get_neighbors(*marble))
+                print(f"Neighbours: {marbles}")
+            neighbors = [item for sublist in neighbors for item in sublist]  # flatten to 1D list
+            print(f"Neighbours: {neighbors}")
 
-        for marble in marbles:
-            neighbors.append(self.board.get_neighbors(*marble))
-        neighbors = [item for sublist in neighbors for item in sublist]  # flatten to 1D list
-        print(f"Neighbours: {neighbors}")
-
-        if to_circle in neighbors:
-            # Proceed with the move if the destination is a neighbor
-            self.selected_circles = []  # Reset the selection
-            print(self.selected_circles)
-            self.manager.moveMarble(marbles, to_circle)
-            for tag in tags:
-                self.highlight_circle(tag, False)
-        else:
-            print("Invalid move")
-            for tag in tags:
-                self.highlight_circle(tag, False)
-            self.selected_circles = []
+            if to_circle in neighbors:
+                # Proceed with the move if the destination is a neighbor
+                self.selected_circles = []  # Reset the selection
+                print(self.selected_circles)
+                self.manager.moveMarble(marbles, to_circle)
+                for tag in tags:
+                    self.highlight_circle(tag, False)
+            else:
+                print("Invalid move")
+                for tag in tags:
+                    self.highlight_circle(tag, False)
+                self.selected_circles = []
 
     def draw_direction_buttons(self):
         directions = [
@@ -181,6 +182,7 @@ class Displayer:
 
             self.draw_circle(x, y, 35, tag, tag.replace("_", " ").title(), fill_color, outline='black')
             self.circle_ids[tag] = (x, y)
+
     def draw_board(self):
         if self.board is not None:
             start_x = 400  # Center the board on the canvas
