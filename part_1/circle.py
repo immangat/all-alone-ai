@@ -1,3 +1,5 @@
+import copy
+
 class Circle:
     def __init__(self, letter, number):
         self.letter = letter
@@ -26,4 +28,12 @@ class Circle:
             return self.number < other.number
         return self.letter < other.letter
 
+    def __deepcopy__(self, memo):
+        # Create a new instance of the Circle class with the same attributes
+        new_circle = Circle(copy.deepcopy(self.letter, memo), copy.deepcopy(self.number, memo))
 
+        # Deep copy the marble attribute if it exists
+        if self.marble is not None:
+            new_circle.marble = copy.deepcopy(self.marble, memo)
+
+        return new_circle

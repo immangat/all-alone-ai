@@ -27,11 +27,12 @@ class Displayer:
 
         self.manager = manager  # Reference to the game manager
 
-    def updateBoard(self, board):
+    def updateBoard(self, board, score, moves, playerColor):
         # Update the display based on the provided Board object
         self.board = board
         self.canvas.delete("all")  # Clear the canvas
         self.draw_board()
+        self.printInfo(score, moves, playerColor)
         self.run()
 
     def draw_circle(self, x, y, r, tag, text, marble_color, **kwargs):
@@ -164,6 +165,14 @@ class Displayer:
                     self.circle_ids[tag] = (x + (self.r * 2 * j), y)
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
+
+    def printInfo(self, scores, moves, playerColor):
+        info_text = f"Black Score: {scores[0]} | White Score: {scores[1]} | " \
+                    f"Black Moves: {moves[0]} | White Moves: {moves[1]} | " \
+                    f"Current Player: {playerColor}"
+
+
+        self.canvas.create_text(400, 650, text=info_text, font=('Arial', 12), anchor=tk.CENTER)
 
     def run(self):
         self.window.mainloop()
