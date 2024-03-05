@@ -31,3 +31,18 @@ Moves are represented as `[[X], Z]`, where:
   ![img_8.png](pictures/img_8.png)
 - Triple Black Marble Move Down Right: `[[E6,E7,E8],DR]`
   ![img_9.png](pictures/img_9.png)
+
+### III Problem Formulation
+
+#### a. State Representation
+#### b. Initial State
+The initial state can be one three states
+1. Standard
+2. German Daisy
+3. Belgian Daisy
+#### c. Actions  
+The action can be defined with the move notation and involves moving marbles(1 to 3) to a one of six direction(as defined in part II)
+#### d. Transition Model 
+
+#### e. Goal Test
+- After each move as been made, check if a side(Black/White) has collected 6 marbles 
