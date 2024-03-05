@@ -36,17 +36,27 @@ Moves are represented as `[[X], Z]`, where:
 
 #### a. State Representation
 
-The state is resented in code my dictionary of circles that can contain a black or white marble. With each move, the
+The state is resented in by a dictionary(`{circle_name: circle_object}`) of circles that can contain a black or white marble. With each move, the
 marble(s) are moved to the intended location. 
-![img.png](img.png)
+```javascript
 
+  state = {
+  "I5": {marble: Marble()},
+  "H5": {marble: none},
+  "G5": {marble: none},
+  ...,
+}
+```
 #### b. Initial State
 
 The initial state can be one three states
 
-1. Standard
-2. German Daisy
-3. Belgian Daisy
+1. Standard  
+![img_3.png](img_3.png)
+2. German Daisy  
+![img_2.png](img_2.png)
+3. Belgian Daisy  
+![img_1.png](img_1.png)
 
 #### c. Actions
 
