@@ -2,13 +2,21 @@
 
 ## Contents
 
-- Game Board Representation
-- Moving Notation
-- Problem Formulation
-- Team Member Contribution
-- Source Code
+### I &nbsp;&nbsp;&nbsp;&nbsp;Game Board Representation
 
-### II Moving Notation
+### II &nbsp;&nbsp;&nbsp;Moving Notation
+
+### III&nbsp;&nbsp;&nbsp;Problem Formulation
+
+### IV&nbsp;&nbsp;Team Member Contribution
+
+### I&nbsp;&nbsp;&nbsp;&nbsp; Game Board Representation
+
+The game board is represented by 61 circles; Each circle has a tag made of a letter and a number. Each circle can
+contain a white or a black marble.  
+<img src="pictures/game_board.png" alt="Belgian Daisy" style="width:40%;">
+
+### II&nbsp;&nbsp;&nbsp;&nbsp;Moving Notation
 
 Moves are represented as `[[X], Z]`, where:
 
@@ -32,7 +40,7 @@ Moves are represented as `[[X], Z]`, where:
 - Triple Black Marble Move Down Right: `[[E6,E7,E8],DR]`
   ![img_9.png](pictures/img_9.png)
 
-### III Problem Formulation
+### III&nbsp;&nbsp;&nbsp;&nbsp;Problem Formulation
 
 #### a. State Representation
 
@@ -79,3 +87,5 @@ in part II).
 #### e. Goal Test
 
 The goal test consists of checking if any player has gotten six of the opposite marbles out of the board.
+
+### IV&nbsp;&nbsp;Team Member Contribution  
