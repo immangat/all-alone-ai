@@ -10,21 +10,12 @@
 
 ### II Moving Notation
 
-Moves are represented as `[X, Yₛ, Z]`, where:
+Moves are represented as `[[X], Z]`, where:
 
-- X: Number of marbles moved (S for single, D for double, T for triple).
-- Y: Type of marble (B for black, W for white).
-    - If no subscript, the marbles are in a straight line. Subscript represents the shape of the marbles if they are
-      double or triple (T, D).
-        - <sub>p</sub>: The marbles are in a diagonal shape with the left side pointing down and the right side pointing
-          up.
-        - <sub>n</sub>: The marbles are in a diagonal shape with the right side pointing down and the left side pointing
-          up.
-- Z: Direction of movement (R, L, U, D, UL, DL, UR, DR).
+- X: Contains coordinates of each marble that will be moved in an array
+- Z: Direction of movement (R, L, UL, DL, UR, DR).
     - R: Right
     - L: Left
-    - U: Up
-    - D: Down
     - UL: Up Left
     - DL: Down Left
     - UR: Up Right
@@ -32,11 +23,11 @@ Moves are represented as `[X, Yₛ, Z]`, where:
 
 #### Example Notation with Pictures
 
-- Single Black Marble Move Right: `[B, S, R]`
+- Single Black Marble Move Right: `[[F6] ,R]`
   ![img_6.png](pictures/img_6.png)
-- Double White Marble (Straight Line) Move Up Left: `[W, D, UL]`
+- Double White Marble (Straight Line) Move Up Left: `[[F5,F6], UL]`
   ![img_7.png](pictures/img_7.png)
-- Double White Marble (Diagonal) Move Up Left: `[W, Dₙ, UL]`
+- Double White Marble (Diagonal) Move Up Right: `[[F6,E6], UL]`
   ![img_8.png](pictures/img_8.png)
-- Triple Black Marble Move Down Right: `[B, T, DR]`
+- Triple Black Marble Move Down Right: `[[E6,E7,E8],DR]`
   ![img_9.png](pictures/img_9.png)
