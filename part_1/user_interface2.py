@@ -17,15 +17,15 @@ class Displayer:
 
         # Bind the click event to the canvas
         self.canvas.bind('<Button-1>', self.on_canvas_click)
-        self.timer_label = tk.Label(self.canvas, text="Timer: 0 seconds")
-        self.timer_label.place(x=100, y=200)
+        self.player_one_timer_label = tk.Label(self.canvas, text="Player 1 Timer: 0 seconds\nPlayer 2 Timer: 0 seconds")
+        self.player_one_timer_label.place(x=10, y=10)
         self.selected_circles = []  # To keep track of the first selected circlex
         # will be used to determine direction of movement of balls
         # and or whether to start the selection process
         # should include the letter axis, number axis, and the letter and number axis
         # make it an enum maybe
+        self.current_timer_ran = False
         self.selected_direction = "right"
-
         self.manager = manager  # Reference to the game manager
 
     def updateBoard(self, board, score, moves, playerColor):
@@ -33,7 +33,7 @@ class Displayer:
         self.board = board
         self.canvas.delete("all")  # Clear the canvas
         self.draw_board()
-        #self.print_timer()
+        # self.print_timer()
         self.printInfo(score, moves, playerColor)
         self.run()
 
@@ -216,9 +216,11 @@ class Displayer:
         self.draw_direction_buttons()
 
     def print_timer(self):
-        seconds = self.manager.get_time_to_display()
-        self.timer_label.config(text=f"Timer: {seconds} seconds")
-        self.timer_label.after(1000, self.print_timer)
+        print("running", time.time())
+        player_one_seconds, player_two_seconds = self.manager.get_time_to_display()
+        self.player_one_timer_label.config(
+            text=f"Player 1 Timer: {player_one_seconds} seconds\nPlayer 2 Timer: {player_two_seconds} seconds")
+        self.player_one_timer_label.after(1000, self.print_timer)
 
     def printInfo(self, scores, moves, playerColor):
         info_text = f"Black Score: {scores[0]} | White Score: {scores[1]} | " \
@@ -228,5 +230,7 @@ class Displayer:
         self.canvas.create_text(400, 650, text=info_text, font=('Arial', 12), anchor=tk.CENTER)
 
     def run(self):
-        self.print_timer()
+        if not self.current_timer_ran:
+            self.print_timer()
+            self.current_timer_ran = True
         self.window.mainloop()
