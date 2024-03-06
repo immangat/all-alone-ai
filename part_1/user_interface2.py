@@ -2,6 +2,8 @@ import math
 import time
 import tkinter as tk
 
+from part_1.button import Button
+
 
 class Displayer:
     def __init__(self, manager=None):
@@ -35,8 +37,18 @@ class Displayer:
         self.canvas.delete("all")  # Clear the canvas
         self.draw_board()
         # self.print_timer()
+        # self.canvas.delete("all")
         self.printInfo(score, moves, playerColor)
         self.run()
+        # self.canvas.delete("all")
+
+    # def display_moves_canvas(self):
+    #     self.canvas.delete("all")
+    #     self.manager.display_moves()
+    #     # self.draw_board() REPLACE WITH DRAWING / DISPLAYING MOVES
+    #     # STEP 1 JUST PRINT TO CONSOLE
+    #     # self.printInfo(self.manager.get_score(), moves, self.manager.current_player.getColor())
+    #     # self.run()
 
     def draw_circle(self, x, y, r, tag, text, marble_color, **kwargs):
         # Draw the circle
@@ -110,7 +122,7 @@ class Displayer:
     def select_marble(self, tag):
         circle = self.board.getCircle(tag[0], int(tag[1:]))
         # print(circle.getMarble().getColor())
-        if circle.getMarble() is not None and circle.getMarble().getColor() in ['Black', 'White']:
+        if circle.getMarble() is not None and circle.getMarble().getColor() == self.manager.current_player.getColor():
             # First circle selected, highlight it
             self.selected_circles.append(tag)
             self.highlight_circle(tag, True)
@@ -192,12 +204,13 @@ class Displayer:
         else:  # logic for multiple marbles
             for marble in marbles:
                 neighbors.append(self.board.get_neighbors(*marble))
-                print(f"Neighbours: {marbles}")
+                print(f"Neighbours: {neighbors}")
             neighbors = [item for sublist in neighbors for item in sublist]  # flatten to 1D list
             print(f"Neighbours: {neighbors}")
 
             if to_circle in neighbors:
                 # Proceed with the move if the destination is a neighbor
+                print(self.selected_circles)
                 self.selected_circles = []  # Reset the selection
                 print(self.selected_circles)
                 self.manager.moveMarble(marbles, to_circle)
@@ -258,8 +271,8 @@ class Displayer:
                     self.circle_ids[tag] = (x + (self.r * 2 * j), y)
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
-
         self.draw_direction_buttons()
+
 
     def print_timer(self):
         print("running", time.time())

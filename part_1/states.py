@@ -7,6 +7,7 @@ class States:
     def __init__(self):
         self.boardStates = []
         self.scoreStates = []
+        self.moves = []
 
     def add_state(self, board, score):
         self.boardStates.append(board)
