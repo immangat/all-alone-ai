@@ -216,9 +216,17 @@ class Manager:
         selected_circles.sort()
         if direction_enum in [Direction.DOWN_RIGHT, Direction.LEFT, Direction.DOWN_LEFT]:
             selected_circles.reverse()
+        all_but_last = selected_circles[-2::-1]
+        last_circle = selected_circles[-1]
+        self.recursive_move(last_circle, direction_enum, None)
 
-        first_circle = selected_circles[0]
-        self.recursive_move(first_circle, direction_enum, None)
+        for circle in all_but_last:
+            print(circle)
+            next_circle = self.board.getCircle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
+            curr_circle = self.board.getCircle(circle[0], circle[1])
+            next_circle.setMarble(curr_circle.getMarble())
+            curr_circle.setMarble(None)
+
 
     def recursive_move(self, selected_circle, direction, previous_marble=None):
         next_char = chr(ord(selected_circle[0]) + direction.value[0])
