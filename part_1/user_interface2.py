@@ -77,7 +77,7 @@ class Displayer:
 
     def handle_special_action(self, action):
         if action == "undo":
-            print(f"Selected action: {action}")
+            self.manager.undoMove()
         else:
             self.manager.direction = action
             self.highlight_direction(action)
