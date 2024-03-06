@@ -147,6 +147,23 @@ class Board:
                 neighbors.append((neighbor_row, neighbor_col))
         return neighbors
 
+    def get_neighbors_with_direction(self, row, col):
+        directions = {
+            'left': (0, -1),
+            'right': (0, 1),
+            'up_left': (1, 0),  # Adjusted for hexagonal grid
+            'up_right': (1, 1),  # Adjusted for hexagonal grid
+            'down_left': (-1, -1),  # Adjusted for hexagonal grid
+            'down_right': (-1, 0),  # Adjusted for hexagonal grid
+        }
+        neighbors = {}
+        for direction, (dr, dc) in directions.items():
+            neighbor_row = chr(ord(row) + dr)
+            neighbor_col = col + dc
+            if self.isWithinBounds(neighbor_row, neighbor_col):
+                neighbors[direction] = (neighbor_row, neighbor_col)
+        return neighbors
+
     def get_coordinates(self, circle):
         for coord, circ in self.circles.items():
             if circ == circle:

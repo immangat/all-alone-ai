@@ -146,12 +146,13 @@ class Displayer:
         else:  # logic for multiple marbles
             for marble in marbles:
                 neighbors.append(self.board.get_neighbors(*marble))
-                print(f"Neighbours: {marbles}")
+                print(f"Neighbours: {neighbors}")
             neighbors = [item for sublist in neighbors for item in sublist]  # flatten to 1D list
             print(f"Neighbours: {neighbors}")
 
             if to_circle in neighbors:
                 # Proceed with the move if the destination is a neighbor
+                print(self.selected_circles)
                 self.selected_circles = []  # Reset the selection
                 print(self.selected_circles)
                 self.manager.moveMarble(marbles, to_circle)
