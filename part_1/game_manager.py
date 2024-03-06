@@ -53,8 +53,6 @@ class Manager:
             else:
                 print("Invalid move")
         else:
-            print("trying to move multiple marbles")
-            print(self.direction)
             neighbors = []
             for selected_circle in selected_circles:
                 neighbors.append(self.board.get_neighbors_with_direction(*selected_circle))
@@ -63,10 +61,7 @@ class Manager:
                 {direction: pos for direction, pos in neighbour.items() if pos not in selected_circles} for neighbour in
                 neighbors]
 
-            print(f"Selected Circles: {selected_circles}")
-            print(f"Neighbours: {neighbors}")
-            print(f"Filtered Neighbours: {filtered_neighbours}")
-            print(f"Aligned: {self.are_circles_adjacent_and_aligned(selected_circles)}")
+
             aligned = self.are_circles_adjacent_and_aligned(selected_circles)
 
             if aligned == "diagonalLeft":
@@ -85,13 +80,13 @@ class Manager:
                     for neighbour in filtered_neighbours
                 ]
 
-            print(f"Filtered Neighbours Updated: {filtered_neighbours}")
+
 
             for filtered_neighbour in filtered_neighbours:
                 if to_circle in filtered_neighbour.values():
                     self.direction = list(filtered_neighbour.keys())[0]
                     break
-            print(f"Direction: {self.direction}")
+
 
             # if (selected_circles in neighbors.values()):
             if self.direction == "left":
@@ -236,7 +231,6 @@ class Manager:
         self.recursive_move(last_circle, direction_enum, None)
 
         for circle in all_but_last:
-            print(circle)
             next_circle = self.board.getCircle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
             curr_circle = self.board.getCircle(circle[0], circle[1])
             next_circle.setMarble(curr_circle.getMarble())
@@ -260,27 +254,15 @@ class Manager:
             self.board.getCircle(selected_circle[0], selected_circle[1]).marble = None
 
         next_circle_from_board = self.board.getCircle(next_char, next_num)
-        print("This is the next circle from board {}".format(next_circle_from_board))
 
         curr_marble_copy = copy.deepcopy(curr_marble)
 
         # If there's no marble in the next position, move the current marble there
         if next_circle_from_board.marble is None:
-            print("No marble found, stop recursive move")
             next_circle_from_board.marble = curr_marble_copy
             return
         else:
-            print("Recursive move")
             self.recursive_move(next_circle, direction, curr_marble_copy)
-
-        # print(selected_circle)
-        # print(direction.value)
-        # print(selected_circle[0])
-        # print(selected_circle[1])
-        # print(next_circle_from_board.marble)
-        # print(next_num)
-        # print(next_circle)
-        # print(next_char)
 
     def get_time_to_display(self):
         player_one_time = self.player1.get_time()
@@ -290,6 +272,10 @@ class Manager:
             self.switchTurns()
         return player_one_time, player_two_time
 
+    def print_moves(self):
+        print(f"Player 1\t\t\t\t\tPlayer 2")
+        for player1, player2 in zip(self.player1.get_move_list(), self.player2.get_move_list()):
+            print(f"{player1}\t\t\t\t\t{player2}")
 
 if __name__ == "__main__":
     manager = Manager()

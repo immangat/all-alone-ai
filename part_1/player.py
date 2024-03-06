@@ -10,6 +10,7 @@ class Player:
         self.moves = 0
         self.score = 0
         self.timer = Timer()
+        self.move_list = []
 
     def getColor(self):
         # Get the color of the player
@@ -43,6 +44,9 @@ class Player:
 
     def getMoves(self):
         return self.moves
+
+    def get_move_list(self):
+        return self.move_list
 
     def increment_time(self):
         return self.timer.increment_timer()
