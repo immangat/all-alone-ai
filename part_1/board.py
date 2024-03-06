@@ -1,5 +1,6 @@
 from circle import Circle
 from marble import Marble
+import copy
 
 class Board:
     def __init__(self):
@@ -25,13 +26,13 @@ class Board:
 
     def isWithinBounds(self, row, col):
         # Check if the row and col are within the hexagonal board bounds
-        if row in 'ABCDEFG' and 1 <= col <= 9:
-            index = 'ABCDEFG'.index(row)
+        if row in 'ABCDEFGHI' and 1 <= col <= 9:
+            index = 'ABCDEFGHI'.index(row)
             if index < 3:  # Rows A, B, C
                 return col <= 5 + index
             elif index < 5:  # Rows D, E
                 return True
-            else:  # Rows F, G
+            else:  # Rows F, G, I, H
                 return col >= index - 4
         return False
 
@@ -90,6 +91,13 @@ class Board:
         for position in white_positions:
             self.placeMarble(position[0], position[1], Marble("White"))
 
+    def __deepcopy__(self, memo):
+        # Create a new Board with deep copies of circles
+        new_board = Board()
+        new_board.circles = {pos: copy.deepcopy(circle, memo) for pos, circle in self.circles.items()}
+        memo[id(self)] = new_board
+        return new_board
+
     @staticmethod
     def flower_positions(lst):
         new_list = []
@@ -129,4 +137,10 @@ class Board:
             if self.isWithinBounds(neighbor_row, neighbor_col):
                 neighbors.append((neighbor_row, neighbor_col))
         return neighbors
+
+    def get_coordinates(self, circle):
+        for coord, circ in self.circles.items():
+            if circ == circle:
+                return coord
+        return None
 
