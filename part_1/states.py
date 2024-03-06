@@ -10,8 +10,6 @@ class States:
     def add_state(self, board, score):
         self.boardStates.append(board)
         self.scoreStates.append(score)
-        print(self.boardStates)
-        print(self.scoreStates)
 
     def __len__(self):
         return len(self.boardStates)

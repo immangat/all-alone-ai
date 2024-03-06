@@ -95,13 +95,10 @@ class Manager:
         playerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
 
     def undoMove(self):
-        # self.board.printCircleStatus()
-        # self.states.get_last_board_state().printCircleStatus()
+
         deletedState = self.states.remove_last_states()
         if deletedState:
             self.board = self.states.get_last_board_state()
-            print("New Board")
-            print(self.board)
             score = self.states.get_last_score_state()
             self.player1.setScore(score[0])
             self.player2.setScore(score[1])
