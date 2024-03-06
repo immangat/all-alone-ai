@@ -6,6 +6,7 @@ from user_interface2 import Displayer
 from player import Player
 from states import States
 
+
 class Manager:
     def __init__(self):
         self.player1 = None
@@ -34,10 +35,10 @@ class Manager:
         currentPlayerColor = self.player1.getColor()
         self.displayer.updateBoard(self.board, score, moves, currentPlayerColor)
 
-    #TODO Lateral movement still needs to be implemented
+    # TODO Lateral movement still needs to be implemented
     def moveMarble(self, selected_circles, to_circle):
         # Get the marble object from the starting circle
-        if isinstance(selected_circles, tuple): # handles the case when only one marble is selected
+        if isinstance(selected_circles, tuple):  # handles the case when only one marble is selected
             marble = self.board.getCircle(*selected_circles).getMarble()
             if self.isValidMove(selected_circles, to_circle, marble):
                 # If the move is valid, remove the marble from the starting circle
@@ -51,6 +52,45 @@ class Manager:
         else:
             print("trying to move multiple marbles")
             print(self.direction)
+            neighbors = []
+            for selected_circle in selected_circles:
+                neighbors.append(self.board.get_neighbors_with_direction(*selected_circle))
+
+            filtered_neighbours = [
+                {direction: pos for direction, pos in neighbour.items() if pos not in selected_circles} for neighbour in
+                neighbors]
+
+            print(f"Selected Circles: {selected_circles}")
+            print(f"Neighbours: {neighbors}")
+            print(f"Filtered Neighbours: {filtered_neighbours}")
+            print(f"Aligned: {self.are_circles_adjacent_and_aligned(selected_circles)}")
+            aligned = self.are_circles_adjacent_and_aligned(selected_circles)
+
+            if aligned == "diagonalLeft":
+                filtered_neighbours = [
+                    {k: v for k, v in neighbour.items() if k in ['up_left', 'down_right']}
+                    for neighbour in filtered_neighbours
+                ]
+            elif aligned == "diagonalRight":
+                filtered_neighbours = [
+                    {k: v for k, v in neighbour.items() if k in ['up_right', 'down_left']}
+                    for neighbour in filtered_neighbours
+                ]
+            elif aligned == "horizontal":
+                filtered_neighbours = [
+                    {k: v for k, v in neighbour.items() if k in ['left', 'right']}
+                    for neighbour in filtered_neighbours
+                ]
+
+            print(f"Filtered Neighbours Updated: {filtered_neighbours}")
+
+            for filtered_neighbour in filtered_neighbours:
+                if to_circle in filtered_neighbour.values():
+                    self.direction = list(filtered_neighbour.keys())[0]
+                    break
+            print(f"Direction: {self.direction}")
+
+            # if (selected_circles in neighbors.values()):
             if self.direction == "left":
                 self.moveMutipleMarbles(selected_circles, Direction.LEFT)
             elif self.direction == "right":
@@ -65,6 +105,77 @@ class Manager:
                 self.moveMutipleMarbles(selected_circles, Direction.DOWN_LEFT)
             # self.moveMutipleMarbles(selected_circles, Direction.DOWN_LEFT)
             self.displayBoard()
+
+    def are_circles_adjacent_and_aligned(self, circles):
+        if len(circles) == 2:
+            direction = self._aligned_two(circles)
+            if direction == "right" or direction == "left":
+                direction = "horizontal"
+                return direction
+            elif direction == "up_right" or direction == "down_left":
+                direction = "diagonalRight"
+                return direction
+            elif direction == "up_left" or direction == "down_right":
+                direction = "diagonalLeft"
+                return direction
+        elif len(circles) == 3:
+            return self._aligned_three(circles)
+
+    def _aligned_two(self, circles):
+        if len(circles) != 2:
+            return False  # Only checking pairs of circles
+
+        # Extract row and column from each circle
+        row1, col1 = circles[0]
+        row2, col2 = circles[1]
+
+        # Calculate differences
+        row_diff = ord(row2) - ord(row1)
+        col_diff = col2 - col1
+
+        # Define all possible directions
+        directions = {
+            'left': (0, -1),
+            'right': (0, 1),
+            'up_left': (1, 0),
+            'up_right': (1, 1),
+            'down_left': (-1, -1),
+            'down_right': (-1, 0),
+        }
+        key = None
+        for k, value in directions.items():
+            if value == (row_diff, col_diff):
+                key = k
+                break
+
+        if key is None:
+            return False
+        else:
+            return key
+
+    def _aligned_three(self, circles):
+        # Sort the circles by rows first (from 'A' to 'I'), and then by columns (from 1 to 9)
+        circles = sorted(circles, key=lambda x: (x[0], x[1]))
+
+        # Vectors for possible axis considering the Abalone board layout
+        axis = {
+            'horizontal': (0, 1),
+            'diagonalLeft': (1, 0),
+            'diagonalRight': (1, 1),
+        }
+
+        # Calculate vectors between consecutive circles
+        vectors = [(ord(circles[i + 1][0]) - ord(circles[i][0]), circles[i + 1][1] - circles[i][1]) for i in
+                   range(len(circles) - 1)]
+
+        # Check if all vectors are the same
+        if all(vector == vectors[0] for vector in vectors):
+            # Create a reverse lookup dictionary from axis
+            reverse_directions = {v: k for k, v in axis.items()}
+            # Return the direction if it's one of the predefined ones
+            return reverse_directions.get(vectors[0], None)
+
+        return None
 
     def isValidMove(self, from_circle, to_circle, marble):
         # Check if the to_circle is one of the valid neighbors of from_circle
@@ -99,6 +210,7 @@ class Manager:
     def saveState(self):
         new_board = copy.deepcopy(self.board)
         self.states.add_state(new_board, (self.player1.getScore(), self.player2.getScore()))
+
     def moveMutipleMarbles(self, selected_circles, direction_enum):
         i = 0
         selected_circles.sort()
@@ -142,6 +254,7 @@ class Manager:
         # print(next_num)
         # print(next_circle)
         # print(next_char)
+
 
 if __name__ == "__main__":
     manager = Manager()
