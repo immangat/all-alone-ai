@@ -89,6 +89,7 @@ class Manager:
 
     def switchTurns(self, save_state=True):
         # Switches the turn from one player to the other
+        self.current_player.reset_timer()
         if save_state:
             self.player1.moveUp() if self.player1.getCurrentTurn() else self.player2.moveUp()
             self.saveState()
@@ -159,13 +160,15 @@ class Manager:
         # print(next_char)
 
     def get_time_to_display(self):
-        seconds = self.current_player.increment_time()
-        if seconds <= 0:
-            self.current_player.reset_timer()
-            seconds = self.current_player.reset_timer()
-            return seconds
-        else:
-            return seconds
+        player_one_time = self.player1.get_time()
+        player_two_time = self.player2.get_time()
+        self.current_player.increment_time()
+        # if seconds <= 0:
+        #     self.current_player.reset_timer()
+        #     seconds = self.current_player.reset_timer()
+        #     return seconds
+        # else:
+        return player_one_time, player_two_time
 
 
 if __name__ == "__main__":
