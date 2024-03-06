@@ -155,4 +155,4 @@ class Manager:
 
 if __name__ == "__main__":
     manager = Manager()
-    manager.startGame("belgian_daisy")
+    manager.startGame("german_daisy")
