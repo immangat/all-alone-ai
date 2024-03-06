@@ -162,12 +162,9 @@ class Manager:
     def get_time_to_display(self):
         player_one_time = self.player1.get_time()
         player_two_time = self.player2.get_time()
-        self.current_player.increment_time()
-        # if seconds <= 0:
-        #     self.current_player.reset_timer()
-        #     seconds = self.current_player.reset_timer()
-        #     return seconds
-        # else:
+        seconds = self.current_player.increment_time()
+        if seconds <= 0:
+            self.switchTurns()
         return player_one_time, player_two_time
 
 
