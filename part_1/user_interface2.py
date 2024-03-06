@@ -17,7 +17,7 @@ class Displayer:
 
         # Bind the click event to the canvas
         self.canvas.bind('<Button-1>', self.on_canvas_click)
-        self.player_one_timer_label = tk.Label(self.canvas, text="Player 1 Timer: 0 seconds\nPlayer 2 Timer: 0 seconds")
+        self.player_one_timer_label = tk.Label(self.canvas, text="Black Timer: 0 seconds\nWhite Timer: 0 seconds")
         self.player_one_timer_label.place(x=10, y=10)
         self.selected_circles = []  # To keep track of the first selected circlex
         # will be used to determine direction of movement of balls
@@ -219,7 +219,7 @@ class Displayer:
         print("running", time.time())
         player_one_seconds, player_two_seconds = self.manager.get_time_to_display()
         self.player_one_timer_label.config(
-            text=f"Player 1 Timer: {player_one_seconds} seconds\nPlayer 2 Timer: {player_two_seconds} seconds")
+            text=f"Black Timer: {player_one_seconds} seconds\nWhite Timer: {player_two_seconds} seconds")
         self.player_one_timer_label.after(1000, self.print_timer)
 
     def printInfo(self, scores, moves, playerColor):
