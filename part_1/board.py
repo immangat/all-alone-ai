@@ -2,6 +2,7 @@ from circle import Circle
 from marble import Marble
 import copy
 
+
 class Board:
     def __init__(self):
         self.circles = {}  # This will map board coordinates to Circle objects
@@ -18,7 +19,6 @@ class Board:
                 number = j + self.starting_numbers[i]
                 circle = Circle(letter, number)
                 self.circles[(letter, number)] = circle
-
 
     def getCircle(self, row, col):
         # Return the Circle object at the given row and col
@@ -64,19 +64,21 @@ class Board:
     def setupDefault(self):
         for i, row_label in enumerate("IHGFEDCBA"):
             for j in range(self.rows[i]):
-                if i < 2 or (i == 2 and j >= 2 and j <= 4):  # Place black marbles in the bottom two rows and the center positions
+                if i < 2 or (
+                        i == 2 and j >= 2 and j <= 4):  # Place black marbles in the bottom two rows and the center positions
                     self.placeMarble(row_label, j + self.starting_numbers[i], Marble("Black"))
-                elif i > 6 or (i == 6 and j >= 2 and j <= 4):  # Place white marbles in the top two rows and the center positions
+                elif i > 6 or (
+                        i == 6 and j >= 2 and j <= 4):  # Place white marbles in the top two rows and the center positions
                     self.placeMarble(row_label, j + self.starting_numbers[i], Marble("White"))
 
         for position, circle in self.circles.items():
             print(f"tile {position}{circle.getMarble()}")
 
     def setupGermanDaisy(self):
-        black_initial =[('C', 2), ('G',8)]
+        black_initial = [('C', 2), ('G', 8)]
         black_positions = Board.flower_positions(black_initial)
 
-        white_initial =[('G', 4), ('C', 6)]
+        white_initial = [('G', 4), ('C', 6)]
         white_positions = Board.flower_positions(white_initial)
 
         for position in black_positions:
@@ -167,4 +169,3 @@ class Board:
             if circ == circle:
                 return coord
         return None
-

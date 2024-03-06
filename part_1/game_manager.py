@@ -9,8 +9,9 @@ from states import States
 
 class Manager:
     def __init__(self):
-        self.player1 = None
-        self.player2 = None
+        self.player1: Player = None
+        self.player2: Player = None
+        self.current_player: Player = None
         self.board = None
         # self.selected_circles = []
         self.direction = "right"
@@ -21,7 +22,7 @@ class Manager:
         self.board = Board()
         self.board.setupBoard(setup)
         self.player1 = Player("Black")
-        self.player1.flipTurn()
+        self.current_player = self.player1
         self.player2 = Player("White")
         self.saveState()
         self.displayBoard()
@@ -198,11 +199,14 @@ class Manager:
 
     def switchTurns(self, save_state=True):
         # Switches the turn from one player to the other
+        self.current_player.reset_timer()
         if save_state:
             self.player1.moveUp() if self.player1.getCurrentTurn() else self.player2.moveUp()
             self.saveState()
-        self.player1.flipTurn()
-        self.player2.flipTurn()
+        if self.current_player == self.player1:
+            self.current_player = self.player2
+        else:
+            self.current_player = self.player1
         playerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
 
     def undoMove(self):
@@ -272,6 +276,14 @@ class Manager:
         # print(next_num)
         # print(next_circle)
         # print(next_char)
+
+    def get_time_to_display(self):
+        player_one_time = self.player1.get_time()
+        player_two_time = self.player2.get_time()
+        seconds = self.current_player.increment_time()
+        if seconds <= 0:
+            self.switchTurns()
+        return player_one_time, player_two_time
 
 
 if __name__ == "__main__":
