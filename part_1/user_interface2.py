@@ -113,7 +113,7 @@ class Displayer:
     def select_marble(self, tag):
         circle = self.board.getCircle(tag[0], int(tag[1:]))
         # print(circle.getMarble().getColor())
-        if circle.getMarble() is not None and circle.getMarble().getColor() in ['Black', 'White']:
+        if circle.getMarble() is not None and circle.getMarble().getColor() == self.manager.current_player.getColor():
             # First circle selected, highlight it
             self.selected_circles.append(tag)
             self.highlight_circle(tag, True)
