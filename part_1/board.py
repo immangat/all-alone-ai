@@ -24,6 +24,12 @@ class Board:
         # Return the Circle object at the given row and col
         return self.circles.get((row, col))
 
+    def printCircleStatus(self):
+        for circle in self.circles.values():
+            print((circle.getPosition()))
+            hasMarble = "False" if circle.isEmpty() else "True"
+            print(hasMarble)
+
     def isWithinBounds(self, row, col):
         # Check if the row and col are within the hexagonal board bounds
         if row in 'ABCDEFGHI' and 1 <= col <= 9:
@@ -45,6 +51,7 @@ class Board:
             self.setupGermanDaisy()
         elif setup_type == "belgian_daisy":
             self.setupBelgianDaisy()
+
 
     def checkPath(self, from_row, from_col, to_row, to_col):
         # Implement logic to check the path for a move

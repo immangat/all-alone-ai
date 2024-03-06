@@ -23,6 +23,7 @@ class Manager:
         self.player1 = Player("Black")
         self.player1.flipTurn()
         self.player2 = Player("White")
+        self.saveState()
         self.displayBoard()
 
     def isGameOver(self):
@@ -32,7 +33,7 @@ class Manager:
     def displayBoard(self):
         score = (self.player1.getScore(), self.player2.getScore())
         moves = (self.player1.getMoves(), self.player2.getMoves())
-        currentPlayerColor = self.player1.getColor()
+        currentPlayerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
         self.displayer.updateBoard(self.board, score, moves, currentPlayerColor)
 
     # TODO Lateral movement still needs to be implemented
@@ -46,6 +47,7 @@ class Manager:
                 # Then, place the marble in the ending circle
                 self.board.getCircle(*to_circle).setMarble(marble)
                 # Update the display
+                self.switchTurns()
                 self.displayBoard()
             else:
                 print("Invalid move")
@@ -104,6 +106,7 @@ class Manager:
             elif self.direction == "down_left":
                 self.moveMutipleMarbles(selected_circles, Direction.DOWN_LEFT)
             # self.moveMutipleMarbles(selected_circles, Direction.DOWN_LEFT)
+            self.switchTurns()
             self.displayBoard()
 
     def are_circles_adjacent_and_aligned(self, circles):
@@ -193,19 +196,26 @@ class Manager:
 
         return True  # The move is valid
 
-    def switchTurns(self):
+    def switchTurns(self, save_state=True):
         # Switches the turn from one player to the other
+        if save_state:
+            self.player1.moveUp() if self.player1.getCurrentTurn() else self.player2.moveUp()
+            self.saveState()
         self.player1.flipTurn()
         self.player2.flipTurn()
+        playerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
 
     def undoMove(self):
-        self.board = self.states.get_last_board_state()
-        score = self.states.get_last_score_state()
-        self.player1.setScore(score[0])
-        self.player2.setScore(score[1])
-        self.switchTurns()
-        self.states.remove_last_states()
-        self.displayBoard()
+
+        deletedState = self.states.remove_last_states()
+        if deletedState:
+            self.board = self.states.get_last_board_state()
+            score = self.states.get_last_score_state()
+            self.player1.setScore(score[0])
+            self.player2.setScore(score[1])
+            self.player2.reverseMove() if self.player1.getCurrentTurn() else self.player1.reverseMove()
+            self.switchTurns(save_state=False)
+            self.displayBoard()
 
     def saveState(self):
         new_board = copy.deepcopy(self.board)
@@ -266,4 +276,4 @@ class Manager:
 
 if __name__ == "__main__":
     manager = Manager()
-    manager.startGame("belgian_daisy")
+    manager.startGame("german_daisy")
