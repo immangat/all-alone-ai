@@ -1,5 +1,6 @@
 import copy
 
+
 class Circle:
     def __init__(self, letter, number):
         self.letter = letter

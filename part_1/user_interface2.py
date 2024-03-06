@@ -1,5 +1,6 @@
-import tkinter as tk
 import math
+import time
+import tkinter as tk
 
 
 class Displayer:
@@ -16,9 +17,9 @@ class Displayer:
 
         # Bind the click event to the canvas
         self.canvas.bind('<Button-1>', self.on_canvas_click)
-
-        self.selected_circles = []  # To keep track of the first selected circle
-
+        self.timer_label = tk.Label(self.canvas, text="Timer: 0 seconds")
+        self.timer_label.place(x=100, y=200)
+        self.selected_circles = []  # To keep track of the first selected circlex
         # will be used to determine direction of movement of balls
         # and or whether to start the selection process
         # should include the letter axis, number axis, and the letter and number axis
@@ -32,6 +33,7 @@ class Displayer:
         self.board = board
         self.canvas.delete("all")  # Clear the canvas
         self.draw_board()
+        #self.print_timer()
         self.printInfo(score, moves, playerColor)
         self.run()
 
@@ -202,7 +204,7 @@ class Displayer:
                     if (row_labels[i], j + self.board.starting_numbers[i]) in self.board.circles:
                         marble = self.board.circles[(row_labels[i], j + self.board.starting_numbers[i])].getMarble()
                         if marble is not None:
-                            circle_color = 'black' if marble.getColor().lower() == 'black' else 'lightgray'
+                            circle_color = 'yellow' if marble.getColor().lower() == 'black' else 'lightgray'
 
                     self.draw_circle(x + (self.r * 2 * j), y, self.r, tag, outline='black', text=tag,
                                      marble_color=circle_color)
@@ -213,6 +215,11 @@ class Displayer:
 
         self.draw_direction_buttons()
 
+    def print_timer(self):
+        seconds = self.manager.get_time_to_display()
+        self.timer_label.config(text=f"Timer: {seconds} seconds")
+        self.timer_label.after(1000, self.print_timer)
+
     def printInfo(self, scores, moves, playerColor):
         info_text = f"Black Score: {scores[0]} | White Score: {scores[1]} | " \
                     f"Black Moves: {moves[0]} | White Moves: {moves[1]} | " \
@@ -221,4 +228,5 @@ class Displayer:
         self.canvas.create_text(400, 650, text=info_text, font=('Arial', 12), anchor=tk.CENTER)
 
     def run(self):
+        self.print_timer()
         self.window.mainloop()

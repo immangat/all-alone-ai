@@ -1,12 +1,15 @@
 from time import time
 
+from part_1.timer import Timer
+
+
 class Player:
     def __init__(self, color):
         self.color = color
         self.current_turn = False  # Initially, not the player's turn
         self.moves = 0
         self.score = 0
-        self.timer = 0
+        self.timer = Timer()
 
     def getColor(self):
         # Get the color of the player
@@ -18,9 +21,7 @@ class Player:
 
     def flipTurn(self):
         self.current_turn = not self.current_turn
-
-
-
+        self.timer.restart_timer()
 
     def getScore(self):
         return self.score
@@ -42,3 +43,9 @@ class Player:
 
     def getMoves(self):
         return self.moves
+
+    def increment_time(self):
+        return self.timer.increment_timer()
+
+    def reset_timer(self):
+        self.timer.restart_timer()

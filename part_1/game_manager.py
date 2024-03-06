@@ -6,10 +6,12 @@ from user_interface2 import Displayer
 from player import Player
 from states import States
 
+
 class Manager:
     def __init__(self):
-        self.player1 = None
-        self.player2 = None
+        self.player1: Player = None
+        self.player2: Player = None
+        self.current_player: Player = None
         self.board = None
         # self.selected_circles = []
         self.direction = "right"
@@ -20,7 +22,7 @@ class Manager:
         self.board = Board()
         self.board.setupBoard(setup)
         self.player1 = Player("Black")
-        self.player1.flipTurn()
+        self.current_player = self.player1
         self.player2 = Player("White")
         self.saveState()
         self.displayBoard()
@@ -35,10 +37,10 @@ class Manager:
         currentPlayerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
         self.displayer.updateBoard(self.board, score, moves, currentPlayerColor)
 
-    #TODO Lateral movement still needs to be implemented
+    # TODO Lateral movement still needs to be implemented
     def moveMarble(self, selected_circles, to_circle):
         # Get the marble object from the starting circle
-        if isinstance(selected_circles, tuple): # handles the case when only one marble is selected
+        if isinstance(selected_circles, tuple):  # handles the case when only one marble is selected
             marble = self.board.getCircle(*selected_circles).getMarble()
             if self.isValidMove(selected_circles, to_circle, marble):
                 # If the move is valid, remove the marble from the starting circle
@@ -90,8 +92,10 @@ class Manager:
         if save_state:
             self.player1.moveUp() if self.player1.getCurrentTurn() else self.player2.moveUp()
             self.saveState()
-        self.player1.flipTurn()
-        self.player2.flipTurn()
+        if self.current_player == self.player1:
+            self.current_player = self.player2
+        else:
+            self.current_player = self.player1
         playerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
 
     def undoMove(self):
@@ -109,6 +113,7 @@ class Manager:
     def saveState(self):
         new_board = copy.deepcopy(self.board)
         self.states.add_state(new_board, (self.player1.getScore(), self.player2.getScore()))
+
     def moveMutipleMarbles(self, selected_circles, direction_enum):
         i = 0
         selected_circles.sort()
@@ -153,6 +158,16 @@ class Manager:
         # print(next_circle)
         # print(next_char)
 
+    def get_time_to_display(self):
+        seconds = self.current_player.increment_time()
+        if seconds <= 0:
+            self.current_player.reset_timer()
+            seconds = self.current_player.reset_timer()
+            return seconds
+        else:
+            return seconds
+
+
 if __name__ == "__main__":
     manager = Manager()
-    manager.startGame("belgian_daisy")
+    manager.startGame()
