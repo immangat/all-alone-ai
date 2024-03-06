@@ -6,12 +6,15 @@ from user_interface2 import Displayer
 from player import Player
 from states import States
 
+
 class Manager:
     def __init__(self):
-        self.player1 = None
-        self.player2 = None
+        self.player1: Player = None
+        self.player2: Player = None
+        self.current_player: Player = None
         self.board = None
-        self.selected_circles = []
+        # self.selected_circles = []
+        self.direction = "right"
         self.displayer = Displayer(manager=self)
         self.states = States()
 
@@ -19,8 +22,9 @@ class Manager:
         self.board = Board()
         self.board.setupBoard(setup)
         self.player1 = Player("Black")
-        self.player1.flipTurn()
+        self.current_player = self.player1
         self.player2 = Player("White")
+        self.saveState()
         self.displayBoard()
 
     def isGameOver(self):
@@ -33,39 +37,10 @@ class Manager:
         currentPlayerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
         self.displayer.updateBoard(self.board, score, moves, currentPlayerColor)
 
-    def _get_to_circle(self, selected_circle_row, selected_circle_number, direction):
-        print("selected_row", selected_circle_row)
-        print("selected_number", selected_circle_number)
-        to_circle = None
-        if direction == "R":
-            to_circle = (selected_circle_row, selected_circle_number + 1)
-        elif direction == "L":
-            to_circle = (selected_circle_row, selected_circle_number - 1)
-        elif direction == "UL":
-            to_circle = (chr(ord(selected_circle_row) + 1), selected_circle_number)
-        elif direction == "UR":
-            to_circle = (chr(ord(selected_circle_row) + 1), selected_circle_number + 1)
-        elif direction == "DL":
-            to_circle = (chr(ord(selected_circle_row) - 1), selected_circle_number - 1)
-        elif direction == "DR":
-            to_circle = (chr(ord(selected_circle_row) - 1), selected_circle_number )
-        return to_circle
-
-    def move_marble2(self, selected_circle, direction):
-        selected_circle_row, selected_circle_number = selected_circle
-        marble = self.board.getCircle(*selected_circle).getMarble()
-        to_circle = self._get_to_circle(selected_circle_row, selected_circle_number, direction)
-        print("circle", to_circle)
-        self.board.getCircle(*selected_circle).setMarble(None)
-        # Then, place the marble in the ending circle
-        self.board.getCircle(*to_circle).setMarble(marble)
-        # Update the display
-        self.displayBoard()
-
-    # TODO Only works for single marbles and the top two rows have issues, need to fix
+    # TODO Lateral movement still needs to be implemented
     def moveMarble(self, selected_circles, to_circle):
         # Get the marble object from the starting circle
-        if isinstance(selected_circles, tuple): # handles the case when only one marble is selected
+        if isinstance(selected_circles, tuple):  # handles the case when only one marble is selected
             marble = self.board.getCircle(*selected_circles).getMarble()
             if self.isValidMove(selected_circles, to_circle, marble):
                 # If the move is valid, remove the marble from the starting circle
@@ -96,15 +71,6 @@ class Manager:
             self.switchTurns()
             self.displayBoard()
 
-    def isValidMove2(self, selected_circle, direction):
-        selected_circle_row, selected_circle_number = selected_circle
-        to_circle = self._get_to_circle(selected_circle_row, selected_circle_number, direction)
-        print("to circle", to_circle)
-        to_circle_marble = self.board.getCircle(*to_circle).getMarble()
-        if to_circle_marble is None:
-            return True
-        return False
-
     def isValidMove(self, from_circle, to_circle, marble):
         # Check if the to_circle is one of the valid neighbors of from_circle
         valid_neighbors = self.board.get_neighbors(*from_circle)
@@ -123,11 +89,14 @@ class Manager:
 
     def switchTurns(self, save_state=True):
         # Switches the turn from one player to the other
+        self.current_player.reset_timer()
         if save_state:
             self.player1.moveUp() if self.player1.getCurrentTurn() else self.player2.moveUp()
             self.saveState()
-        self.player1.flipTurn()
-        self.player2.flipTurn()
+        if self.current_player == self.player1:
+            self.current_player = self.player2
+        else:
+            self.current_player = self.player1
         playerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
 
     def undoMove(self):
@@ -145,6 +114,7 @@ class Manager:
     def saveState(self):
         new_board = copy.deepcopy(self.board)
         self.states.add_state(new_board, (self.player1.getScore(), self.player2.getScore()))
+
     def moveMutipleMarbles(self, selected_circles, direction_enum):
         i = 0
         selected_circles.sort()
@@ -189,6 +159,15 @@ class Manager:
         # print(next_circle)
         # print(next_char)
 
+    def get_time_to_display(self):
+        player_one_time = self.player1.get_time()
+        player_two_time = self.player2.get_time()
+        seconds = self.current_player.increment_time()
+        if seconds <= 0:
+            self.switchTurns()
+        return player_one_time, player_two_time
+
+
 if __name__ == "__main__":
     manager = Manager()
-    manager.startGame("belgian_daisy")
+    manager.startGame()

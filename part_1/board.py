@@ -33,13 +33,13 @@ class Board:
 
     def isWithinBounds(self, row, col):
         # Check if the row and col are within the hexagonal board bounds
-        if row in 'ABCDEFG' and 1 <= col <= 9:
-            index = 'ABCDEFG'.index(row)
+        if row in 'ABCDEFGHI' and 1 <= col <= 9:
+            index = 'ABCDEFGHI'.index(row)
             if index < 3:  # Rows A, B, C
                 return col <= 5 + index
             elif index < 5:  # Rows D, E
                 return True
-            else:  # Rows F, G
+            else:  # Rows F, G, I, H
                 return col >= index - 4
         return False
 
@@ -52,8 +52,7 @@ class Board:
             self.setupGermanDaisy()
         elif setup_type == "belgian_daisy":
             self.setupBelgianDaisy()
-        elif setup_type == "notation":
-            self.setupForNotation()
+
 
     def checkPath(self, from_row, from_col, to_row, to_col):
         # Implement logic to check the path for a move
@@ -67,21 +66,12 @@ class Board:
         for i, row_label in enumerate("IHGFEDCBA"):
             for j in range(self.rows[i]):
                 if i < 2 or (
-                        i == 2 and 2 <= j <= 4):  # Place black marbles in the bottom two rows and the center positions
+                        i == 2 and j >= 2 and j <= 4):  # Place black marbles in the bottom two rows and the center positions
                     self.placeMarble(row_label, j + self.starting_numbers[i], Marble("Black"))
                 elif i > 6 or (
-                        i == 6 and 2 <= j <= 4):  # Place white marbles in the top two rows and the center positions
+                        i == 6 and j >= 2 and j <= 4):  # Place white marbles in the top two rows and the center positions
                     self.placeMarble(row_label, j + self.starting_numbers[i], Marble("White"))
 
-        for position, circle in self.circles.items():
-            print(f"tile {position}{circle.getMarble()}")
-
-    def setupForNotation(self):
-        self.placeMarble("E", 5 + 1, Marble("Black"))
-        self.placeMarble("E", 6 + 1, Marble("Black"))
-        self.placeMarble("E", 7 + 1, Marble("Black"))
-        # self.placeMarble("E", 5 + 1, Marble("Black"))
-        # self.placeMarble("D", 5 + 1, Marble("Black"))
         for position, circle in self.circles.items():
             print(f"tile {position}{circle.getMarble()}")
 
@@ -157,3 +147,10 @@ class Board:
             if self.isWithinBounds(neighbor_row, neighbor_col):
                 neighbors.append((neighbor_row, neighbor_col))
         return neighbors
+
+    def get_coordinates(self, circle):
+        for coord, circ in self.circles.items():
+            if circ == circle:
+                return coord
+        return None
+
