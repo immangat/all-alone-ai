@@ -242,6 +242,10 @@ class Manager:
             next_circle.setMarble(curr_circle.getMarble())
             curr_circle.setMarble(None)
 
+    def display_moves(self):
+        self.displayer.display_moves(self.board)
+
+
 
     def recursive_move(self, selected_circle, direction, previous_marble=None):
         next_char = chr(ord(selected_circle[0]) + direction.value[0])

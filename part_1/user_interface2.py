@@ -2,6 +2,8 @@ import math
 import time
 import tkinter as tk
 
+from part_1.button import Button
+
 
 class Displayer:
     def __init__(self, manager=None):
@@ -34,8 +36,18 @@ class Displayer:
         self.canvas.delete("all")  # Clear the canvas
         self.draw_board()
         # self.print_timer()
+        # self.canvas.delete("all")
         self.printInfo(score, moves, playerColor)
         self.run()
+        # self.canvas.delete("all")
+
+    # def display_moves_canvas(self):
+    #     self.canvas.delete("all")
+    #     self.manager.display_moves()
+    #     # self.draw_board() REPLACE WITH DRAWING / DISPLAYING MOVES
+    #     # STEP 1 JUST PRINT TO CONSOLE
+    #     # self.printInfo(self.manager.get_score(), moves, self.manager.current_player.getColor())
+    #     # self.run()
 
     def draw_circle(self, x, y, r, tag, text, marble_color, **kwargs):
         # Draw the circle
@@ -213,8 +225,8 @@ class Displayer:
                     self.circle_ids[tag] = (x + (self.r * 2 * j), y)
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
-
         self.draw_direction_buttons()
+
 
     def print_timer(self):
         print("running", time.time())
