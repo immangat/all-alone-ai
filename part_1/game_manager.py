@@ -21,9 +21,9 @@ class Manager:
     def startGame(self, setup="default"):
         self.board = Board()
         self.board.setupBoard(setup)
-        self.player1 = Player("Black")
+        self.player1 = Player("White")
         self.current_player = self.player1
-        self.player2 = Player("White")
+        self.player2 = Player("Black")
         self.saveState()
         self.displayBoard()
 
@@ -207,7 +207,8 @@ class Manager:
             self.current_player = self.player2
         else:
             self.current_player = self.player1
-        playerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
+        self.player1.flipTurn()
+        self.player2.flipTurn()
 
     def undoMove(self):
 
