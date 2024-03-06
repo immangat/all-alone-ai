@@ -49,3 +49,6 @@ class Player:
 
     def reset_timer(self):
         self.timer.restart_timer()
+
+    def get_time(self):
+        return self.timer.seconds
