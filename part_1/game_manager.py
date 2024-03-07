@@ -2,6 +2,7 @@ import copy
 
 from board import Board
 from part_1.directions import Direction
+from part_1.move import Move
 from user_interface2 import Displayer
 from player import Player
 from states import States
@@ -43,11 +44,14 @@ class Manager:
         if isinstance(selected_circles, tuple):  # handles the case when only one marble is selected
             marble = self.board.getCircle(*selected_circles).getMarble()
             if self.isValidMove(selected_circles, to_circle, marble):
+                self.direction = self._aligned_two([selected_circles, to_circle])
                 # If the move is valid, remove the marble from the starting circle
                 self.board.getCircle(*selected_circles).setMarble(None)
                 # Then, place the marble in the ending circle
                 self.board.getCircle(*to_circle).setMarble(marble)
                 # Update the display
+                move_to_add = Move([selected_circles], self.direction)
+                self.current_player.move_list.append(move_to_add)
                 self.switchTurns()
                 self.displayBoard()
             else:
@@ -236,8 +240,8 @@ class Manager:
             next_circle.setMarble(curr_circle.getMarble())
             curr_circle.setMarble(None)
 
-    def display_moves(self):
-        self.displayer.display_moves(self.board)
+    # def display_moves(self):
+    #     self.displayer.display_moves(self.board)
 
 
 
@@ -273,9 +277,21 @@ class Manager:
         return player_one_time, player_two_time
 
     def print_moves(self):
-        print(f"Player 1\t\t\t\t\tPlayer 2")
-        for player1, player2 in zip(self.player1.get_move_list(), self.player2.get_move_list()):
-            print(f"{player1}\t\t\t\t\t{player2}")
+        print(f"Player 1\t\t\t\t\t\t\t\t\t\t\tPlayer 2")
+        # for player1, player2 in zip(self.player1.get_move_list(), self.player2.get_move_list()):
+        #     print(f"{player1}\t\t\t\t\t{player2}")
+
+        #for loop but with max
+        for i in range(max(len(self.player1.get_move_list()), len(self.player2.get_move_list()))):
+            if i < len(self.player1.get_move_list()):
+                player1 = self.player1.get_move_list()[i]
+            else:
+                player1 = ""
+            if i < len(self.player2.get_move_list()):
+                player2 = self.player2.get_move_list()[i]
+            else:
+                player2 = ""
+            print(f"{player1}\t\t\t\t\t\t{player2}")
 
 if __name__ == "__main__":
     manager = Manager()
