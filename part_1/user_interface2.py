@@ -278,11 +278,11 @@ class Displayer:
                size=(100, 30))
 
     def print_timer(self):
-        print("running", time.time())
+        # print("running", time.time())
         if not self.manager.game_paused:
             player_one_time, player_one_agg, player_one_last_move, player_two_time, player_two_agg, player_two_last_move = self.manager.get_time_to_display()
             self.time_label.config(
-                text=f"Black Timer: {player_one_time} s Agg: {player_one_agg} Last Mov: {player_one_last_move}\nWhite "
+                text=f"White Timer: {player_one_time} s Agg: {player_one_agg} Last Mov: {player_one_last_move}\nBlack "
                      f"Timer: {player_two_time} s Agg: {player_two_agg} Last Mov: {player_two_last_move}")
         self.time_label.after(1000, self.print_timer)
 

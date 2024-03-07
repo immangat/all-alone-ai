@@ -32,14 +32,14 @@ class Manager:
 
     def define_player(self, game_type="Human x Human"):
         if game_type == "Human x Human":
-            self.player1 = Player("Black", "Human")
-            self.player2 = Player("White", "Human")
+            self.player2 = Player("Black", "Human")
+            self.player1 = Player("White", "Human")
         elif game_type == "AI(B) x Human(W)":
-            self.player1 = Player("Black", "AI")
-            self.player2 = Player("White", "Human")
+            self.player2 = Player("Black", "AI")
+            self.player1 = Player("White", "Human")
         else:
-            self.player1 = Player("Black", "Human")
-            self.player2 = Player("White", "AI")
+            self.player2 = Player("Black", "Human")
+            self.player1 = Player("White", "AI")
 
     def isGameOver(self):
         # Check if the game is over (implement logic later)
@@ -52,8 +52,8 @@ class Manager:
     def displayBoard(self):
         score = (self.player1.getScore(), self.player2.getScore())
         moves = (self.player1.getMoves(), self.player2.getMoves())
-        currentPlayerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
-        self.displayer.updateBoard(self.board, score, moves, currentPlayerColor)
+        # currentPlayerColor = self.player1.getColor() if self.player1.getCurrentTurn() else self.player2.getColor()
+        self.displayer.updateBoard(self.board, score, moves, self.current_player.getColor())
 
     # TODO Lateral movement still needs to be implemented
     def moveMarble(self, selected_circles, to_circle):
