@@ -110,7 +110,7 @@ class Displayer:
 
     def select_marble(self, tag):
         circle = self.board.getCircle(tag[0], int(tag[1:]))
-        if circle.getMarble() is not None and circle.getMarble().getColor() == self.manager.current_player.getColor():
+        if circle.getMarble() is not None and circle.getMarble().get_color() == self.manager.current_player.get_color():
             # First circle selected, highlight it
             self.selected_circles.append(tag)
             self.highlight_circle(tag, True)
@@ -181,7 +181,7 @@ class Displayer:
             if to_circle in self.board.get_neighbors(*marbles[0]):
                 # Proceed with the move if the destination is a neighbor
                 self.selected_circles = []  # Reset the selection
-                self.manager.moveMarble(marbles[0], to_circle)
+                self.manager.move_marble(marbles[0], to_circle)
                 self.highlight_circle(tags[0], False)
             else:
                 print("Invalid move")
@@ -196,7 +196,7 @@ class Displayer:
             if to_circle in neighbors:
                 # Proceed with the move if the destination is a neighbor
                 self.selected_circles = []  # Reset the selection
-                self.manager.moveMarble(marbles, to_circle)
+                self.manager.move_marble(marbles, to_circle)
                 for tag in tags:
                     self.highlight_circle(tag, False)
             else:
@@ -245,7 +245,7 @@ class Displayer:
                     if (row_labels[i], j + self.board.starting_numbers[i]) in self.board.circles:
                         marble = self.board.circles[(row_labels[i], j + self.board.starting_numbers[i])].getMarble()
                         if marble is not None:
-                            circle_color = 'black' if marble.getColor().lower() == 'black' else 'lightgray'
+                            circle_color = 'black' if marble.get_color().lower() == 'black' else 'lightgray'
 
                     self.draw_circle(x + (self.r * 2 * j), y, self.r, tag, outline='black', text=tag,
                                      marble_color=circle_color)
@@ -255,7 +255,7 @@ class Displayer:
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
         self.draw_direction_buttons()
 
-        Button(text='Undo', master=self.window, command=self.manager.undoMove, position=(280, 360), size=(100, 30))
+        Button(text='Undo', master=self.window, command=self.manager.undo_move, position=(280, 360), size=(100, 30))
         Button(text='Pause/unpause', master=self.window,
                command=self.manager.toggle_pause_game, position=(390, 360),
                size=(100, 30))
@@ -269,12 +269,12 @@ class Displayer:
         humanAiMenu = Button(text='Option types', master=self.window, options=humanAI, position=(320, 490),
                              size=(150, 30), type="dropdown", default_option="Game Type")
         Button(text='Start / Reset', master=self.window,
-               command=lambda: self.manager.startGame(setupMenu.get_selected_option(),
-                                                      humanAiMenu.get_selected_option()), position=(350, 530),
+               command=lambda: self.manager.start_game(setupMenu.get_selected_option(),
+                                                       humanAiMenu.get_selected_option()), position=(350, 530),
                size=(100, 30))
 
         Button(text='Stop', master=self.window,
-               command=lambda: self.manager.startGame("", ""), position=(350, 580),
+               command=lambda: self.manager.start_game("", ""), position=(350, 580),
                size=(100, 30))
 
     def print_timer(self):
