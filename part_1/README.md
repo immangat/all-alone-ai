@@ -92,4 +92,27 @@ in part II).
 
 The goal test consists of checking if any player has gotten six of the opposite marbles out of the board.
 
-### IV&nbsp;&nbsp;Team Member Contribution  
+### IV&nbsp;&nbsp;Team Member Contribution
+
+1. **Mangat Toor**
+    - Worked on timer logic of the game
+    - Worked on move notation and problem formulation
+    - Worked on move logic
+    - Worked on pause functionality
+
+2. **Nicolas Rodriguez**
+    - Developed the backend API using Python and Django.
+    - Implemented database models and migrations.
+    - Conducted performance optimization for API endpoints.
+
+3. **Tomasz Stojek**
+    - Designed and implemented the database schema.
+    - Wrote unit tests for database operations.
+    - Documented API endpoints and data models.
+
+4. **Vitor Guara**
+    - Researched and integrated third-party libraries for additional functionality.
+    - Implemented data validation and error handling in the backend.
+    - Provided technical support and troubleshooting assistance.
+
+
