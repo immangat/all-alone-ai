@@ -236,11 +236,11 @@ class Manager:
 
         for circle in all_but_last:
             print(circle)
-            next_circle = self.board.getCircle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
+            next_circle = self.board.getCircle(chr(ord(circle[0]) + direction_enum.value[0]),
+                                               circle[1] + direction_enum.value[1])
             curr_circle = self.board.getCircle(circle[0], circle[1])
             next_circle.setMarble(curr_circle.getMarble())
             curr_circle.setMarble(None)
-
 
     def recursive_move(self, selected_circle, direction, previous_marble=None):
         next_char = chr(ord(selected_circle[0]) + direction.value[0])
