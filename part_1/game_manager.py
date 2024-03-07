@@ -1,8 +1,8 @@
 import copy
 
 from board import Board
-from part_1.directions import Direction
-from part_1.move import Move
+from directions import Direction
+from move import Move
 from user_interface2 import Displayer
 from player import Player
 from states import States
