@@ -72,7 +72,7 @@ class Manager:
         score = (self.player1.getScore(), self.player2.getScore())
         moves = (self.player1.getMoves(), self.player2.getMoves())
         # currentPlayerColor = self.player1.get_color() if self.player1.getCurrentTurn() else self.player2.get_color()
-        self.displayer.updateBoard(self.board, score, moves, self.current_player.getColor())
+        self.displayer.update_board(self.board, score, moves, self.current_player.getColor())
 
     def move_marble(self, selected_circles, to_circle):
         """
