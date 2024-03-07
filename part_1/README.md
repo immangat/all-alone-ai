@@ -1,4 +1,12 @@
-# Part 1
+# COMP 3981 Project
+## Part 1
+
+## Team Members
+- Mangat Toor
+- Nicolas Rodriguez
+- Tomasz Stojek
+- Vitor Guara
+___
 
 ## Contents
 
@@ -95,24 +103,28 @@ The goal test consists of checking if any player has gotten six of the opposite 
 ### IV&nbsp;&nbsp;Team Member Contribution
 
 1. **Mangat Toor**
-    - Worked on timer logic of the game
-    - Worked on move notation and problem formulation
-    - Worked on move logic
-    - Worked on pause functionality
+    - Worked on timer logic for the game.
+    - Worked on move notation and problem formulation.
+    - Worked on move logic.
+    - Worked on pause functionality.
+    - Worked on documentation.
 
 2. **Nicolas Rodriguez**
-    - Developed the backend API using Python and Django.
-    - Implemented database models and migrations.
-    - Conducted performance optimization for API endpoints.
+    - Worked on moving single marbles.
+    - Worked on axis checking logic when moving marbles.
+    - Worked on creating the initial GUI.
+    - Worked on move history.
+    - Worked on selection logic.
 
 3. **Tomasz Stojek**
-    - Designed and implemented the database schema.
-    - Wrote unit tests for database operations.
-    - Documented API endpoints and data models.
+    - Worked on logic for moving multiple marbles.
+    - Worked on logic for selecting multiple marbles.
+    - Worked on move history.
 
 4. **Vitor Guara**
-    - Researched and integrated third-party libraries for additional functionality.
-    - Implemented data validation and error handling in the backend.
-    - Provided technical support and troubleshooting assistance.
-
+    - Worked on the skeleton of the classes mapped to the GUI.
+    - Worked on initial board positions.
+    - Worked on undo and start buttons.
+    - Worked on saving the states for the undo button.
+    - Worked on displaying the score.
 
