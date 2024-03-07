@@ -46,14 +46,19 @@ Moves are represented as `[[X], Z]`, where:
 
 The state is represented by a dictionary(`{circle_name: circle_object}`) of circles that can contain a black or white
 marble. With each move, the
-marble(s) are moved to the intended circle.
+marble(s) are moved to the intended circle. It also has a `captured_mables` attribute that stores how many white or
+black mab
+les are captured.
 
 ```javascript
 state = {
-    "I5": {marble: marble_object(black | white)},
-    "H5": {marble: none},
-    "G5": {marble: none},
-    ...,
+    captured_mables: [w, b],
+    circles: {
+        "I5": {marble: marble_object(black | white)},
+        "H5": {marble: none},
+        "G5": {marble: none},
+        ...,
+    }
 }
 ```
 

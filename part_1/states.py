@@ -30,3 +30,7 @@ class States:
             del self.scoreStates[-1]
             return True
         return False
+
+    def clear_all_states(self):
+        self.boardStates = []
+        self.scoreStates = []

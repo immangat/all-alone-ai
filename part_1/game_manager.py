@@ -19,18 +19,36 @@ class Manager:
         self.displayer = Displayer(manager=self)
         self.states = States()
 
-    def startGame(self, setup="default"):
+    def startGame(self, setup="Default", game_type = "Human x Human"):
+        self.game_over()
         self.board = Board()
         self.board.setupBoard(setup)
-        self.player1 = Player("White")
+        self.define_player(game_type)
         self.current_player = self.player1
-        self.player2 = Player("Black")
         self.saveState()
         self.displayBoard()
+
+    def define_player(self, game_type = "Human x Human"):
+        if game_type == "Human x Human":
+            self.player1 = Player("Black", "Human")
+            self.player2 = Player("White", "Human")
+        elif game_type == "AI(B) x Human(W)":
+            self.player1 = Player("Black", "AI")
+            self.player2 = Player("White", "Human")
+        else:
+            self.player1 = Player("Black", "Human")
+            self.player2 = Player("White", "AI")
+
+
+
 
     def isGameOver(self):
         # Check if the game is over (implement logic later)
         pass
+
+    def game_over(self):
+        self.board = None
+        self.states.clear_all_states()
 
     def displayBoard(self):
         score = (self.player1.getScore(), self.player2.getScore())
@@ -239,6 +257,7 @@ class Manager:
         self.recursive_move(last_circle, direction_enum, None)
 
         for circle in all_but_last:
+
             next_circle = self.board.getCircle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
             curr_circle = self.board.getCircle(circle[0], circle[1])
             next_circle.setMarble(curr_circle.getMarble())
@@ -274,11 +293,15 @@ class Manager:
 
     def get_time_to_display(self):
         player_one_time = self.player1.get_time()
+        player_one_agg = self.player1.get_aggregate_time()
+        player_one_last_move = self.player1.get_last_move_time()
         player_two_time = self.player2.get_time()
+        player_two_agg = self.player2.get_aggregate_time()
+        player_two_last_move = self.player2.get_last_move_time()
         seconds = self.current_player.increment_time()
         if seconds <= 0:
             self.switchTurns()
-        return player_one_time, player_two_time
+        return player_one_time, player_one_agg, player_one_last_move, player_two_time, player_two_agg, player_two_last_move
 
     def print_moves(self):
         print(f"Player 1\t\t\t\t\t\t\t\t\t\t\tPlayer 2")
@@ -299,4 +322,4 @@ class Manager:
 
 if __name__ == "__main__":
     manager = Manager()
-    manager.startGame("german_daisy")
+    manager.startGame("German Daisy")

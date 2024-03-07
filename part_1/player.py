@@ -1,16 +1,20 @@
+from functools import reduce
 from time import time
 
-from part_1.timer import Timer
+from timer import Timer
 
 
 class Player:
-    def __init__(self, color):
+    def __init__(self, color, playerType):
         self.color = color
         self.current_turn = False  # Initially, not the player's turn
         self.moves = 0
         self.score = 0
         self.timer = Timer()
+        self.move_times = []
+        self.playerType = playerType
         self.move_list = []
+
 
     def getColor(self):
         # Get the color of the player
@@ -52,11 +56,22 @@ class Player:
         return self.timer.increment_timer()
 
     def reset_timer(self):
+        self.move_times.append(60 - self.timer.get_time())
         self.timer.restart_timer()
 
     def get_time(self):
         return self.timer.seconds
 
+    def get_aggregate_time(self):
+        if len(self.move_times) == 0:
+            return 0
+        return reduce(lambda x, y: x + y, self.move_times)
+
+    def get_last_move_time(self):
+        if len(self.move_times) == 0:
+            return 0
+        return self.move_times[len(self.move_times) - 1] 
+      
     def remove_last_move(self):
         if len(self.move_list) > 0:
             self.move_list.pop()
