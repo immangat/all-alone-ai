@@ -2,7 +2,8 @@ import tkinter as tk
 
 
 class Button:
-    def __init__(self, master, text, position, command=None, size=(100, 30), bg_color="white", fg_color="black", type="simple", options=None, default_option =""):
+    def __init__(self, master, text, position, command=None, size=(100, 30), bg_color="white", fg_color="black",
+                 type="simple", options=None, default_option=""):
         """
         Initialize a new MyButton instance.
 
@@ -22,12 +23,11 @@ class Button:
         self.bg_color = bg_color
         self.fg_color = fg_color
         self.options = options
-        self.selected_option = None if self.options == None else tk.StringVar(value=default_option)
-        if (type == "simple"):
+        self.selected_option = None if self.options is None else tk.StringVar(value=default_option)
+        if type == "simple":
             self.create_button()
-        elif (type == "dropdown"):
+        elif type == "dropdown":
             self.create_dropdown()
-
 
     def create_button(self):
         """Create and place the button widget."""
@@ -35,14 +35,23 @@ class Button:
         self.button.place(x=self.position[0], y=self.position[1], width=self.size[0], height=self.size[1])
 
     def create_dropdown(self):
-        # Use the selected_option variable for the OptionMenu
+        """
+        Create and place the dropdown widget
+        """
         self.button = tk.OptionMenu(self.master, self.selected_option, *self.options,
                                            command=self.update_button_text)
         self.button.place(x=self.position[0], y=self.position[1], width=self.size[0], height=self.size[1])
 
     def update_button_text(self, selected_option):
+        """
+        Update the button text
+        :param selected_option: is new text selected
+        """
         self.selected_option.set(selected_option)
         self.button.config(text=f"{self.text}: {selected_option}")
 
     def get_selected_option(self):
+        """
+        Getter for the selected option
+        """
         return self.selected_option.get()
