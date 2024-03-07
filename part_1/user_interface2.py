@@ -273,7 +273,10 @@ class Displayer:
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
         self.draw_direction_buttons()
-        Button(text='Undo', master=self.window, command=self.manager.undoMove, position=(350, 360), size=(100, 30))
+        Button(text='Undo', master=self.window, command=self.manager.undoMove, position=(280, 360), size=(100, 30))
+        Button(text='Pause', master=self.window,
+               command=lambda: self.manager.startGame("", ""), position=(390, 360),
+               size=(100, 30))
         self.start_button()
 
     def start_button(self):
@@ -283,7 +286,9 @@ class Displayer:
         humanAiMenu = Button(text='Option types', master=self.window, options=humanAI, position=(320, 490),
                               size=(150, 30), type="dropdown", default_option="Game Type")
         Button(text='Start / Reset', master=self.window, command=lambda: self.manager.startGame(setupMenu.get_selected_option(), humanAiMenu.get_selected_option()), position=(350, 530), size=(100, 30))
-
+        Button(text='Stop', master=self.window,
+               command=lambda: self.manager.startGame("",""), position=(350, 580),
+               size=(100, 30))
 
     def print_timer(self):
         print("running", time.time())
