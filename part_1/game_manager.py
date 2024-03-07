@@ -18,17 +18,19 @@ class Manager:
         self.direction = "right"
         self.displayer = Displayer(manager=self)
         self.states = States()
+        self.game_paused = False
 
-    def startGame(self, setup="Default", game_type = "Human x Human"):
+    def startGame(self, setup="Default", game_type="Human x Human"):
         self.game_over()
         self.board = Board()
         self.board.setupBoard(setup)
         self.define_player(game_type)
         self.current_player = self.player1
         self.saveState()
+        self.reset_timers()
         self.displayBoard()
 
-    def define_player(self, game_type = "Human x Human"):
+    def define_player(self, game_type="Human x Human"):
         if game_type == "Human x Human":
             self.player1 = Player("Black", "Human")
             self.player2 = Player("White", "Human")
@@ -38,9 +40,6 @@ class Manager:
         else:
             self.player1 = Player("Black", "Human")
             self.player2 = Player("White", "AI")
-
-
-
 
     def isGameOver(self):
         # Check if the game is over (implement logic later)
@@ -266,8 +265,6 @@ class Manager:
     # def display_moves(self):
     #     self.displayer.display_moves(self.board)
 
-
-
     def recursive_move(self, selected_circle, direction, previous_marble=None):
         next_char = chr(ord(selected_circle[0]) + direction.value[0])
         next_num = selected_circle[1] + direction.value[1]
@@ -303,6 +300,15 @@ class Manager:
             self.switchTurns()
         return player_one_time, player_one_agg, player_one_last_move, player_two_time, player_two_agg, player_two_last_move
 
+
+    def reset_timers(self):
+        self.player1.clear_clock()
+        self.player2.clear_clock()
+
+    def toggle_pause_game(self):
+        self.game_paused = not self.game_paused
+
+
     def print_moves(self):
         print(f"Player 1\t\t\t\t\t\t\t\t\t\t\tPlayer 2")
         # for player1, player2 in zip(self.player1.get_move_list(), self.player2.get_move_list()):
@@ -319,6 +325,7 @@ class Manager:
             else:
                 player2 = ""
             print(f"{player1}\t\t\t\t\t\t{player2}")
+
 
 if __name__ == "__main__":
     manager = Manager()

@@ -48,14 +48,6 @@ class Displayer:
 
         # self.canvas.delete("all")
 
-    # def display_moves_canvas(self):
-    #     self.canvas.delete("all")
-    #     self.manager.display_moves()
-    #     # self.draw_board() REPLACE WITH DRAWING / DISPLAYING MOVES
-    #     # STEP 1 JUST PRINT TO CONSOLE
-    #     # self.printInfo(self.manager.get_score(), moves, self.manager.current_player.getColor())
-    #     # self.run()
-
     def draw_circle(self, x, y, r, tag, text, marble_color, **kwargs):
         # Draw the circle
         circle = self.canvas.create_oval(x - r, y - r, x + r, y + r, fill=marble_color, **kwargs)
@@ -253,7 +245,7 @@ class Displayer:
                     if (row_labels[i], j + self.board.starting_numbers[i]) in self.board.circles:
                         marble = self.board.circles[(row_labels[i], j + self.board.starting_numbers[i])].getMarble()
                         if marble is not None:
-                            circle_color = 'yellow' if marble.getColor().lower() == 'black' else 'lightgray'
+                            circle_color = 'black' if marble.getColor().lower() == 'black' else 'lightgray'
 
                     self.draw_circle(x + (self.r * 2 * j), y, self.r, tag, outline='black', text=tag,
                                      marble_color=circle_color)
@@ -264,28 +256,34 @@ class Displayer:
         self.draw_direction_buttons()
 
         Button(text='Undo', master=self.window, command=self.manager.undoMove, position=(280, 360), size=(100, 30))
-        Button(text='Pause', master=self.window,
-               command=lambda: self.manager.startGame("", ""), position=(390, 360),
+        Button(text='Pause/unpause', master=self.window,
+               command=self.manager.toggle_pause_game, position=(390, 360),
                size=(100, 30))
         self.start_button()
 
     def start_button(self):
         options = ["Default", "Belgian Daisy", "German Daisy"]
-        humanAI = ["Human x Human","AI(B) x Human(W)", "Human(B) x AI(W)"]
-        setupMenu = Button(text='Option types', master=self.window, options=options, position=(340,450), size=(120, 30), type="dropdown", default_option="Setup Type")
+        humanAI = ["Human x Human", "AI(B) x Human(W)", "Human(B) x AI(W)"]
+        setupMenu = Button(text='Option types', master=self.window, options=options, position=(340, 450),
+                           size=(120, 30), type="dropdown", default_option="Setup Type")
         humanAiMenu = Button(text='Option types', master=self.window, options=humanAI, position=(320, 490),
-                              size=(150, 30), type="dropdown", default_option="Game Type")
-        Button(text='Start / Reset', master=self.window, command=lambda: self.manager.startGame(setupMenu.get_selected_option(), humanAiMenu.get_selected_option()), position=(350, 530), size=(100, 30))
+                             size=(150, 30), type="dropdown", default_option="Game Type")
+        Button(text='Start / Reset', master=self.window,
+               command=lambda: self.manager.startGame(setupMenu.get_selected_option(),
+                                                      humanAiMenu.get_selected_option()), position=(350, 530),
+               size=(100, 30))
+
         Button(text='Stop', master=self.window,
-               command=lambda: self.manager.startGame("",""), position=(350, 580),
+               command=lambda: self.manager.startGame("", ""), position=(350, 580),
                size=(100, 30))
 
     def print_timer(self):
         print("running", time.time())
-        player_one_time, player_one_agg, player_one_last_move, player_two_time, player_two_agg, player_two_last_move = self.manager.get_time_to_display()
-        self.time_label.config(
-            text=f"Black Timer: {player_one_time} s Agg: {player_one_agg} Last Mov: {player_one_last_move}\nWhite "
-                 f"Timer: {player_two_time} s Agg: {player_two_agg} Last Mov: {player_two_last_move}")
+        if not self.manager.game_paused:
+            player_one_time, player_one_agg, player_one_last_move, player_two_time, player_two_agg, player_two_last_move = self.manager.get_time_to_display()
+            self.time_label.config(
+                text=f"Black Timer: {player_one_time} s Agg: {player_one_agg} Last Mov: {player_one_last_move}\nWhite "
+                     f"Timer: {player_two_time} s Agg: {player_two_agg} Last Mov: {player_two_last_move}")
         self.time_label.after(1000, self.print_timer)
 
 
