@@ -1,7 +1,8 @@
 import copy
 
 from board import Board
-from directions import Direction
+from part_1.directions import Direction
+from part_1.move import Move
 from user_interface2 import Displayer
 from player import Player
 from states import States
@@ -60,18 +61,19 @@ class Manager:
         if isinstance(selected_circles, tuple):  # handles the case when only one marble is selected
             marble = self.board.getCircle(*selected_circles).getMarble()
             if self.isValidMove(selected_circles, to_circle, marble):
+                self.direction = self._aligned_two([selected_circles, to_circle])
                 # If the move is valid, remove the marble from the starting circle
                 self.board.getCircle(*selected_circles).setMarble(None)
                 # Then, place the marble in the ending circle
                 self.board.getCircle(*to_circle).setMarble(marble)
                 # Update the display
+                move_to_add = Move([selected_circles], self.direction)
+                self.current_player.move_list.append(move_to_add)
                 self.switchTurns()
                 self.displayBoard()
             else:
                 print("Invalid move")
         else:
-            print("trying to move multiple marbles")
-            print(self.direction)
             neighbors = []
             for selected_circle in selected_circles:
                 neighbors.append(self.board.get_neighbors_with_direction(*selected_circle))
@@ -80,10 +82,7 @@ class Manager:
                 {direction: pos for direction, pos in neighbour.items() if pos not in selected_circles} for neighbour in
                 neighbors]
 
-            print(f"Selected Circles: {selected_circles}")
-            print(f"Neighbours: {neighbors}")
-            print(f"Filtered Neighbours: {filtered_neighbours}")
-            print(f"Aligned: {self.are_circles_adjacent_and_aligned(selected_circles)}")
+
             aligned = self.are_circles_adjacent_and_aligned(selected_circles)
 
             if aligned == "diagonalLeft":
@@ -102,13 +101,13 @@ class Manager:
                     for neighbour in filtered_neighbours
                 ]
 
-            print(f"Filtered Neighbours Updated: {filtered_neighbours}")
+
 
             for filtered_neighbour in filtered_neighbours:
                 if to_circle in filtered_neighbour.values():
                     self.direction = list(filtered_neighbour.keys())[0]
                     break
-            print(f"Direction: {self.direction}")
+
 
             # if (selected_circles in neighbors.values()):
             if self.direction == "left":
@@ -130,13 +129,13 @@ class Manager:
     def are_circles_adjacent_and_aligned(self, circles):
         if len(circles) == 2:
             direction = self._aligned_two(circles)
-            if direction == "right" or direction == "left":
+            if direction == Direction.RIGHT or direction == Direction.LEFT:
                 direction = "horizontal"
                 return direction
-            elif direction == "up_right" or direction == "down_left":
+            elif direction == Direction.UP_RIGHT or direction == Direction.DOWN_LEFT:
                 direction = "diagonalRight"
                 return direction
-            elif direction == "up_left" or direction == "down_right":
+            elif direction == Direction.UP_LEFT or direction == Direction.DOWN_RIGHT:
                 direction = "diagonalLeft"
                 return direction
         elif len(circles) == 3:
@@ -156,12 +155,12 @@ class Manager:
 
         # Define all possible directions
         directions = {
-            'left': (0, -1),
-            'right': (0, 1),
-            'up_left': (1, 0),
-            'up_right': (1, 1),
-            'down_left': (-1, -1),
-            'down_right': (-1, 0),
+            Direction.LEFT: (0, -1),
+            Direction.RIGHT: (0, 1),
+            Direction.UP_LEFT: (1, 0),
+            Direction.UP_RIGHT: (1, 1),
+            Direction.DOWN_LEFT: (-1, -1),
+            Direction.DOWN_RIGHT: (-1, 0),
         }
         key = None
         for k, value in directions.items():
@@ -231,12 +230,14 @@ class Manager:
 
         deletedState = self.states.remove_last_states()
         if deletedState:
+
             self.board = self.states.get_last_board_state()
             score = self.states.get_last_score_state()
             self.player1.setScore(score[0])
             self.player2.setScore(score[1])
             self.player2.reverseMove() if self.player1.getCurrentTurn() else self.player1.reverseMove()
             self.switchTurns(save_state=False)
+            self.current_player.remove_last_move()
             self.displayBoard()
 
     def saveState(self):
@@ -246,6 +247,8 @@ class Manager:
     def moveMutipleMarbles(self, selected_circles, direction_enum):
         i = 0
         selected_circles.sort()
+        move = Move(selected_circles, direction_enum)
+        self.current_player.move_list.append(move)
         if direction_enum in [Direction.DOWN_RIGHT, Direction.LEFT, Direction.DOWN_LEFT]:
             selected_circles.reverse()
         all_but_last = selected_circles[-2::-1]
@@ -253,15 +256,14 @@ class Manager:
         self.recursive_move(last_circle, direction_enum, None)
 
         for circle in all_but_last:
-            print(circle)
-            next_circle = self.board.getCircle(chr(ord(circle[0]) + direction_enum.value[0]),
-                                               circle[1] + direction_enum.value[1])
+
+            next_circle = self.board.getCircle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
             curr_circle = self.board.getCircle(circle[0], circle[1])
             next_circle.setMarble(curr_circle.getMarble())
             curr_circle.setMarble(None)
 
-    def display_moves(self):
-        self.displayer.display_moves(self.board)
+    # def display_moves(self):
+    #     self.displayer.display_moves(self.board)
 
     def recursive_move(self, selected_circle, direction, previous_marble=None):
         next_char = chr(ord(selected_circle[0]) + direction.value[0])
@@ -276,27 +278,15 @@ class Manager:
             self.board.getCircle(selected_circle[0], selected_circle[1]).marble = None
 
         next_circle_from_board = self.board.getCircle(next_char, next_num)
-        print("This is the next circle from board {}".format(next_circle_from_board))
 
         curr_marble_copy = copy.deepcopy(curr_marble)
 
         # If there's no marble in the next position, move the current marble there
         if next_circle_from_board.marble is None:
-            print("No marble found, stop recursive move")
             next_circle_from_board.marble = curr_marble_copy
             return
         else:
-            print("Recursive move")
             self.recursive_move(next_circle, direction, curr_marble_copy)
-
-        # print(selected_circle)
-        # print(direction.value)
-        # print(selected_circle[0])
-        # print(selected_circle[1])
-        # print(next_circle_from_board.marble)
-        # print(next_num)
-        # print(next_circle)
-        # print(next_char)
 
     def get_time_to_display(self):
         player_one_time = self.player1.get_time()
@@ -310,12 +300,31 @@ class Manager:
             self.switchTurns()
         return player_one_time, player_one_agg, player_one_last_move, player_two_time, player_two_agg, player_two_last_move
 
+
     def reset_timers(self):
         self.player1.clear_clock()
         self.player2.clear_clock()
 
     def toggle_pause_game(self):
         self.game_paused = not self.game_paused
+
+
+    def print_moves(self):
+        print(f"Player 1\t\t\t\t\t\t\t\t\t\t\tPlayer 2")
+        # for player1, player2 in zip(self.player1.get_move_list(), self.player2.get_move_list()):
+        #     print(f"{player1}\t\t\t\t\t{player2}")
+
+        #for loop but with max
+        for i in range(max(len(self.player1.get_move_list()), len(self.player2.get_move_list()))):
+            if i < len(self.player1.get_move_list()):
+                player1 = self.player1.get_move_list()[i]
+            else:
+                player1 = ""
+            if i < len(self.player2.get_move_list()):
+                player2 = self.player2.get_move_list()[i]
+            else:
+                player2 = ""
+            print(f"{player1}\t\t\t\t\t\t{player2}")
 
 
 if __name__ == "__main__":

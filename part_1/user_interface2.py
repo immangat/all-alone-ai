@@ -40,13 +40,16 @@ class Displayer:
         self.draw_board()
         # self.print_timer()
         # self.canvas.delete("all")
+        self.manager.print_moves()
         self.printInfo(score, moves, playerColor)
+        # undo button
+
         self.run()
+
         # self.canvas.delete("all")
 
     def draw_circle(self, x, y, r, tag, text, marble_color, **kwargs):
         # Draw the circle
-        # print(marble_color)
         circle = self.canvas.create_oval(x - r, y - r, x + r, y + r, fill=marble_color, **kwargs)
         self.circle_objects[tag] = circle
 
@@ -62,22 +65,16 @@ class Displayer:
             self.handle_special_action(clicked_circle)
         elif clicked_circle is not None:
             circle = self.board.getCircle(clicked_circle[0], int(clicked_circle[1:]))
-            print(circle.getMarble())
-            print(clicked_circle)
             if clicked_circle:
-                print(self.selected_circles)
 
                 if clicked_circle not in self.selected_circles:  # selecting marbles
                     self.select_marble(clicked_circle)
-                    print("1st")
                 else:
                     # If the same circle is clicked again, deselect it
                     self.deselect_marble(clicked_circle)
-                    print("3rd")
 
                 if circle.getMarble() is None:  # selecting an empty circle
                     if 3 >= len(self.selected_circles) >= 0:
-                        print("2nd")
                         self.attempt_move(self.selected_circles, clicked_circle)
 
     def handle_special_action(self, action):
@@ -86,7 +83,6 @@ class Displayer:
         else:
             self.manager.direction = action
             self.highlight_direction(action)
-            print(f"Selected direction: {self.manager.direction}")
 
     def highlight_direction(self, action_tag, select=True):
         # Reset the highlight of the previously selected direction, if any
@@ -108,14 +104,12 @@ class Displayer:
     # Highlight function to visually mark selected circles
     def highlight_circle(self, tag, select):
         tag = f"{tag[0]}{tag[1]}"
-        print(tag)
         circle = self.circle_objects[tag]
         outline_color = "red" if select else "black"
         self.canvas.itemconfig(circle, outline=outline_color)
 
     def select_marble(self, tag):
         circle = self.board.getCircle(tag[0], int(tag[1:]))
-        # print(circle.getMarble().getColor())
         if circle.getMarble() is not None and circle.getMarble().getColor() == self.manager.current_player.getColor():
             # First circle selected, highlight it
             self.selected_circles.append(tag)
@@ -187,7 +181,6 @@ class Displayer:
             if to_circle in self.board.get_neighbors(*marbles[0]):
                 # Proceed with the move if the destination is a neighbor
                 self.selected_circles = []  # Reset the selection
-                print(self.selected_circles)
                 self.manager.moveMarble(marbles[0], to_circle)
                 self.highlight_circle(tags[0], False)
             else:
@@ -198,15 +191,11 @@ class Displayer:
         else:  # logic for multiple marbles
             for marble in marbles:
                 neighbors.append(self.board.get_neighbors(*marble))
-                print(f"Neighbours: {neighbors}")
             neighbors = [item for sublist in neighbors for item in sublist]  # flatten to 1D list
-            print(f"Neighbours: {neighbors}")
 
             if to_circle in neighbors:
                 # Proceed with the move if the destination is a neighbor
-                print(self.selected_circles)
                 self.selected_circles = []  # Reset the selection
-                print(self.selected_circles)
                 self.manager.moveMarble(marbles, to_circle)
                 for tag in tags:
                     self.highlight_circle(tag, False)
@@ -265,6 +254,7 @@ class Displayer:
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
         self.draw_direction_buttons()
+
         Button(text='Undo', master=self.window, command=self.manager.undoMove, position=(280, 360), size=(100, 30))
         Button(text='Pause/unpause', master=self.window,
                command=self.manager.toggle_pause_game, position=(390, 360),
@@ -295,6 +285,7 @@ class Displayer:
                 text=f"Black Timer: {player_one_time} s Agg: {player_one_agg} Last Mov: {player_one_last_move}\nWhite "
                      f"Timer: {player_two_time} s Agg: {player_two_agg} Last Mov: {player_two_last_move}")
         self.time_label.after(1000, self.print_timer)
+
 
     def printInfo(self, scores, moves, playerColor):
         info_text = f"Black Score: {scores[0]} | White Score: {scores[1]} | " \

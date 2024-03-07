@@ -13,6 +13,8 @@ class Player:
         self.timer = Timer()
         self.move_times = []
         self.playerType = playerType
+        self.move_list = []
+
 
     def getColor(self):
         # Get the color of the player
@@ -47,6 +49,9 @@ class Player:
     def getMoves(self):
         return self.moves
 
+    def get_move_list(self):
+        return self.move_list
+
     def increment_time(self):
         return self.timer.increment_timer()
 
@@ -65,8 +70,18 @@ class Player:
     def get_last_move_time(self):
         if len(self.move_times) == 0:
             return 0
+
         return self.move_times[len(self.move_times) - 1]
 
     def clear_clock(self):
         self.move_times = []
         self.reset_timer()
+
+        return self.move_times[len(self.move_times) - 1] 
+      
+    def remove_last_move(self):
+        if len(self.move_list) > 0:
+            self.move_list.pop()
+            return True
+        return False
+
