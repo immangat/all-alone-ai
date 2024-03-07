@@ -2,9 +2,12 @@ import math
 import time
 import tkinter as tk
 
+from button import Button
+
 
 class Displayer:
     def __init__(self, manager=None):
+        self.selected_circles = []
         self.window = tk.Tk()
         self.window.title("Abalone Game")
         self.canvas = tk.Canvas(self.window, width=800, height=700, bg='white')
@@ -36,8 +39,18 @@ class Displayer:
         self.canvas.delete("all")  # Clear the canvas
         self.draw_board()
         # self.print_timer()
+        # self.canvas.delete("all")
         self.printInfo(score, moves, playerColor)
         self.run()
+        # self.canvas.delete("all")
+
+    # def display_moves_canvas(self):
+    #     self.canvas.delete("all")
+    #     self.manager.display_moves()
+    #     # self.draw_board() REPLACE WITH DRAWING / DISPLAYING MOVES
+    #     # STEP 1 JUST PRINT TO CONSOLE
+    #     # self.printInfo(self.manager.get_score(), moves, self.manager.current_player.getColor())
+    #     # self.run()
 
     def draw_circle(self, x, y, r, tag, text, marble_color, **kwargs):
         # Draw the circle
@@ -52,10 +65,6 @@ class Displayer:
 
     # Modified on_canvas_click method
     def on_canvas_click(self, event):
-        # add logic here so that it will check if the circle has
-        # a marble of your team color and if it does then add it to selected circles
-        # if the circle selected is an opposing team or empty
-        # then it will treat it as a move instead with a direction
         clicked_circle = self.get_clicked_circle_tag(event)
         if clicked_circle in ["left", "right", "up_left", "up_right", "down_left", "down_right", "undo"]:
             self.handle_special_action(clicked_circle)
@@ -81,7 +90,7 @@ class Displayer:
 
     def handle_special_action(self, action):
         if action == "undo":
-            self.manager.undoMove()
+            pass
         else:
             self.manager.direction = action
             self.highlight_direction(action)
@@ -115,7 +124,7 @@ class Displayer:
     def select_marble(self, tag):
         circle = self.board.getCircle(tag[0], int(tag[1:]))
         # print(circle.getMarble().getColor())
-        if circle.getMarble() is not None and circle.getMarble().getColor() in ['Black', 'White']:
+        if circle.getMarble() is not None and circle.getMarble().getColor() == self.manager.current_player.getColor():
             # First circle selected, highlight it
             self.selected_circles.append(tag)
             self.highlight_circle(tag, True)
@@ -124,6 +133,55 @@ class Displayer:
         # Deselect the marble and unhighlight it
         self.selected_circles.remove(tag)
         self.highlight_circle(tag, False)
+
+    def _get_move_direction(self, first_clicked_marble, to_circle):
+        marble_clicked_row = first_clicked_marble[0]
+        marble_clicked_number = first_clicked_marble[1]
+        to_circle_row = to_circle[0]
+        to_circle_number = to_circle[1]
+        number_sum = to_circle_number - marble_clicked_number
+        row_sum = ord(to_circle_row) - ord(marble_clicked_row)
+        if row_sum == 0 and number_sum == 0:
+            return 'Invalid'
+        elif row_sum == 0 and number_sum > 0:
+            return "R"
+        elif row_sum == 0 and number_sum < 0:
+            return "L"
+        elif row_sum > 0 and number_sum == 0:
+            return "UL"
+        elif row_sum > 0 and number_sum > 0:
+            return "UR"
+        elif row_sum < 0 and number_sum == 0:
+            return "DR"
+        elif row_sum < 0 and number_sum < 0:
+            return "DL"
+
+    def attempt_move2(self, tags, to_circle_tag):
+        if len(tags) >= 1:
+            to_circle = (to_circle_tag[0], int(to_circle_tag[1:]))
+            marbles = [(tag[0], int(tag[1:])) for tag in tags]
+            can_all_be_moved = True
+            for marble in marbles:
+                move_direction_for_marble = self._get_move_direction(marble, to_circle)
+                if not self.manager.isValidMove2(marble, move_direction_for_marble):
+                    can_all_be_moved = False
+                    break
+            print(move_direction_for_marble, can_all_be_moved)
+            if can_all_be_moved:
+                for marble in marbles:
+                    self.manager.move_marble2(marble, move_direction_for_marble)
+            for tag in tags:
+                self.highlight_circle(tag, False)
+            self.selected_circles = []
+            print("selectedtags", self.selected_circles)
+            """
+            
+                for each marble
+                    check if each marble can be moved in that direction
+                if not all marbles can be moved, raise exception
+                else:
+                    move all marbles            
+            """
 
     def attempt_move(self, tags, to_circle_tag):
         # Second circle selected, try to make a move
@@ -174,7 +232,6 @@ class Displayer:
             ("up_right", 150, 375),
             ("down_left", 50, 525),
             ("down_right", 150, 525),
-            ("undo", 300, 525),
         ]
 
         for direction in directions:
@@ -215,8 +272,18 @@ class Displayer:
                     self.circle_ids[tag] = (x + (self.r * 2 * j), y)
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
-
         self.draw_direction_buttons()
+        Button(text='Undo', master=self.window, command=self.manager.undoMove, position=(350, 360), size=(100, 30))
+        self.start_button()
+
+    def start_button(self):
+        options = ["Default", "Belgian Daisy", "German Daisy"]
+        humanAI = ["Human x Human","AI(B) x Human(W)", "Human(B) x AI(W)"]
+        setupMenu = Button(text='Option types', master=self.window, options=options, position=(340,450), size=(120, 30), type="dropdown", default_option="Setup Type")
+        humanAiMenu = Button(text='Option types', master=self.window, options=humanAI, position=(320, 490),
+                              size=(150, 30), type="dropdown", default_option="Game Type")
+        Button(text='Start / Reset', master=self.window, command=lambda: self.manager.startGame(setupMenu.get_selected_option(), humanAiMenu.get_selected_option()), position=(350, 530), size=(100, 30))
+
 
     def print_timer(self):
         print("running", time.time())

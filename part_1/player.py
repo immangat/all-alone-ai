@@ -1,17 +1,18 @@
 from functools import reduce
 from time import time
 
-from part_1.timer import Timer
+from timer import Timer
 
 
 class Player:
-    def __init__(self, color):
+    def __init__(self, color, playerType):
         self.color = color
         self.current_turn = False  # Initially, not the player's turn
         self.moves = 0
         self.score = 0
         self.timer = Timer()
         self.move_times = []
+        self.playerType = playerType
 
     def getColor(self):
         # Get the color of the player

@@ -7,6 +7,7 @@ class States:
     def __init__(self):
         self.boardStates = []
         self.scoreStates = []
+        self.moves = []
 
     def add_state(self, board, score):
         self.boardStates.append(board)
@@ -29,3 +30,7 @@ class States:
             del self.scoreStates[-1]
             return True
         return False
+
+    def clear_all_states(self):
+        self.boardStates = []
+        self.scoreStates = []
