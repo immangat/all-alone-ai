@@ -296,7 +296,6 @@ class Manager:
         :param selected_circles: is an array of circles containing the marbles that are to be moved
         :param direction_enum: is the direction that will be applied to the marbles
         """
-        i = 0
         selected_circles.sort()
         move = Move(selected_circles, direction_enum)
         self.current_player.move_list.append(move)
