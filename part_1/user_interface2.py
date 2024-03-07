@@ -73,7 +73,7 @@ class Displayer:
         if clicked_circle in ["left", "right", "up_left", "up_right", "down_left", "down_right", "undo"]:
             self.handle_special_action(clicked_circle)
         elif clicked_circle is not None:
-            circle = self.board.getCircle(clicked_circle[0], int(clicked_circle[1:]))
+            circle = self.board.get_circle(clicked_circle[0], int(clicked_circle[1:]))
             if clicked_circle:
 
                 if clicked_circle not in self.selected_circles:  # selecting marbles
@@ -138,7 +138,7 @@ class Displayer:
         a function that selects marbles that are within circles on the gui
         :param tag: is the tuple representing the circle
         """
-        circle = self.board.getCircle(tag[0], int(tag[1:]))
+        circle = self.board.get_circle(tag[0], int(tag[1:]))
         if circle.getMarble() is not None and circle.getMarble().get_color() == self.manager.current_player.get_color():
             # First circle selected, highlight it
             self.selected_circles.append(tag)

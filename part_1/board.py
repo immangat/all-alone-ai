@@ -4,13 +4,16 @@ import copy
 
 
 class Board:
+    """
+    This class is the representation of an abalone board
+    """
     def __init__(self):
         self.circles = {}  # This will map board coordinates to Circle objects
         self.starting_numbers = [5, 4, 3, 2, 1, 1, 1, 1, 1]
         self.rows = [5, 6, 7, 8, 9, 8, 7, 6, 5]
-        self.initBoard()
+        self.init_board()
 
-    def initBoard(self):
+    def init_board(self):
         row_labels = "IHGFEDCBA"
 
         for i, num in enumerate(self.rows):
@@ -20,18 +23,18 @@ class Board:
                 circle = Circle(letter, number)
                 self.circles[(letter, number)] = circle
 
-
-    def getCircle(self, row, col):
+    def get_circle(self, row, col):
         # Return the Circle object at the given row and col
         return self.circles.get((row, col))
 
-    def printCircleStatus(self):
+    def print_circle_status(self):
         for circle in self.circles.values():
             print((circle.getPosition()))
-            hasMarble = "False" if circle.isEmpty() else "True"
-            print(hasMarble)
+            has_marble = "False" if circle.isEmpty() else "True"
+            print(has_marble)
 
-    def isWithinBounds(self, row, col):
+    @staticmethod
+    def is_within_bounds(row, col):
         # Check if the row and col are within the hexagonal board bounds
         if row in 'ABCDEFGHI' and 1 <= col <= 9:
             index = 'ABCDEFGHI'.index(row)
@@ -43,39 +46,38 @@ class Board:
                 return col >= index - 4
         return False
 
-    def setupBoard(self, setup_type="Default"):
-        self.clearBoard()
+    def setup_board(self, setup_type="Default"):
+        self.clear_board()
 
         if setup_type == "Default":
-            self.setupDefault()
+            self.setup_default()
         elif setup_type == "German Daisy":
-            self.setupGermanDaisy()
+            self.setup_german_daisy()
         elif setup_type == "Belgian Daisy":
-            self.setupBelgianDaisy()
+            self.setup_belgian_daisy()
 
-
-    def checkPath(self, from_row, from_col, to_row, to_col):
+    def check_path(self, from_row, from_col, to_row, to_col):
         # Implement logic to check the path for a move
         pass
 
-    def clearBoard(self):
+    def clear_board(self):
         for position, circle in self.circles.items():
             circle.setMarble(None)
 
-    def setupDefault(self):
+    def setup_default(self):
         for i, row_label in enumerate("IHGFEDCBA"):
             for j in range(self.rows[i]):
                 if i < 2 or (
                         i == 2 and j >= 2 and j <= 4):  # Place black marbles in the bottom two rows and the center positions
-                    self.placeMarble(row_label, j + self.starting_numbers[i], Marble("Black"))
+                    self.place_marble(row_label, j + self.starting_numbers[i], Marble("Black"))
                 elif i > 6 or (
                         i == 6 and j >= 2 and j <= 4):  # Place white marbles in the top two rows and the center positions
-                    self.placeMarble(row_label, j + self.starting_numbers[i], Marble("White"))
+                    self.place_marble(row_label, j + self.starting_numbers[i], Marble("White"))
 
         for position, circle in self.circles.items():
             print(f"tile {position}{circle.getMarble()}")
 
-    def setupGermanDaisy(self):
+    def setup_german_daisy(self):
         black_initial = [('C', 2), ('G', 8)]
         black_positions = Board.flower_positions(black_initial)
 
@@ -83,12 +85,12 @@ class Board:
         white_positions = Board.flower_positions(white_initial)
 
         for position in black_positions:
-            self.placeMarble(position[0], position[1], Marble("Black"))
+            self.place_marble(position[0], position[1], Marble("Black"))
 
         for position in white_positions:
-            self.placeMarble(position[0], position[1], Marble("White"))
+            self.place_marble(position[0], position[1], Marble("White"))
 
-    def setupBelgianDaisy(self):
+    def setup_belgian_daisy(self):
         black_initial = [('B', 2), ('H', 8)]
         black_positions = Board.flower_positions(black_initial)
 
@@ -96,10 +98,10 @@ class Board:
         white_positions = Board.flower_positions(white_initial)
 
         for position in black_positions:
-            self.placeMarble(position[0], position[1], Marble("Black"))
+            self.place_marble(position[0], position[1], Marble("Black"))
 
         for position in white_positions:
-            self.placeMarble(position[0], position[1], Marble("White"))
+            self.place_marble(position[0], position[1], Marble("White"))
 
     def __deepcopy__(self, memo):
         # Create a new Board with deep copies of circles
@@ -126,7 +128,7 @@ class Board:
 
         return new_list
 
-    def placeMarble(self, row, col, marble):
+    def place_marble(self, row, col, marble):
         # Helper method to place a marble on the board at the specified position
         position = (row, col)
         self.circles[position].setMarble(marble)
@@ -144,7 +146,7 @@ class Board:
         for direction, (dr, dc) in directions:
             neighbor_row = chr(ord(row) + dr)
             neighbor_col = col + dc
-            if self.isWithinBounds(neighbor_row, neighbor_col):
+            if Board.is_within_bounds(neighbor_row, neighbor_col):
                 neighbors.append((neighbor_row, neighbor_col))
         return neighbors
 
@@ -161,7 +163,7 @@ class Board:
         for direction, (dr, dc) in directions.items():
             neighbor_row = chr(ord(row) + dr)
             neighbor_col = col + dc
-            if self.isWithinBounds(neighbor_row, neighbor_col):
+            if Board.is_within_bounds(neighbor_row, neighbor_col):
                 neighbors[direction] = (neighbor_row, neighbor_col)
         return neighbors
 

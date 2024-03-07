@@ -31,7 +31,7 @@ class Manager:
         """
         self.game_over()
         self.board = Board()
-        self.board.setupBoard(setup)
+        self.board.setup_board(setup)
         self.define_player(game_type)
         self.current_player = self.player1
         self.save_state()
@@ -82,13 +82,13 @@ class Manager:
         """
         # Get the marble object from the starting circle
         if isinstance(selected_circles, tuple):  # handles the case when only one marble is selected
-            marble = self.board.getCircle(*selected_circles).getMarble()
+            marble = self.board.get_circle(*selected_circles).getMarble()
             if self.is_valid_move(selected_circles, to_circle):
                 self.direction = Manager.aligned_two([selected_circles, to_circle])
                 # If the move is valid, remove the marble from the starting circle
-                self.board.getCircle(*selected_circles).setMarble(None)
+                self.board.get_circle(*selected_circles).setMarble(None)
                 # Then, place the marble in the ending circle
-                self.board.getCircle(*to_circle).setMarble(marble)
+                self.board.get_circle(*to_circle).setMarble(marble)
                 # Update the display
                 move_to_add = Move([selected_circles], self.direction)
                 self.current_player.move_list.append(move_to_add)
@@ -241,7 +241,7 @@ class Manager:
             return False  # to_circle is not adjacent to from_circle
 
         # Check if the to_circle is empty
-        to_circle_marble = self.board.getCircle(*to_circle).getMarble()
+        to_circle_marble = self.board.get_circle(*to_circle).getMarble()
         if to_circle_marble is not None:
             return False  # to_circle is not empty
 
@@ -307,8 +307,8 @@ class Manager:
 
         for circle in all_but_last:
 
-            next_circle = self.board.getCircle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
-            curr_circle = self.board.getCircle(circle[0], circle[1])
+            next_circle = self.board.get_circle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
+            curr_circle = self.board.get_circle(circle[0], circle[1])
             next_circle.setMarble(curr_circle.getMarble())
             curr_circle.setMarble(None)
 
@@ -323,14 +323,14 @@ class Manager:
         next_num = selected_circle[1] + direction.value[1]
         next_circle = (next_char, next_num)
 
-        curr_marble = self.board.getCircle(selected_circle[0], selected_circle[1]).marble
+        curr_marble = self.board.get_circle(selected_circle[0], selected_circle[1]).marble
 
         # Check if the current marble is the one to be moved, and there is no previous marble
         if curr_marble is not None and previous_marble is None:
             # This means we are at the first marble to be moved, so we should remove it after copying
-            self.board.getCircle(selected_circle[0], selected_circle[1]).marble = None
+            self.board.get_circle(selected_circle[0], selected_circle[1]).marble = None
 
-        next_circle_from_board = self.board.getCircle(next_char, next_num)
+        next_circle_from_board = self.board.get_circle(next_char, next_num)
 
         curr_marble_copy = copy.deepcopy(curr_marble)
 
