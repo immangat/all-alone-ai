@@ -2,25 +2,36 @@ import copy
 
 
 class Circle:
+    """
+    Represents a spot or circle on the board that can contain a marble
+    """
     def __init__(self, letter, number):
+        """
+        Constructs a new Circle
+        :param letter: is the letter of board or row number as a character
+        :param number: is the column of board or column number as an Int
+        """
         self.letter = letter
         self.number = number
         self.marble = None  # Initially, no marble in the circle
 
-    def isEmpty(self):
-        # Check if the circle is empty
+    def is_empty(self):
+        """ Checks if the circle is empty"""
         return self.marble is None
 
-    def getMarble(self):
-        # Get the marble in the circle
+    def get_marble(self):
+        """ Returns the marble of the circle"""
         return self.marble
 
-    def setMarble(self, marble):
-        # Set the marble in the circle
+    def set_marble(self, marble):
+        """
+        Set the marble in the circle
+        :param marble: is the marble to set
+        """
         self.marble = marble
 
-    def getPosition(self):
-        # Get the position of the circle as (letter, number)
+    def get_position(self):
+        """ Gets the position of the circle as (letter, number) """
         return self.letter, self.number
 
     def __lt__(self, other):

@@ -78,7 +78,7 @@ class Board:
         Clears the board of marbles
         """
         for position, circle in self.circles.items():
-            circle.setMarble(None)
+            circle.set_marble(None)
 
     def setup_default(self):
         """
@@ -94,7 +94,7 @@ class Board:
                     self.place_marble(row_label, j + self.starting_numbers[i], Marble("White"))
 
         for position, circle in self.circles.items():
-            print(f"tile {position}{circle.getMarble()}")
+            print(f"tile {position}{circle.get_marble()}")
 
     def setup_german_daisy(self):
         """
@@ -168,7 +168,7 @@ class Board:
         :param marble: is the marble
         """
         position = (row, col)
-        self.circles[position].setMarble(marble)
+        self.circles[position].set_marble(marble)
 
     def get_neighbors(self, row, col):
         """ Gets all the surrounding circles of the board for a given row and col"""

@@ -82,7 +82,7 @@ class Displayer:
                     # If the same circle is clicked again, deselect it
                     self.deselect_marble(clicked_circle)
 
-                if circle.getMarble() is None:  # selecting an empty circle
+                if circle.get_marble() is None:  # selecting an empty circle
                     if 3 >= len(self.selected_circles) >= 0:
                         self.attempt_move(self.selected_circles, clicked_circle)
 
@@ -139,7 +139,7 @@ class Displayer:
         :param tag: is the tuple representing the circle
         """
         circle = self.board.get_circle(tag[0], int(tag[1:]))
-        if circle.getMarble() is not None and circle.getMarble().get_color() == self.manager.current_player.get_color():
+        if circle.get_marble() is not None and circle.get_marble().get_color() == self.manager.current_player.get_color():
             # First circle selected, highlight it
             self.selected_circles.append(tag)
             self.highlight_circle(tag, True)
@@ -282,7 +282,7 @@ class Displayer:
 
                     # Check if there is a marble in the circle
                     if (row_labels[i], j + self.board.starting_numbers[i]) in self.board.circles:
-                        marble = self.board.circles[(row_labels[i], j + self.board.starting_numbers[i])].getMarble()
+                        marble = self.board.circles[(row_labels[i], j + self.board.starting_numbers[i])].get_marble()
                         if marble is not None:
                             circle_color = 'black' if marble.get_color().lower() == 'black' else 'lightgray'
 

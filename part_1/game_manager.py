@@ -82,13 +82,13 @@ class Manager:
         """
         # Get the marble object from the starting circle
         if isinstance(selected_circles, tuple):  # handles the case when only one marble is selected
-            marble = self.board.get_circle(*selected_circles).getMarble()
+            marble = self.board.get_circle(*selected_circles).get_marble()
             if self.is_valid_move(selected_circles, to_circle):
                 self.direction = Manager.aligned_two([selected_circles, to_circle])
                 # If the move is valid, remove the marble from the starting circle
-                self.board.get_circle(*selected_circles).setMarble(None)
+                self.board.get_circle(*selected_circles).set_marble(None)
                 # Then, place the marble in the ending circle
-                self.board.get_circle(*to_circle).setMarble(marble)
+                self.board.get_circle(*to_circle).set_marble(marble)
                 # Update the display
                 move_to_add = Move([selected_circles], self.direction)
                 self.current_player.move_list.append(move_to_add)
@@ -241,7 +241,7 @@ class Manager:
             return False  # to_circle is not adjacent to from_circle
 
         # Check if the to_circle is empty
-        to_circle_marble = self.board.get_circle(*to_circle).getMarble()
+        to_circle_marble = self.board.get_circle(*to_circle).get_marble()
         if to_circle_marble is not None:
             return False  # to_circle is not empty
 
@@ -309,8 +309,8 @@ class Manager:
 
             next_circle = self.board.get_circle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
             curr_circle = self.board.get_circle(circle[0], circle[1])
-            next_circle.setMarble(curr_circle.getMarble())
-            curr_circle.setMarble(None)
+            next_circle.set_marble(curr_circle.get_marble())
+            curr_circle.set_marble(None)
 
     def recursive_move(self, selected_circle, direction, previous_marble=None):
         """
