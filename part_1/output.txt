@@ -1,0 +1,93 @@
+Player 1											Player 2
+Player 1											Player 2
+Move: [('F', 4)] DOWN_RIGHT							
+Player 1											Player 2
+Move: [('F', 4)] DOWN_RIGHT							Move: [('C', 3)] RIGHT	
+Invalid move
+Player 1											Player 2
+Move: [('F', 4)] DOWN_RIGHT							Move: [('C', 3)] RIGHT	
+Move: [('G', 5)] DOWN_RIGHT							
+Player 1											Player 2
+Move: [('F', 4)] DOWN_RIGHT							Move: [('C', 3)] RIGHT	
+Move: [('G', 5)] DOWN_RIGHT							Move: [('B', 2)] RIGHT	
+Player 1											Player 2
+Move: [('F', 4)] DOWN_RIGHT							Move: [('C', 3)] RIGHT	
+Move: [('G', 5)] DOWN_RIGHT							Move: [('B', 2)] RIGHT	
+Move: [('D', 6)] UP_LEFT							
+Player 1											Player 2
+Move: [('F', 4)] DOWN_RIGHT							Move: [('C', 3)] RIGHT	
+Move: [('G', 5)] DOWN_RIGHT							Move: [('B', 2)] RIGHT	
+Move: [('D', 6)] UP_LEFT							Move: [('C', 2)] RIGHT	
+Player 1											Player 2
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "tkinter\__init__.py", line 1948, in __call__
+  File "user_interface2.py", line 87, in on_canvas_click
+    self.attempt_move(self.selected_circles, clicked_circle)
+  File "user_interface2.py", line 222, in attempt_move
+    self.highlight_circle(tags[0], False)
+  File "user_interface2.py", line 134, in highlight_circle
+    self.canvas.itemconfig(circle, outline=outline_color)
+  File "tkinter\__init__.py", line 2959, in itemconfigure
+  File "tkinter\__init__.py", line 1692, in _configure
+_tkinter.TclError: invalid command name ".!canvas"
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "tkinter\__init__.py", line 1948, in __call__
+  File "user_interface2.py", line 87, in on_canvas_click
+    self.attempt_move(self.selected_circles, clicked_circle)
+  File "user_interface2.py", line 222, in attempt_move
+    self.highlight_circle(tags[0], False)
+  File "user_interface2.py", line 134, in highlight_circle
+    self.canvas.itemconfig(circle, outline=outline_color)
+  File "tkinter\__init__.py", line 2959, in itemconfigure
+  File "tkinter\__init__.py", line 1692, in _configure
+_tkinter.TclError: invalid command name ".!canvas"
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "tkinter\__init__.py", line 1948, in __call__
+  File "user_interface2.py", line 87, in on_canvas_click
+    self.attempt_move(self.selected_circles, clicked_circle)
+  File "user_interface2.py", line 222, in attempt_move
+    self.highlight_circle(tags[0], False)
+  File "user_interface2.py", line 134, in highlight_circle
+    self.canvas.itemconfig(circle, outline=outline_color)
+  File "tkinter\__init__.py", line 2959, in itemconfigure
+  File "tkinter\__init__.py", line 1692, in _configure
+_tkinter.TclError: invalid command name ".!canvas"
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "tkinter\__init__.py", line 1948, in __call__
+  File "user_interface2.py", line 87, in on_canvas_click
+    self.attempt_move(self.selected_circles, clicked_circle)
+  File "user_interface2.py", line 222, in attempt_move
+    self.highlight_circle(tags[0], False)
+  File "user_interface2.py", line 134, in highlight_circle
+    self.canvas.itemconfig(circle, outline=outline_color)
+  File "tkinter\__init__.py", line 2959, in itemconfigure
+  File "tkinter\__init__.py", line 1692, in _configure
+_tkinter.TclError: invalid command name ".!canvas"
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "tkinter\__init__.py", line 1948, in __call__
+  File "user_interface2.py", line 87, in on_canvas_click
+    self.attempt_move(self.selected_circles, clicked_circle)
+  File "user_interface2.py", line 222, in attempt_move
+    self.highlight_circle(tags[0], False)
+  File "user_interface2.py", line 134, in highlight_circle
+    self.canvas.itemconfig(circle, outline=outline_color)
+  File "tkinter\__init__.py", line 2959, in itemconfigure
+  File "tkinter\__init__.py", line 1692, in _configure
+_tkinter.TclError: invalid command name ".!canvas"
+Exception in Tkinter callback
+Traceback (most recent call last):
+  File "tkinter\__init__.py", line 1948, in __call__
+  File "user_interface2.py", line 87, in on_canvas_click
+    self.attempt_move(self.selected_circles, clicked_circle)
+  File "user_interface2.py", line 222, in attempt_move
+    self.highlight_circle(tags[0], False)
+  File "user_interface2.py", line 134, in highlight_circle
+    self.canvas.itemconfig(circle, outline=outline_color)
+  File "tkinter\__init__.py", line 2959, in itemconfigure
+  File "tkinter\__init__.py", line 1692, in _configure
+_tkinter.TclError: invalid command name ".!canvas"
