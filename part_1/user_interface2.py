@@ -2,7 +2,7 @@ import math
 import time
 import tkinter as tk
 
-from part_1.button import Button
+from button import Button
 
 
 class Displayer:
@@ -88,7 +88,7 @@ class Displayer:
 
     def handle_special_action(self, action):
         if action == "undo":
-            self.manager.undoMove()
+            pass
         else:
             self.manager.direction = action
             self.highlight_direction(action)
@@ -230,7 +230,6 @@ class Displayer:
             ("up_right", 150, 375),
             ("down_left", 50, 525),
             ("down_right", 150, 525),
-            ("undo", 300, 525),
         ]
 
         for direction in directions:
@@ -272,6 +271,16 @@ class Displayer:
 
                 y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
         self.draw_direction_buttons()
+        Button(text='Undo', master=self.window, command=self.manager.undoMove, position=(350, 360), size=(100, 30))
+        self.start_button()
+
+    def start_button(self):
+        options = ["Default", "Belgian Daisy", "German Daisy"]
+        humanAI = ["Human x Human","AI(B) x Human(W)", "Human(B) x AI(W)"]
+        setupMenu = Button(text='Option types', master=self.window, options=options, position=(340,450), size=(120, 30), type="dropdown", default_option="Setup Type")
+        humanAiMenu = Button(text='Option types', master=self.window, options=humanAI, position=(320, 490),
+                              size=(150, 30), type="dropdown", default_option="Game Type")
+        Button(text='Start / Reset', master=self.window, command=lambda: self.manager.startGame(setupMenu.get_selected_option(), humanAiMenu.get_selected_option()), position=(350, 530), size=(100, 30))
 
 
     def print_timer(self):

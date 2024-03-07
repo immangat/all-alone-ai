@@ -1,7 +1,7 @@
 import copy
 
 from board import Board
-from part_1.directions import Direction
+from directions import Direction
 from user_interface2 import Displayer
 from player import Player
 from states import States
@@ -18,18 +18,36 @@ class Manager:
         self.displayer = Displayer(manager=self)
         self.states = States()
 
-    def startGame(self, setup="default"):
+    def startGame(self, setup="Default", game_type = "Human x Human"):
+        self.game_over()
         self.board = Board()
         self.board.setupBoard(setup)
-        self.player1 = Player("White")
+        self.define_player(game_type)
         self.current_player = self.player1
-        self.player2 = Player("Black")
         self.saveState()
         self.displayBoard()
+
+    def define_player(self, game_type = "Human x Human"):
+        if game_type == "Human x Human":
+            self.player1 = Player("Black", "Human")
+            self.player2 = Player("White", "Human")
+        elif game_type == "AI(B) x Human(W)":
+            self.player1 = Player("Black", "AI")
+            self.player2 = Player("White", "Human")
+        else:
+            self.player1 = Player("Black", "Human")
+            self.player2 = Player("White", "AI")
+
+
+
 
     def isGameOver(self):
         # Check if the game is over (implement logic later)
         pass
+
+    def game_over(self):
+        self.board = None
+        self.states.clear_all_states()
 
     def displayBoard(self):
         score = (self.player1.getScore(), self.player2.getScore())
@@ -293,4 +311,4 @@ class Manager:
 
 if __name__ == "__main__":
     manager = Manager()
-    manager.startGame("german_daisy")
+    manager.startGame("German Daisy")

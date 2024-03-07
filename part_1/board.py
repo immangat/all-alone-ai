@@ -43,14 +43,14 @@ class Board:
                 return col >= index - 4
         return False
 
-    def setupBoard(self, setup_type="default"):
+    def setupBoard(self, setup_type="Default"):
         self.clearBoard()
 
-        if setup_type == "default":
+        if setup_type == "Default":
             self.setupDefault()
-        elif setup_type == "german_daisy":
+        elif setup_type == "German Daisy":
             self.setupGermanDaisy()
-        elif setup_type == "belgian_daisy":
+        elif setup_type == "Belgian Daisy":
             self.setupBelgianDaisy()
 
 
