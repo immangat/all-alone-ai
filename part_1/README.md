@@ -8,7 +8,7 @@ Abalone is a two-player abstract strategy game where players move marbles on a h
 To run the game, execute the `ab-ablone-game.eve` file.
 
 ## How to build the Game
-To build the game rune `pyinstaller --name="name_of_game" --windowed game_manager.py`
+To build the game run `pyinstaller --name="name_of_game" --onefile --windowed game_manager.py`
 
 ## Configuration
 The game can be configured using the drop-down menus in the game interface.
