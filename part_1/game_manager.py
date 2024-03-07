@@ -69,10 +69,10 @@ class Manager:
         Displays the board for the game for the Human players to see
         :return:
         """
-        score = (self.player1.getScore(), self.player2.getScore())
-        moves = (self.player1.getMoves(), self.player2.getMoves())
-        # currentPlayerColor = self.player1.get_color() if self.player1.getCurrentTurn() else self.player2.get_color()
-        self.displayer.update_board(self.board, score, moves, self.current_player.getColor())
+        score = (self.player1.get_score(), self.player2.get_score())
+        moves = (self.player1.get_moves(), self.player2.get_moves())
+        # currentPlayerColor = self.player1.get_color() if self.player1.get_current_turn() else self.player2.get_color()
+        self.displayer.update_board(self.board, score, moves, self.current_player.get_color())
 
     def move_marble(self, selected_circles, to_circle):
         """
@@ -257,14 +257,14 @@ class Manager:
         """
         self.current_player.reset_timer()
         if save_state:
-            self.player1.moveUp() if self.player1.getCurrentTurn() else self.player2.moveUp()
+            self.player1.move_up() if self.player1.get_current_turn() else self.player2.move_up()
             self.save_state()
         if self.current_player == self.player1:
             self.current_player = self.player2
         else:
             self.current_player = self.player1
-        self.player1.flipTurn()
-        self.player2.flipTurn()
+        self.player1.flip_turn()
+        self.player2.flip_turn()
 
     def undo_move(self):
         """
@@ -276,9 +276,9 @@ class Manager:
 
             self.board = self.states.get_last_board_state()
             score = self.states.get_last_score_state()
-            self.player1.setScore(score[0])
-            self.player2.setScore(score[1])
-            self.player2.reverseMove() if self.player1.getCurrentTurn() else self.player1.reverseMove()
+            self.player1.set_score(score[0])
+            self.player2.set_score(score[1])
+            self.player2.reverse_move() if self.player1.get_current_turn() else self.player1.reverse_move()
             self.switch_turns(save_state=False)
             self.current_player.remove_last_move()
             self.display_board()
@@ -288,7 +288,7 @@ class Manager:
         Saves the current state of the game and saves it to the states array for a history
         """
         new_board = copy.deepcopy(self.board)
-        self.states.add_state(new_board, (self.player1.getScore(), self.player2.getScore()))
+        self.states.add_state(new_board, (self.player1.get_score(), self.player2.get_score()))
 
     def move_multiple_marbles(self, selected_circles, direction_enum):
         """
