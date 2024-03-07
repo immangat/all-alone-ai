@@ -301,16 +301,15 @@ class Manager:
         self.current_player.move_list.append(move)
         if direction_enum in [Direction.DOWN_RIGHT, Direction.LEFT, Direction.DOWN_LEFT]:
             selected_circles.reverse()
-        all_but_last = selected_circles[-2::-1]
-        last_circle = selected_circles[-1]
-        self.recursive_move(last_circle, direction_enum, None)
-
-        for circle in all_but_last:
-
-            next_circle = self.board.get_circle(chr(ord(circle[0]) + direction_enum.value[0]), circle[1] + direction_enum.value[1])
-            curr_circle = self.board.get_circle(circle[0], circle[1])
-            next_circle.set_marble(curr_circle.get_marble())
-            curr_circle.set_marble(None)
+        first_circle = selected_circles[0]
+        second_circle = selected_circles[1]
+        check_chr = chr(ord(first_circle[0]) + direction_enum.value[0]) == second_circle[0]
+        check_num = second_circle[1] == first_circle[1] + direction_enum.value[1]
+        if check_chr and check_num:
+            self.recursive_move(first_circle, direction_enum, None)
+        else:
+            for circle in selected_circles:
+                self.recursive_move(circle, direction_enum)
 
     def recursive_move(self, selected_circle, direction, previous_marble=None):
         """
@@ -324,7 +323,7 @@ class Manager:
         next_circle = (next_char, next_num)
 
         curr_marble = self.board.get_circle(selected_circle[0], selected_circle[1]).marble
-
+        curr_marble_copy = copy.deepcopy(curr_marble)
         # Check if the current marble is the one to be moved, and there is no previous marble
         if curr_marble is not None and previous_marble is None:
             # This means we are at the first marble to be moved, so we should remove it after copying
@@ -332,13 +331,13 @@ class Manager:
 
         next_circle_from_board = self.board.get_circle(next_char, next_num)
 
-        curr_marble_copy = copy.deepcopy(curr_marble)
 
-        # If there's no marble in the next position, move the current marble there
         if next_circle_from_board.marble is None:
+            self.board.get_circle(selected_circle[0], selected_circle[1]).marble = previous_marble
             next_circle_from_board.marble = curr_marble_copy
             return
         else:
+            self.board.get_circle(selected_circle[0], selected_circle[1]).marble = previous_marble
             self.recursive_move(next_circle, direction, curr_marble_copy)
 
     def get_time_to_display(self):
