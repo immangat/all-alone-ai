@@ -31,5 +31,4 @@ The game can be paused using the `Pause/unpause` button.
 ### Moving Marbles
 1. To move the marbles first select direction to move in the bottom left corner of the game.
 2. Select the marble(s) that you wish to me.
-3. Select a circle where you wish the marble(s) to go.   
-`Note:` If moving in a straight line, click the circle where the marble(s) will be moving towards. For Diagonal moves, click the circle that any of the selected marble(s) will be in once the move is complete.
+3. Select any circle that is touching your selected marble(s) to move the marbles.
