@@ -2,6 +2,9 @@ from enum import Enum
 
 
 class Direction(Enum):
+    """
+    Enumeration of possible directions in abalone games
+    """
     LEFT = (0, -1)
     RIGHT = (0, 1)
     UP_LEFT = (1, 0)
