@@ -161,11 +161,15 @@ class Manager:
 
     def get_time_to_display(self):
         player_one_time = self.player1.get_time()
+        player_one_agg = self.player1.get_aggregate_time()
+        player_one_last_move = self.player1.get_last_move_time()
         player_two_time = self.player2.get_time()
+        player_two_agg = self.player2.get_aggregate_time()
+        player_two_last_move = self.player2.get_last_move_time()
         seconds = self.current_player.increment_time()
         if seconds <= 0:
             self.switchTurns()
-        return player_one_time, player_two_time
+        return player_one_time, player_one_agg, player_one_last_move, player_two_time, player_two_agg, player_two_last_move
 
 
 if __name__ == "__main__":
