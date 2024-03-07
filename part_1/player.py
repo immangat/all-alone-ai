@@ -56,3 +56,9 @@ class Player:
 
     def get_time(self):
         return self.timer.seconds
+
+    def remove_last_move(self):
+        if len(self.move_list) > 0:
+            self.move_list.pop()
+            return True
+        return False

@@ -4,4 +4,4 @@ class Move:
         self.enum_direction = enum_direction # not value of direction but the enum of direction
 
     def __str__(self):
-        return f"Move: {self.circles} {self.enum_direction}\t"
+        return f"Move: {self.circles} {self.enum_direction.name}\t"

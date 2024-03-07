@@ -112,13 +112,13 @@ class Manager:
     def are_circles_adjacent_and_aligned(self, circles):
         if len(circles) == 2:
             direction = self._aligned_two(circles)
-            if direction == "right" or direction == "left":
+            if direction == Direction.RIGHT or direction == Direction.LEFT:
                 direction = "horizontal"
                 return direction
-            elif direction == "up_right" or direction == "down_left":
+            elif direction == Direction.UP_RIGHT or direction == Direction.DOWN_LEFT:
                 direction = "diagonalRight"
                 return direction
-            elif direction == "up_left" or direction == "down_right":
+            elif direction == Direction.UP_LEFT or direction == Direction.DOWN_RIGHT:
                 direction = "diagonalLeft"
                 return direction
         elif len(circles) == 3:
@@ -138,12 +138,12 @@ class Manager:
 
         # Define all possible directions
         directions = {
-            'left': (0, -1),
-            'right': (0, 1),
-            'up_left': (1, 0),
-            'up_right': (1, 1),
-            'down_left': (-1, -1),
-            'down_right': (-1, 0),
+            Direction.LEFT: (0, -1),
+            Direction.RIGHT: (0, 1),
+            Direction.UP_LEFT: (1, 0),
+            Direction.UP_RIGHT: (1, 1),
+            Direction.DOWN_LEFT: (-1, -1),
+            Direction.DOWN_RIGHT: (-1, 0),
         }
         key = None
         for k, value in directions.items():
@@ -213,12 +213,14 @@ class Manager:
 
         deletedState = self.states.remove_last_states()
         if deletedState:
+
             self.board = self.states.get_last_board_state()
             score = self.states.get_last_score_state()
             self.player1.setScore(score[0])
             self.player2.setScore(score[1])
             self.player2.reverseMove() if self.player1.getCurrentTurn() else self.player1.reverseMove()
             self.switchTurns(save_state=False)
+            self.current_player.remove_last_move()
             self.displayBoard()
 
     def saveState(self):
@@ -228,6 +230,8 @@ class Manager:
     def moveMutipleMarbles(self, selected_circles, direction_enum):
         i = 0
         selected_circles.sort()
+        move = Move(selected_circles, direction_enum)
+        self.current_player.move_list.append(move)
         if direction_enum in [Direction.DOWN_RIGHT, Direction.LEFT, Direction.DOWN_LEFT]:
             selected_circles.reverse()
         all_but_last = selected_circles[-2::-1]
