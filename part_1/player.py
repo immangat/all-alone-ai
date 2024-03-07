@@ -66,3 +66,7 @@ class Player:
         if len(self.move_times) == 0:
             return 0
         return self.move_times[len(self.move_times) - 1]
+
+    def clear_clock(self):
+        self.move_times = []
+        self.reset_timer()
