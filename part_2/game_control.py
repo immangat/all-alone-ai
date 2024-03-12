@@ -28,6 +28,6 @@ class Manager:
 if __name__ == "__main__":
     board = Board()
     board.setup_belgian_daisy()
-    manager = Manager(GameWindow(800, 600), board)
-    game = Manager(GameWindow(800, 600, manager), board)
+    manager = Manager(GameWindow(1280, 720), board)
+    game = Manager(GameWindow(1280, 720, manager), board)
     game.start()

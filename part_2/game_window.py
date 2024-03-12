@@ -40,11 +40,14 @@ class GameWindow:
     def board_to_pixel(self, coord):
         # Assuming you have a method that converts board coordinates to pixel coordinates
         row, col = coord
-        start_x = self.width // 2  # Center the board on the canvas
-        start_y = 50
+        # start_x = self.width // 2  # Center the board on the canvas
         x_spacing = int(self.marble_radius * 2.5)  # Horizontal spacing between marbles
         y_spacing = int(self.marble_radius * math.sqrt(5))  # Vertical spacing between marbles
         max_row = 9  # Maximum row number
+        max_col = 9  # Maximum column number
+        total_board_width = x_spacing * (max_col - 1) + self.marble_radius * 2
+        start_x = total_board_width // 2  # This left aligns a specific x,y coordinate according to the board
+        start_y = 50
         x_offset = (row - 1) * x_spacing // 2
         x_pixel = start_x + (col - 3) * x_spacing - x_offset
         y_pixel = start_y + (max_row - row + 2) * y_spacing
@@ -80,7 +83,8 @@ class GameWindow:
             print(self.highlighted_marbles)
             for marble in self.highlighted_marbles:
                 if marble == (row, col):
-                    pygame.draw.circle(self.display_surface, (255, 102, 102), (x_pixel, y_pixel), self.marble_radius + 2, 3)
+                    pygame.draw.circle(self.display_surface, (255, 102, 102), (x_pixel, y_pixel),
+                                       self.marble_radius + 2, 3)
         pygame.display.flip()
 
     # Not implemented for now due to processing power losses
@@ -105,4 +109,3 @@ class GameWindow:
     #             pygame.draw.circle(self.display_surface, empty_space_color, position, self.marble_radius)
     #     self.sprites.draw(self.display_surface)
     #     pygame.display.flip()  # Update the display after drawing the empty spaces
-
