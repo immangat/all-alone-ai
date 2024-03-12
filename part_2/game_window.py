@@ -2,12 +2,11 @@ import math
 
 import pygame
 
-from part_2.event_handler import EventHandler
-from part_2.sprite import MySprite
+from part_2.event_handler import EventHandler, CUSTOM_TIMER_EVENT
 
 
 class GameWindow:
-    def __init__(self, width: int, height: int, manager=None):
+    def __init__(self, width: int, height: int, manager):
         self.width = width
         self.height = height
         self.display_surface = None
@@ -16,11 +15,13 @@ class GameWindow:
         self.event_handler = EventHandler(self)
         self.marble_radius = 20  # Radius of the marbles
         self.highlighted_marbles = []  # Store the coordinates of the highlighted marble
+        self.clock = pygame.time.Clock()
 
     def initWindow(self):
         pygame.init()
         self.display_surface = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Game Window')
+        pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
         # self.loadSprites()
 
     def updateWindow(self):
@@ -64,6 +65,7 @@ class GameWindow:
     def draw_board(self):
         self.display_surface.fill((200, 200, 200))
         # Iterate through all board coordinates and draw marbles
+
         for row, col in self.manager.board.BOARD_COORD:
             x_pixel, y_pixel = self.board_to_pixel((row, col))
             color = self.manager.board.get_circle(row, col)
@@ -80,8 +82,26 @@ class GameWindow:
             print(self.highlighted_marbles)
             for marble in self.highlighted_marbles:
                 if marble == (row, col):
-                    pygame.draw.circle(self.display_surface, (255, 102, 102), (x_pixel, y_pixel), self.marble_radius + 2, 3)
+                    pygame.draw.circle(self.display_surface, (255, 102, 102), (x_pixel, y_pixel),
+                                       self.marble_radius + 2, 3)
         pygame.display.flip()
+
+    def draw_time(self):
+        self.display_surface.fill((200, 200, 200))
+        font = pygame.font.SysFont(None, 30)
+        text = font.render(str("{}:{:.2f} {}:{:.2f} board:{:.2f}".format(self.manager.players[0].name,
+                                                                         self.manager.players[
+                                                                             0].clock.current_time / 1000,
+                                                                         self.manager.players[1].name,
+                                                                         self.manager.players[
+                                                                             1].clock.current_time / 1000,
+                                                                         self.manager.clock.current_time / 1000)), True,
+                           (0, 0, 0))
+        self.display_surface.blit(text, (0, 0))
+        pygame.display.update((0, 0, text.get_width() + 10, text.get_height() + 1))
+        self.clock.tick(60)
+
+
 
     # Not implemented for now due to processing power losses
     # def load_marble_sprites(self):
@@ -105,4 +125,3 @@ class GameWindow:
     #             pygame.draw.circle(self.display_surface, empty_space_color, position, self.marble_radius)
     #     self.sprites.draw(self.display_surface)
     #     pygame.display.flip()  # Update the display after drawing the empty spaces
-
