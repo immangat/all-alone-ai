@@ -138,6 +138,26 @@ class StateSpaceGen:
         else:
             return (1, 0)
 
+    def validate_move(self, board, marbles, direction):
+        self.board = board
+        player_color = self.board.get_marble(marbles[0])
+        sort_marbles = sorted(marbles, key=lambda x: (x[0], x[1]))
+        self.clear_states()
+        self.generate_state_space(board, player_color)
+        moveState = self.find_move_in_list(sort_marbles, direction)
+        if moveState is not None:
+            moveIndex = self.moves.index(moveState)
+            boardState = self.boards[moveIndex]
+            return (moveState, boardState)
+        return (None, None)
+
+    def find_move_in_list(self, marbles, direction):
+        for move in self.moves:
+            sorted_marbles = sorted(move.get_marbles(), key=lambda x: (x[0], x[1]))
+            if direction == move.get_direction() and marbles == sorted_marbles:
+                return move
+        return None
+
     def get_neighbors(self, coord):
         neighbors = []
         neighbors_directions = [direction for direction in Direction]
