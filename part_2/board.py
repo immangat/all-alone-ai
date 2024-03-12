@@ -17,6 +17,8 @@ class Board:
         (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)
     ]
 
+
+
     def __init__(self):
         """
         Initialise the board with the empty board
@@ -149,19 +151,12 @@ class Board:
     def get_marble(self, coord):
         return self.circles[coord]
 
-    def get_white_marbles(self):
-        white_marbles = []
+    def get_marbles_by_color(self, color):
+        marbles = []
         for coord in self.BOARD_COORD:
-            if self.get_marble(coord) == "w":
-                white_marbles.append(coord)
-        return white_marbles
-
-    def get_black_marbles(self):
-        black_marbles = []
-        for coord in self.BOARD_COORD:
-            if self.get_marble(coord) == "b":
-                black_marbles.append(coord)
-        return black_marbles
+            if self.get_marble(coord) == color:
+                marbles.append(coord)
+        return marbles
 
     def get_row_letter(self, index):
         return chr(ord('A') + index - 1)
@@ -169,7 +164,7 @@ class Board:
     def __str__(self):
         board_str = ""
 
-        for marble in self.get_black_marbles() + self.get_white_marbles():
+        for marble in self.get_marbles_by_color("b") + self.get_marbles_by_color("w"):
             row_letter = self.get_row_letter(marble[0])
             coord_str = f"{row_letter}{marble[1]}{self.get_marble(marble)}"
             board_str += f"{coord_str}, "
