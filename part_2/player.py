@@ -42,6 +42,7 @@ class Player(ABC):
     def reset_player_clock(self):
         current_move_time = self.clock.current_time
         self.list_of_moves.append(current_move_time)
+        print(self)
         self.clock.reset_timer()
 
     def __str__(self):
