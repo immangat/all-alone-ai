@@ -6,7 +6,7 @@ from part_2.move_gui import move_gui
 
 
 class GameWindow:
-    MOVE_GUI_WIDTH = 200
+    MOVE_GUI_WIDTH = 300
     MOVE_GUI_HEIGHT = 500
     MOVE_GUI_MARGIN = 10
     def __init__(self, width: int, height: int, manager=None):
@@ -34,7 +34,7 @@ class GameWindow:
         pygame.display.set_caption('Game Window')
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
-        self.manager_ui = pygame_gui.UIManager((self.width, self.height))
+        self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
 
         self.move_gui.create_gui()
 

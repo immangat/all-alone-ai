@@ -3,23 +3,32 @@ import pygame_gui
 
 pygame.init()
 
-pygame.display.set_caption('Quick Start')
-window_surface = pygame.display.set_mode((800, 600))
-
-background = pygame.Surface((800, 540))
+window_size = (800, 600)
+window_surface = pygame.display.set_mode(window_size)
+background = pygame.Surface(window_size)
 background.fill(pygame.Color('#000000'))
 
-manager = pygame_gui.UIManager((800, 600))
+manager = pygame_gui.UIManager(window_size)
 
-hello_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((350, 275), (100, 50)),
-                                            text='Say Hello',
-                                            manager=manager)
+# Create a panel
+panel_rect = pygame.Rect(50, 50, 300, 400)  # Position and size of the panel
+panel = pygame_gui.elements.UIPanel(relative_rect=panel_rect,
+                                    starting_height=1,
+                                    manager=manager)
+
+# Create a button inside the panel
+button_rect = pygame.Rect(50, 50, 100, 50)  # Position and size of the button relative to the panel
+button = pygame_gui.elements.UIButton(relative_rect=button_rect,
+                                      text='Click Me',
+                                      manager=manager,
+                                      container=panel)  # Notice how we specify the panel as the container
 
 clock = pygame.time.Clock()
 is_running = True
 
 while is_running:
-    time_delta = clock.tick(60) / 1000.0
+    time_delta = clock.tick(60)/1000.0
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             is_running = False

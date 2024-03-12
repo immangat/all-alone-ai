@@ -1,0 +1,10 @@
+ {
+     "panel1":
+     {
+         "colours":
+         {
+             "dark_bg":"#FF9999",
+             "normal_border": "#999999"
+         }
+     }
+ }
