@@ -16,17 +16,17 @@ class GameWindow:
         self.marble_radius = 20  # Radius of the marbles
         self.highlighted_marbles = []  # Store the coordinates of the highlighted marble
         self.manager_ui = None
-        # self.move_gui = move_gui(self.width, self.height, self.manager, self.manager_ui)
-        # self.initWindow()
+        self.move_gui = move_gui(self.width, self.height, self.manager_ui, self.manager_ui)
 
     def initWindow(self):
         pygame.init()
         self.display_surface = pygame.display.set_mode((self.width, self.height))  # Create the window
-        # pygame.display.set_caption('Game Window')
+        pygame.display.set_caption('Game Window')
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.manager_ui = pygame_gui.UIManager((self.width, self.height))
-        self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
+
+        self.move_gui.draw_button()
 
         # Here, you should also create your UI elements and pass the manager_ui to them
 
@@ -34,6 +34,9 @@ class GameWindow:
     def updateWindow(self):
         # This will update the contents of the entire display
         self.draw_board()
+        self.manager_ui.draw_ui(self.display_surface)  # Draws any ui using pygame_gui
+        pygame.display.flip()  # Update the display
+        self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
 
     def board_to_pixel(self, coord):
         # Assuming you have a method that converts board coordinates to pixel coordinates
@@ -83,7 +86,7 @@ class GameWindow:
                 if marble == (row, col):
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
-        self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
+        # self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
         # pygame.display.flip()
 
     # def draw_move_gui(self):
