@@ -1,5 +1,7 @@
 import pygame
 
+CUSTOM_TIMER_EVENT = pygame.USEREVENT + 1
+
 
 class EventHandler:
     def __init__(self, game_window):
@@ -13,6 +15,11 @@ class EventHandler:
                 self.game_window.draw_board()
                 self.game_window.updateWindow()
                 self.on_mouse_click(event.pos)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.game_window.manager.switch_turns()
+            elif event.type == CUSTOM_TIMER_EVENT:
+                self.game_window.manager.tick_timer()
+                self.game_window.draw_time()
 
     def on_mouse_click(self, mouse_pos):
         # Check if the click is within the radius of any circle
