@@ -17,17 +17,26 @@ class Manager:
         self.main_loop()
 
     def main_loop(self):
-        # done outside the loop the first time to optimize performance
-        self.game_window.draw_board()
-        self.game_window.updateWindow()
+        clock = pygame.time.Clock()
+        # originally planned to only update on mouse click, but for simplicity will update everything for now
+        # self.game_window.draw_board()
+        # self.game_window.updateWindow()
+        # self.game_window.manager_ui.draw_ui(self.game_window.display_surface)
         # This would be the main loop where you keep the game running and handle events
         while self.is_running:
+            time_delta = clock.tick(60) / 1000.0
             self.game_window.event_handler.handle_events()
+            self.game_window.manager_ui.update(time_delta)
+            self.game_window.display_surface.blit(self.game_window.background, (0, 0))  # Draw the background
+            self.game_window.draw_board()  # Draw the board state
+            self.game_window.manager_ui.draw_ui(self.game_window.display_surface)  # Draw the UI
+            pygame.display.flip()  # Update the display
 
 
 if __name__ == "__main__":
     board = Board()
     board.setup_belgian_daisy()
+
     manager = Manager(GameWindow(1280, 720), board)
     game = Manager(GameWindow(1280, 720, manager), board)
     game.start()

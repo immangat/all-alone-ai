@@ -10,9 +10,10 @@ class EventHandler:
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
-                self.game_window.draw_board()
-                self.game_window.updateWindow()
+                # self.game_window.draw_board()
+                # self.game_window.updateWindow()
                 self.on_mouse_click(event.pos)
+            self.game_window.manager_ui.process_events(event)
 
     def on_mouse_click(self, mouse_pos):
         # Check if the click is within the radius of any circle
@@ -29,11 +30,12 @@ class EventHandler:
                 elif coord in self.game_window.highlighted_marbles:
                     print(f"Marble at {coord} was removed.")
                     self.game_window.highlighted_marbles.remove(coord)
-                    self.game_window.draw_board()
+                    self.game_window.updateWindow()
                 break
 
     def highlight_circle(self, coord, radius):
         # Draw a circle with a different color to highlight it
         x_pixel, y_pixel = self.game_window.board_to_pixel(coord)
-        pygame.draw.circle(self.game_window.display_surface, (255, 102, 102), (x_pixel, y_pixel), radius + 3, 3)
+        pygame.draw.circle(self.game_window.background, (255, 102, 102), (x_pixel, y_pixel), radius + 3, 3)
+        self.game_window.display_surface.blit(self.game_window.background, (0, 0))
         pygame.display.flip()
