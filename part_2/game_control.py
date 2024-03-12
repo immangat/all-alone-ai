@@ -16,20 +16,18 @@ class Manager:
         self.game_window.initWindow()
         self.main_loop()
 
-    # def stop(self):
-    #     self.is_running = False
-    #     pygame.quit()
-
     def main_loop(self):
+        # done outside the loop the first time to optimize performance
+        self.game_window.draw_board()
+        self.game_window.updateWindow()
         # This would be the main loop where you keep the game running and handle events
         while self.is_running:
-            self.game_window.draw_board()
-            self.game_window.updateWindow()
             self.game_window.event_handler.handle_events()
-                # Handle other events (keyboard, mouse, etc)
 
 
 if __name__ == "__main__":
-    manager = Manager(GameWindow(800, 600), Board())
-    game = Manager(GameWindow(800, 600, manager), Board())
+    board = Board()
+    board.setup_belgian_daisy()
+    manager = Manager(GameWindow(800, 600), board)
+    game = Manager(GameWindow(800, 600, manager), board)
     game.start()
