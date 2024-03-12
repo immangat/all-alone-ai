@@ -5,7 +5,7 @@ class Clock:
 
     def __init__(self):
         self.current_time = 0
-        self.tick_value = 1
+        self.tick_value = 16
         self.can_tick = True
 
     @property
