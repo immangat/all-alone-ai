@@ -95,6 +95,7 @@ class Board:
         for coord in white_marbles:
             self.set_marble(coord, "w")
 
+
     def setup_german_daisy(self):
         """
         Sets up the marbles on the board for a game with
@@ -137,6 +138,19 @@ class Board:
         for coord in white_marbles:
             self.set_marble(coord, "w")
 
+    @classmethod
+    def create_custom_board(cls, string_list):
+        new_board = cls()
+        for string in string_list:
+            row_letter, col_str, color = string[0], string[1:-1], string[-1]
+            row = ord(row_letter) - ord('A') + 1
+            col = int(col_str)
+            coord = (row, col)
+            new_board.set_marble(coord, color)
+
+        return new_board
+
+
     def __deepcopy__(self, memo):
         # Create a new Board with deep copies of circles
         new_board = Board()
@@ -144,22 +158,16 @@ class Board:
         memo[id(self)] = new_board
         return new_board
 
+
     def get_marble(self, coord):
         return self.circles[coord]
 
-    def get_white_marbles(self):
-        white_marbles = []
+    def get_marbles_by_color(self, color):
+        marbles = []
         for coord in self.BOARD_COORD:
-            if self.get_marble(coord) == "w":
-                white_marbles.append(coord)
-        return white_marbles
-
-    def get_black_marbles(self):
-        black_marbles = []
-        for coord in self.BOARD_COORD:
-            if self.get_marble(coord) == "b":
-                black_marbles.append(coord)
-        return black_marbles
+            if self.get_marble(coord) == color:
+                marbles.append(coord)
+        return marbles
 
     def get_row_letter(self, index):
         return chr(ord('A') + index - 1)
@@ -167,52 +175,11 @@ class Board:
     def __str__(self):
         board_str = ""
 
-        for marble in self.get_black_marbles() + self.get_white_marbles():
+        for marble in self.get_marbles_by_color("b") + self.get_marbles_by_color("w"):
             row_letter = self.get_row_letter(marble[0])
             coord_str = f"{row_letter}{marble[1]}{self.get_marble(marble)}"
-            board_str += f"{coord_str}, "
+            board_str += f"{coord_str},"
 
         # Remove the trailing comma and space
-        return board_str.rstrip(', ')
+        return board_str.rstrip(',')
 
-    # def get_neighbors(self, row, col):
-    #     """ Gets all the surrounding circles of the board for a given row and col"""
-    #     directions = [
-    #         ('left', (0, -1)),
-    #         ('right', (0, 1)),
-    #         ('up_left', (1, 0)),
-    #         ('up_right', (1, 1)),
-    #         ('down_left', (-1, -1)),
-    #         ('down_right', (-1, 0)),
-    #     ]
-    #     neighbors = []
-    #     for direction, (dr, dc) in directions:
-    #         neighbor_row = chr(ord(row) + dr)
-    #         neighbor_col = col + dc
-    #         if Board.is_within_bounds(neighbor_row, neighbor_col):
-    #             neighbors.append((neighbor_row, neighbor_col))
-    #     return neighbors
-    #
-    # def get_neighbors_with_direction(self, row, col):
-    #     """
-    #     Gets all the surrounding circles of the board for a given row and col
-    #     :param row: is a row of the board as a Character
-    #     :param col: is the column of the board as an Int
-    #     :return: is a list of tuples of the surrounding circles of the board
-    #     with no overlap between the other neighbours of other circles
-    #     """
-    #     directions = {
-    #         'left': (0, -1),
-    #         'right': (0, 1),
-    #         'up_left': (1, 0),  # Adjusted for hexagonal grid
-    #         'up_right': (1, 1),  # Adjusted for hexagonal grid
-    #         'down_left': (-1, -1),  # Adjusted for hexagonal grid
-    #         'down_right': (-1, 0),  # Adjusted for hexagonal grid
-    #     }
-    #     neighbors = {}
-    #     for direction, (dr, dc) in directions.items():
-    #         neighbor_row = chr(ord(row) + dr)
-    #         neighbor_col = col + dc
-    #         if Board.is_within_bounds(neighbor_row, neighbor_col):
-    #             neighbors[direction] = (neighbor_row, neighbor_col)
-    #     return neighbors
