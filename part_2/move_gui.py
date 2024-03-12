@@ -6,20 +6,17 @@ from part_2.event_handler import EventHandler
 
 
 class move_gui:
-    def __init__(self, width: int, height: int, manager_ui=None, container=None):
+    def __init__(self, x_pixel: int, y_pixel: int, width: int, height: int, manager_ui=None, container=None):
         self.width = width
         self.height = height
-        self.display_surface = pygame.display.set_mode((self.width, self.height))
+        self.x_pixel = x_pixel
+        self.y_pixel = y_pixel
         self.manager_ui = manager_ui
-        self.event_handler = EventHandler(self)
-        self.button_layout_rect = pygame.Rect(30, 20, 300, 500)
+        self.button_layout_rect = pygame.Rect(x_pixel, y_pixel, width, height)
         self.container = container
 
-    def draw_button(self):
-
+    def create_gui(self):
         UIButton(relative_rect=self.button_layout_rect,
                  text='Hello',
                  manager=self.manager_ui,
                  container=self.container)
-        # pygame.draw.rect(self.display_surface, (224, 224, 224), self.button_layout_rect)
-        # pygame.display.update(self.button_layout_rect)
