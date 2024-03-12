@@ -81,20 +81,19 @@ class Board:
         """
         Sets up the board for a game with a default setup type
         """
-        black_marbles = [ (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
-        (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6),
-        (3, 3), (3, 4), (3, 5)]
+        black_marbles = [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+                         (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6),
+                         (3, 3), (3, 4), (3, 5)]
 
         white_marbles = [(7, 5), (7, 6), (7, 7),
-        (8, 4), (8, 5), (8, 6), (8, 7), (8, 8), (8, 9),
-        (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)]
+                         (8, 4), (8, 5), (8, 6), (8, 7), (8, 8), (8, 9),
+                         (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)]
 
         for coord in black_marbles:
             self.set_marble(coord, "b")
 
         for coord in white_marbles:
             self.set_marble(coord, "w")
-
 
     def setup_german_daisy(self):
         """
@@ -104,12 +103,12 @@ class Board:
         black_marbles = [
             (2, 1), (2, 2), (3, 1), (3, 2), (3, 3), (4, 2), (4, 3),
             (6, 7), (6, 8), (7, 7), (7, 8), (7, 9), (8, 8), (8, 9)
-            ]
+        ]
 
         white_marbles = [
             (2, 5), (2, 6), (3, 5), (3, 6), (3, 7), (4, 6), (4, 7),
             (6, 3), (6, 4), (7, 3), (7, 4), (7, 5), (8, 4), (8, 5)
-            ]
+        ]
 
         for coord in black_marbles:
             self.set_marble(coord, "b")
@@ -125,12 +124,12 @@ class Board:
         black_marbles = [
             (1, 1), (1, 2), (2, 1), (2, 2), (2, 3), (3, 2), (3, 3),
             (7, 7), (7, 8), (8, 7), (8, 8), (8, 9), (9, 8), (9, 9)
-            ]
+        ]
 
         white_marbles = [
             (1, 4), (1, 5), (2, 4), (2, 5), (2, 6), (3, 5), (3, 6),
             (7, 4), (7, 5), (8, 4), (8, 5), (8, 6), (9, 5), (9, 6)
-            ]
+        ]
 
         for coord in black_marbles:
             self.set_marble(coord, "b")
@@ -144,7 +143,6 @@ class Board:
         new_board.circles = copy.deepcopy(self.circles, memo)
         memo[id(self)] = new_board
         return new_board
-
 
     def get_marble(self, coord):
         return self.circles[coord]
@@ -218,6 +216,3 @@ class Board:
     #         if Board.is_within_bounds(neighbor_row, neighbor_col):
     #             neighbors[direction] = (neighbor_row, neighbor_col)
     #     return neighbors
-
-
-
