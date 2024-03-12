@@ -21,7 +21,7 @@ clock = pygame.time.Clock()
 # UIManager to manage UI elements
 manager = pygame_gui.UIManager(window_size)
 
-# Define a UI container (optional, depending on your needs)
+# Define a UI container (optional, depending on your needs))
 abalone_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, ROW_LINE_1), (COLUM_LINE_1, ROW_LINE_3 - ROW_LINE_1)),
                                         manager=manager)
 player_1_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0,0), (COLUM_LINE_1, ROW_LINE_1)))
