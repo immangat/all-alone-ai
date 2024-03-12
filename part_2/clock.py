@@ -4,16 +4,17 @@ import time
 class Clock:
 
     def __init__(self):
-        self.start_time = 0
-        self.end_time = 0
-        self.elapsed_time = 0
-        self.time_limit = 0
+        self.current_time = 0
+        self.tick_value = 1
+        self.can_tick = True
 
-    def start_timer(self):
-        self.start_time = time.time_ns()
+    @property
+    def current_timer(self):
+        return self.current_time
 
-    def pause_timer(self):
-        pass
+    def tick_timer(self):
+        if self.can_tick:
+            self.current_time += self.tick_value
 
     def reset_timer(self):
-        pass
+        self.current_time = 0
