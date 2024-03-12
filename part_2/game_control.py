@@ -1,25 +1,60 @@
 import pygame
 
 from part_2.board import Board
+from part_2.clock import Clock
 from part_2.game_window import GameWindow
+from part_2.player import Player, HumanPlayer
 
 
 class Manager:
-    def __init__(self, game_window, board):
-        self.game_window = game_window  # This should be an instance of GameWindow class
-        self.board_state = ''  # You would set this according to your game logic
-        self.is_running = False
-        self.board = board  # You would set this according to your game logic
+    __instance = None
+
+    def __init__(self, board):
+        if Manager.__instance is not None:
+            raise Exception("This class is a singleton")
+        else:
+            Manager.__instance = self
+            self.game_window = GameWindow(800, 600, self)  # This should be an instance of GameWindow class
+            self.board_state = ''  # You would set this according to your game logic
+            self.is_running = False
+            self.board = board  # You would set this according to your game logic
+            self.clock = Clock()
+            self.players = [HumanPlayer("White"), HumanPlayer("Black")]
+            self.current_player: Player = self.players[0]
+
+    @staticmethod
+    def get_instance(game_window=None, board=None):
+        if Manager.__instance is None:
+            Manager(game_window, board)
+        return Manager.__instance
 
     def start(self):
         self.is_running = True
         self.game_window.initWindow()
         self.main_loop()
 
+    def end_game(self):
+        pass
+
+    def pause_game(self):
+        pass
+
+    def switch_turns(self):
+        self.current_player.reset_player_clock()
+        if self.current_player == self.players[0]:
+            self.current_player = self.players[1]
+        else:
+            self.current_player = self.players[0]
+
+    def tick_timer(self):
+        self.clock.tick_timer()
+        self.current_player.tick_player_clock()
+
     def main_loop(self):
         # done outside the loop the first time to optimize performance
         self.game_window.draw_board()
         self.game_window.updateWindow()
+        self.game_window.draw_time()
         # This would be the main loop where you keep the game running and handle events
         while self.is_running:
             self.game_window.event_handler.handle_events()
@@ -28,6 +63,5 @@ class Manager:
 if __name__ == "__main__":
     board = Board()
     board.setup_belgian_daisy()
-    manager = Manager(GameWindow(800, 600), board)
-    game = Manager(GameWindow(800, 600, manager), board)
+    game = Manager(board)
     game.start()
