@@ -95,7 +95,7 @@ class StateSpaceGen:
         next_coord = (coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1])
         opponent_marbles = 1
         pushable = True
-        while next_coord != None or next_coord in Board.BOARD_COORD:
+        while next_coord in Board.BOARD_COORD and self.board.get_marble(next_coord) != None:
             next_coord_marble = self.board.get_marble(next_coord)
             if next_coord_marble == self.curr_player or opponent_marbles > 2 or len(coords) <= opponent_marbles:
                 pushable = False
@@ -106,7 +106,8 @@ class StateSpaceGen:
             new_move = Move("i", direction, coords)
             opponent_color = self.board.get_marble((coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1]))
             new_board = copy.deepcopy(self.board)
-            new_board.set_marble(next_coord, opponent_color)
+            if next_coord in Board.BOARD_COORD:
+                new_board.set_marble(next_coord, opponent_color)
             new_board.set_marble((coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1]), self.curr_player)
             new_board.set_marble(coords[0], None)
             self.moves.append(new_move)
