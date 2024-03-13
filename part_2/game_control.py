@@ -52,8 +52,8 @@ class Manager:
 
     def main_loop(self):
         # done outside the loop the first time to optimize performance
-        self.game_window.draw_board()
-        self.game_window.updateWindow()
+        # self.game_window.draw_board()
+        # self.game_window.updateWindow()
         self.game_window.draw_time()
         clock = pygame.time.Clock()
         # originally planned to only update on mouse click, but for simplicity will update everything for now

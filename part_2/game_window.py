@@ -1,7 +1,6 @@
 import math
 import pygame
 import pygame_gui
-from part_2.event_handler import EventHandler
 from part_2.move_gui import move_gui
 
 from part_2.event_handler import EventHandler, CUSTOM_TIMER_EVENT
@@ -11,6 +10,7 @@ class GameWindow:
     MOVE_GUI_WIDTH = 300
     MOVE_GUI_HEIGHT = 500
     MOVE_GUI_MARGIN = 10
+
     def __init__(self, width: int, height: int, manager):
         self.width = width
         self.height = height
@@ -23,7 +23,7 @@ class GameWindow:
         self.manager_ui = None
         self.move_gui = move_gui(
             width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
-            height//2 - self.MOVE_GUI_HEIGHT//2,
+            height // 2 - self.MOVE_GUI_HEIGHT // 2,
             self.MOVE_GUI_WIDTH,
             self.MOVE_GUI_HEIGHT,
             self.manager_ui,
@@ -83,6 +83,7 @@ class GameWindow:
         self.background.fill((200, 200, 200))
         # Iterate through all board coordinates and draw marbles
         for row, col in self.manager.board.BOARD_COORD:
+            print("board")
             x_pixel, y_pixel = self.board_to_pixel((row, col))
             color = self.manager.board.get_circle(row, col)
             # Define the color based on the marble color, assuming 'b' for black, 'w' for white
@@ -101,7 +102,6 @@ class GameWindow:
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
         # self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
-        # pygame.display.flip()
 
     # def draw_move_gui(self):
     #     # Draw the move GUI
@@ -121,8 +121,6 @@ class GameWindow:
         self.display_surface.blit(text, (0, 0))
         pygame.display.update((0, 0, text.get_width() + 10, text.get_height() + 1))
         self.clock.tick(60)
-
-
 
     # Not implemented for now due to processing power losses
     # def load_marble_sprites(self):
