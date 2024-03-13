@@ -8,6 +8,7 @@ from part_2.event_handler import EventHandler
 class move_gui:
 
     def __init__(self, x_pixel: int, y_pixel: int, width: int, height: int, manager_ui=None, container=None):
+        self.move_buffer = None
         self.moves_made = ""
         self.move_count = 0
         self.width = width
@@ -18,6 +19,8 @@ class move_gui:
         self.container = container
         self.undo_button = None
         self.add_button = None
+        self.panel_moves = None
+        self.moves_gui = None
         self.move_gui_rect = pygame.Rect(x_pixel, y_pixel, width, height)
         # Use division to keep relative sizes
         self.top_rect = self.calc_relative_rect(x_proportion=0.49, y_proportion=0.1, width_proportion=0.75,
@@ -26,12 +29,12 @@ class move_gui:
                                                    height_proportion=0.1, parent=self.move_gui_rect)
         self.button2_rect = self.calc_relative_rect(x_proportion=0.74, y_proportion=0.875, width_proportion=0.3,
                                                     height_proportion=0.1, parent=self.move_gui_rect)
-        self.moves_container = self.calc_relative_rect(x_proportion=0.49, y_proportion=0.5, width_proportion=0.9,
-                                                       height_proportion=0.6, parent=self.move_gui_rect)
-        self.moves_text = self.calc_relative_rect(x_proportion=0.49, y_proportion=0.49, width_proportion=1,
-                                                  height_proportion=1, parent=self.moves_container)
-        self.top_label = self.calc_relative_rect(x_proportion=0.49, y_proportion=0.5, width_proportion=1,
-                                                 height_proportion=1, parent=self.top_rect)
+        self.moves_container_rect = self.calc_relative_rect(x_proportion=0.49, y_proportion=0.5, width_proportion=0.9,
+                                                            height_proportion=0.6, parent=self.move_gui_rect)
+        self.moves_text_rect = self.calc_relative_rect(x_proportion=0.49, y_proportion=0.49, width_proportion=1,
+                                                       height_proportion=1, parent=self.moves_container_rect)
+        self.top_label_rect = self.calc_relative_rect(x_proportion=0.49, y_proportion=0.5, width_proportion=1,
+                                                      height_proportion=1, parent=self.top_rect)
 
     # Calculate the relative rect based on the parent rect and the proportions
     def calc_relative_rect(self, x_proportion, y_proportion, width_proportion, height_proportion, parent):
@@ -54,13 +57,13 @@ class move_gui:
                             manager=self.manager_ui,
                             container=panel)
 
-        panel_moves = UIPanel(relative_rect=self.moves_container,
-                              starting_height=1,
-                              # this is like padding inside the panel
-                              manager=self.manager_ui,
-                              container=panel)
+        self.panel_moves = UIPanel(relative_rect=self.moves_container_rect,
+                                   starting_height=1,
+                                   # this is like padding inside the panel
+                                   manager=self.manager_ui,
+                                   container=panel)
 
-        ulabel = UILabel(relative_rect=self.top_label,
+        ulabel = UILabel(relative_rect=self.top_label_rect,
                          text='Moves made in game:',
                          manager=self.manager_ui,
                          container=panel_top)
@@ -77,18 +80,18 @@ class move_gui:
                                    manager=self.manager_ui,
                                    container=panel)
 
-        self.moves_text = UITextBox(relative_rect=self.moves_text,
-                                    html_text=self.moves_made,
-                                    manager=self.manager_ui,
-                                    container=panel_moves)
+        self.moves_gui = UITextBox(relative_rect=self.moves_text_rect,
+                                   html_text=self.moves_made,
+                                   manager=self.manager_ui,
+                                   container=self.panel_moves)
 
     def add_move(self, move):
-        if self.move_count % 2 == 1:
-            self.moves_made += f"{move}"
+        if self.move_count % 2 == 0:
+            # If it's an even move count, start a new buffer with the move
+            self.moves_made += f"{move}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
         else:
-            self.moves_made += f"<br>{move}&nbsp&nbsp&nbsp"
-
-        self.moves_text.html_text = self.moves_made  # Update the html_text of the UITextBox
-        print(self.moves_text.html_text)
-        self.moves_text.rebuild()  # Rebuild the UITextBox to reflect the changes
+            # If it's an odd move count, complete the buffer and wrap it in <p> tags
+            self.moves_made += f"<p>{move}</p>"
+        self.moves_gui.html_text = self.moves_made  # Update the html_text of the UITextBox
+        self.moves_gui.rebuild()  # Rebuild the UITextBox to reflect the changes
         self.move_count += 1

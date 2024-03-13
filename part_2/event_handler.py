@@ -18,7 +18,7 @@ class EventHandler:
                     elif event.ui_element == self.game_window.move_gui.add_button:
                         self.test += 1
                         self.game_window.move_gui.add_move(str(self.test))  # Customize as needed
-                        self.game_window.move_gui.moves_text.rebuild()
+                        self.game_window.move_gui.moves_gui.rebuild()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
                 # self.game_window.draw_board()
                 # self.game_window.updateWindow()
