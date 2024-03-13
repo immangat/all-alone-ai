@@ -7,8 +7,12 @@
   },
   "buttons_panel": {
     "colours": {
-      "normal_bg": "#FFFFFF",
-      "normal_border": "#999999"
+      "dark_bg": "#c8c8c8",
+      "normal_border": "#c8c8c8"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
     }
   },
   "pause_button": {
