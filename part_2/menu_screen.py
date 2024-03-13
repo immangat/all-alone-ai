@@ -1,40 +1,47 @@
 import pygame
 import pygame_gui
+import pygame_menu
+from pygame_gui.elements import UIButton
+
+from part_2.event_handler import EventHandler
 
 
 class MenuScreen:
-    def __init__(self, width: int, height: int, manager_ui=None):
+    def __init__(self, width: int, height: int, manager):
         self.width = width
         self.height = height
-        self.manager_ui = manager_ui
+        # self.manager_ui = None
         self.start_game_button = None
         self.time_select_input = None
         self.display_surface = None
         self.background = None
+        self.menu = None
+        self.manager = manager
+        self.event_handler = EventHandler(self)
+        self.type = "menu"
 
-    def create_menu(self):
+    def initWindow(self):
         pygame.init()
         self.display_surface = pygame.display.set_mode((self.width, self.height))  # Create the window
         pygame.display.set_caption('Menu Screen')
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
-        self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
+        # self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
+        self.menu = pygame_menu.Menu('All-Alone', self.width, self.height,
+                                     theme=pygame_menu.themes.THEME_DEFAULT)
+        self.menu.add.button('Start', self.start_game)
+        self.menu.add.button('Quit', self.quit_game)
 
-        # Create the Start Game button
-        self.start_game_button = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect((self.width / 2 - 100, self.height / 2 - 25), (200, 50)),
-            text='Start Game',
-            manager=self.manager_ui)
+    def start_game(self):
+        print("Game started")
+        self.manager.switch_to_screen("game")
 
-        # Create an input form for selecting time or other settings
-        self.time_select_input = pygame_gui.elements.UITextEntryLine(
-            relative_rect=pygame.Rect((self.width / 2 - 100, self.height / 2 + 50), (200, 50)),
-            manager=self.manager_ui)
+    def quit_game(self):
+        # Exit the program
+        pygame.quit()
 
-    def handle_events(self, event):
-        # Handle events like button clicks or text entry here
-        if event.type == pygame.USEREVENT:
-            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                if event.ui_element == self.start_game_button:
-                    print("Start Game button clicked!")
-                    # Transition to the game screen here
+    def updateWindow(self):
+        # self.manager_ui.draw_ui(self.background)
+        self.menu.draw(self.background)
+        pygame.display.flip()
+        self.display_surface.blit(self.background, (0, 0))
