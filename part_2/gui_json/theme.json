@@ -1,10 +1,40 @@
- {
-     "panel1":
-     {
-         "colours":
-         {
-             "dark_bg":"#B59A7E",
-             "normal_border": "#999999"
-         }
-     }
- }
+{
+  "panel1": {
+    "colours": {
+      "dark_bg": "#B59A7E",
+      "normal_border": "#999999"
+    }
+  },
+  "buttons_panel": {
+    "colours": {
+      "dark_bg": "#c8c8c8",
+      "normal_border": "#c8c8c8"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
+    }
+  },
+  "pause_button": {
+    "colours": {
+      "normal_text": "#FFFFFF",
+      "normal_bg": "#34dceb",
+      "normal_border": "#999999"
+    }
+  },
+  "reset_button": {
+    "colours": {
+      "normal_text": "#FFFFFF",
+      "normal_bg": "#eb7734",
+      "normal_border": "#999999"
+    }
+  },
+  "stop_button": {
+    "colours": {
+      "normal_text": "#FFFFFF",
+      "normal_bg": "#FF0000",
+      "normal_border": "#999999"
+    }
+  }
+}
+

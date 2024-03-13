@@ -17,6 +17,7 @@ class Manager:
             self.game_window = GameWindow(1280, 720, self)  # This should be an instance of GameWindow class
             self.board_state = ''  # You would set this according to your game logic
             self.is_running = False
+            self.game_paused = False
             self.board = board  # You would set this according to your game logic
             self.clock = Clock()
             self.players = [HumanPlayer("White", "w"), HumanPlayer("Black", "b")]
@@ -37,7 +38,8 @@ class Manager:
         pass
 
     def pause_game(self):
-        pass
+        print("Game pasued")
+        self.game_paused = not self.game_paused
 
     def switch_turns(self):
         self.current_player.reset_player_clock()
@@ -48,7 +50,8 @@ class Manager:
 
     def tick_timer(self):
         self.clock.tick_timer()
-        self.current_player.tick_player_clock()
+        if not self.game_paused:
+            self.current_player.tick_player_clock()
 
     def main_loop(self):
         clock = pygame.time.Clock()
