@@ -27,10 +27,7 @@ class Manager:
             time_delta = clock.tick(60) / 1000.0
             self.game_window.event_handler.handle_events()
             self.game_window.manager_ui.update(time_delta)
-            self.game_window.display_surface.blit(self.game_window.background, (0, 0))  # Draw the background
-            self.game_window.draw_board()  # Draw the board state
-            self.game_window.manager_ui.draw_ui(self.game_window.display_surface)  # Draw the UI
-            pygame.display.flip()  # Update the display
+            self.game_window.updateWindow()  # Draw the board state
 
 
 if __name__ == "__main__":
