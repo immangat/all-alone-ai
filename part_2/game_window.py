@@ -83,7 +83,6 @@ class GameWindow:
         self.background.fill((200, 200, 200))
         # Iterate through all board coordinates and draw marbles
         for row, col in self.manager.board.BOARD_COORD:
-            print("board")
             x_pixel, y_pixel = self.board_to_pixel((row, col))
             color = self.manager.board.get_circle(row, col)
             # Define the color based on the marble color, assuming 'b' for black, 'w' for white
@@ -101,6 +100,7 @@ class GameWindow:
                 if marble == (row, col):
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
+        self.draw_time()
         # self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
 
     # def draw_move_gui(self):
@@ -108,9 +108,8 @@ class GameWindow:
     #     self.move_gui.draw_button()
 
     def draw_time(self):
-        self.display_surface.fill((200, 200, 200))
         font = pygame.font.SysFont(None, 30)
-        text = font.render(str("{}:{:.2f} {}:{:.2f} board:{:.2f}".format(self.manager.players[0].name,
+        text = font.render(str("{}:{:.1f} {}:{:.1f} board:{:.1f}".format(self.manager.players[0].name,
                                                                          self.manager.players[
                                                                              0].clock.current_time / 1000,
                                                                          self.manager.players[1].name,
@@ -120,7 +119,6 @@ class GameWindow:
                            (0, 0, 0))
         self.display_surface.blit(text, (0, 0))
         pygame.display.update((0, 0, text.get_width() + 10, text.get_height() + 1))
-        self.clock.tick(60)
 
     # Not implemented for now due to processing power losses
     # def load_marble_sprites(self):
