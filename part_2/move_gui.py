@@ -86,12 +86,13 @@ class move_gui:
                                    container=self.panel_moves)
 
     def add_move(self, move):
+        formatted_move = str(move).ljust(3)  # Ensures move is left-aligned in 3 characters
         if self.move_count % 2 == 0:
-            # If it's an even move count, start a new buffer with the move
-            self.moves_made += f"{move}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            # Start a new buffer with the formatted move
+            self.moves_made += f"<pre>{formatted_move}              <pre>"
         else:
-            # If it's an odd move count, complete the buffer and wrap it in <p> tags
-            self.moves_made += f"<p>{move}</p>"
+            # Complete the buffer with the formatted move
+            self.moves_made += f"<p>{formatted_move}</p>"
         self.moves_gui.html_text = self.moves_made  # Update the html_text of the UITextBox
         self.moves_gui.rebuild()  # Rebuild the UITextBox to reflect the changes
         self.move_count += 1
