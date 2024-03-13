@@ -45,6 +45,7 @@ class GameWindow:
         self.manager_ui.draw_ui(self.background)  # Draws any ui using pygame_gui
         pygame.display.flip()  # Update the display
         self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
+        # self.move_gui.create_gui()
 
     def board_to_pixel(self, coord):
         # Assuming you have a method that converts board coordinates to pixel coordinates
