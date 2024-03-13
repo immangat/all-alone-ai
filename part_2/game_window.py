@@ -35,7 +35,6 @@ class GameWindow:
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
-
         self.move_gui.create_gui()
 
         # Here, you should also create your UI elements and pass the manager_ui to them
@@ -43,7 +42,7 @@ class GameWindow:
     def updateWindow(self):
         # This will update the contents of the entire display
         self.draw_board()
-        self.manager_ui.draw_ui(self.display_surface)  # Draws any ui using pygame_gui
+        self.manager_ui.draw_ui(self.background)  # Draws any ui using pygame_gui
         pygame.display.flip()  # Update the display
         self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
 
@@ -90,7 +89,7 @@ class GameWindow:
 
             # Draw the marble on the board
             pygame.draw.circle(self.background, color, (x_pixel, y_pixel), self.marble_radius)
-            print(self.highlighted_marbles)
+            # print(self.highlighted_marbles)
             for marble in self.highlighted_marbles:
                 if marble == (row, col):
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
