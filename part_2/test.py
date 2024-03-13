@@ -1,71 +1,161 @@
+# import pygame
+# import pygame_gui
+#
+# import pygame_gui.data
+#
+# from pygame.color import Color
+# from pygame.surface import Surface
+#
+# from pygame_gui.elements.ui_text_box import UITextBox
+#
+# """
+# A test bed to tinker with future text features.
+# """
+#
+#
+# def test_app():
+#     pygame.init()
+#
+#     display_surface = pygame.display.set_mode((800, 600))
+#
+#     ui_manager = pygame_gui.UIManager((800, 600), 'data/themes/theme_1.json')
+#
+#     background = Surface((800, 600), depth=32)
+#     background.fill(Color("#FFFFFF"))
+#
+#     text_box = UITextBox(
+#         html_text="<body><font color=#E0E080>hey hey hey "
+#                   "what are the <a href=haps>haps</a> my "
+#                   "<u>brand new friend?</u> These are the "
+#                   "days of our <i>disco tent. </i>"
+#                   "<shadow size=1 offset=0,0 color=#306090><font color=#E0F0FF><b>Why the "
+#                   "long night</b></font></shadow> of <font color=regular_text>absolution</font>, "
+#                   "shall <b>becometh </b>the man. Lest "
+#                   "forth "
+#                   "betwixt moon under one nation "
+#                   "before and beyond opus grande "
+#                   "just in time for the last time "
+#                   "three nine nine. Toight."
+#                   "<br><br>"
+#                   "hella toight.</font>",
+#         relative_rect=pygame.Rect(100, 100, 400, 200),
+#         manager=ui_manager)
+#
+#     text_box.scroll_bar.has_moved_recently = True
+#     text_box.update(5.0)
+#
+#     is_running = True
+#     row_key_pos = 13
+#     typing_row = len(text_box.text_box_layout.layout_rows) - 1
+#
+#     clock = pygame.time.Clock()
+#
+#     cursor_toggle = 0
+#     while is_running:
+#         time_delta = clock.tick(60)/1000.0
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 is_running = False
+#
+#             if event.type == pygame.MOUSEBUTTONDOWN and event.button == pygame.BUTTON_LEFT:
+#                 text_block_full_height = text_box.text_box_layout.layout_rect.height
+#                 height_adjustment = (text_box.scroll_bar.start_percentage *
+#                                      text_block_full_height)
+#                 base_x = int(text_box.rect[0] + text_box.padding[0] + text_box.border_width +
+#                              text_box.shadow_width + text_box.rounded_corner_offset)
+#                 base_y = int(text_box.rect[1] + text_box.padding[1] + text_box.border_width +
+#                              text_box.shadow_width + text_box.rounded_corner_offset - height_adjustment)
+#                 text_box.text_box_layout.set_cursor_from_click_pos((event.pos[0] - base_x,
+#                                                                          event.pos[1] - base_y))
+#
+#             if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+#                 text_box.text_box_layout.set_text_selection(48, 245)
+#
+#             if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+#                 text_box.text_box_layout.set_text_selection(56, 220)
+#
+#             if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
+#                 text_box.text_box_layout.set_text_selection(0, 5)
+#
+#             if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+#                 text_box.text_box_layout.set_text_selection(0, 4)
+#
+#             ui_manager.process_events(event)
+#
+#         cursor_toggle += time_delta
+#         if cursor_toggle >= 0.4:
+#             cursor_toggle = 0.0
+#             text_box.text_box_layout.toggle_cursor()
+#             text_box.redraw_from_text_block()
+#
+#         display_surface.blit(background, (0, 0))
+#
+#         ui_manager.update(0.01)
+#         ui_manager.draw_ui(window_surface=display_surface)
+#
+#         pygame.display.update()
+#
+#
+# if __name__ == "__main__":
+#     test_app()
+
+
 import pygame
-import math
+import pygame_gui
 
-class AbaloneGame:
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.screen = None
-        self.r = 20  # Radius of circles
-        self.circle_objects = {}  # This will map board coordinates to circle objects
-        self.circle_ids = {}  # This will map circle objects to board coordinates
-        self.init_window()
-        self.draw_board()
+class MoveGUI:
+    def __init__(self, manager_ui):
+        self.manager_ui = manager_ui
+        self.moves_made = []  # List to track the moves made
+        self.initialize_ui()
 
-    def init_window(self):
-        pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Abalone Game")
-        self.screen.fill((255, 255, 255))
+    def initialize_ui(self):
+        self.text_box = pygame_gui.elements.UITextBox(
+            html_text=self.generate_moves_html(),
+            relative_rect=pygame.Rect(100, 100, 400, 400),
+            manager=self.manager_ui
+        )
 
-    def draw_circle(self, x, y, r, tag, **kwargs):
-        color = kwargs.get('outline', (0, 0, 0))
-        circle = pygame.draw.circle(self.screen, color, (x, y), r)
-        self.circle_objects[tag] = circle
-        self.circle_ids[tag] = (x, y)
-        return circle
+    def generate_moves_html(self):
+        # Generate HTML text for all moves made
+        moves_html = "<body>"
+        for move in self.moves_made:
+            moves_html += f"<p>{move}</p>"
+        moves_html += "</body>"
+        return moves_html
 
-    def on_canvas_click(self, position):
-        x, y = position
-        # Check if the click is within the radius of any circle
-        for tag, (cx, cy) in self.circle_ids.items():
-            if (x - cx) ** 2 + (y - cy) ** 2 <= self.r ** 2:
-                print(f"Circle {tag} clicked")
-                self.draw_circle(cx, cy, self.r, tag, outline=(0, 0, 255))  # Blue fill
-                pygame.display.flip()
-                break  # Exit the loop after finding the circle
+    def add_move(self, move_description):
+        # Add a new move and update the text box
+        self.moves_made.append(move_description)
+        self.text_box.html_text = self.generate_moves_html()
+        self.text_box.rebuild()
 
-    def draw_board(self):
-        start_x = self.width // 2  # Center the board on the canvas
-        start_y = 50
-        row_labels = list(range(1, 10))  # 1 to 9 instead of I to A
-        starting_numbers = [5, 4, 3, 2, 1, 1, 1, 1, 1]
-        rows = [5, 6, 7, 8, 9, 8, 7, 6, 5]
+    def handle_events(self, event):
+        if event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_object_id == 'add_move_button':
+                    self.add_move("New Move Description")  # Customize as needed
 
-        y = start_y
-        for i, num in enumerate(rows):
-            current_row_width = (self.r * 2 * (num - 1)) + self.r
-            x = start_x - (current_row_width // 2)
-            for j in range(num):
-                # Change 'row_labels[i]' to match the '1' to '9' scheme
-                tag = f"{row_labels[8-i]}{j + starting_numbers[i]}"  # Flip the row_labels index for '1' at the bottom
-                self.draw_circle(x + (self.r * 2 * j), y, self.r, tag, outline=(0, 0, 0))
-                # Track the circle with its board coordinate
-                self.circle_ids[tag] = (x + (self.r * 2 * j), y)
-            y += int(self.r * math.sqrt(3))  # Adjust the vertical distance between rows of circles
-        pygame.display.flip()
+# Pygame setup
+pygame.init()
+pygame.display.set_mode((800, 600))
+ui_manager = pygame_gui.UIManager((800, 600))
 
-    def run(self):
-        running = True
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
-                    self.on_canvas_click(event.pos)
-        pygame.quit()
+move_gui = MoveGUI(manager_ui=ui_manager)
 
+# Main loop and event handling
+is_running = True
+while is_running:
+    time_delta = pygame.time.Clock().tick(60)/1000.0
 
-if __name__ == "__main__":
-    game = AbaloneGame(800, 700)
-    game.run()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            is_running = False
+
+        move_gui.handle_events(event)  # Handle events specific to the move GUI
+        ui_manager.process_events(event)
+
+    ui_manager.update(time_delta)
+    ui_manager.draw_ui(window_surface=pygame.display.get_surface())
+
+    pygame.display.update()
