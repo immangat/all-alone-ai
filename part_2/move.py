@@ -6,6 +6,15 @@ class Move():
         self.direction = direction
         self.marbles = marbles
 
+    def get_move_type(self):
+        return self.move_type
+
+    def get_direction(self):
+        return self.direction
+
+    def get_marbles(self):
+        return self.marbles
+
     def get_row_letter(self, index):
         return chr(ord('A') + index - 1)
 
