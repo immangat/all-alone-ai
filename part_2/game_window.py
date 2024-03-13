@@ -9,6 +9,7 @@ class GameWindow:
     MOVE_GUI_WIDTH = 300
     MOVE_GUI_HEIGHT = 500
     MOVE_GUI_MARGIN = 10
+
     def __init__(self, width: int, height: int, manager=None):
         self.width = width
         self.height = height
@@ -21,7 +22,7 @@ class GameWindow:
         self.manager_ui = None
         self.move_gui = move_gui(
             width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
-            height//2 - self.MOVE_GUI_HEIGHT//2,
+            height // 2 - self.MOVE_GUI_HEIGHT // 2,
             self.MOVE_GUI_WIDTH,
             self.MOVE_GUI_HEIGHT,
             self.manager_ui,
