@@ -17,7 +17,7 @@ class GameWindow:
         self.display_surface = None
         self.background = None
         self.manager = manager
-        self.event_handler = EventHandler(self)
+        self.event_handler = EventHandler(self, manager)
         self.marble_radius = 20  # Radius of the marbles
         self.highlighted_marbles = []  # Store the coordinates of the highlighted marble
         self.manager_ui = None
