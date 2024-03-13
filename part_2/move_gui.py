@@ -96,24 +96,3 @@ class move_gui:
         self.moves_gui.html_text = self.moves_made  # Update the html_text of the UITextBox
         self.moves_gui.rebuild()  # Rebuild the UITextBox to reflect the changes
         self.move_count += 1
-
-
-# class selection_menu:
-#     def __init__(self, width, height, manager_ui=None, container=None):
-#         self.width = width
-#         self.height = height
-#         self.event_handler = EventHandler(self)
-#         self.manager_ui = manager_ui
-#         self.container = container
-#         self.selection_gui_rect = pygame.Rect(0, 0, self.width, self.height)
-#         self.play_vs_human_rect = self.calc_relative_rect(0.5, 0.3, 0.3, 0.1, self.selection_gui_rect)
-#         self.play_vs_ai_rect = self.calc_relative_rect(0.5, 0.5, 0.3, 0.1, self.selection_gui_rect)
-#         self.white_marble_rect = self.calc_relative_rect(0.5, 0.7, 0.3, 0.1, self.selection_gui_rect)
-#         self.black_marble_rect = self.calc_relative_rect(0.5, 0.9, 0.3, 0.1, self.selection_gui_rect)
-#         self.random_marble_rect = self.calc_relative_rect(0.5, 0.9, 0.3, 0.1, self.selection_gui_rect)
-#         self.board_type_rect = self.calc_relative_rect(0.5, 0.9, 0.3, 0.1, self.selection_gui_rect)
-#         self.total_move_limit_rect = self.calc_relative_rect(0.5, 0.9, 0.3, 0.1, self.selection_gui_rect)
-#         self.p1_time_per_move_rect = self.calc_relative_rect(0.5, 0.9, 0.3, 0.1, self.selection_gui_rect)
-#         self.p2_time_per_move_rect = self.calc_relative_rect(0.5, 0.9, 0.3, 0.1, self.selection_gui_rect)
-#         self.start_button_rect = self.calc_relative_rect(0.5, 0.9, 0.3, 0.1, self.selection_gui_rect)
-#         self.feed_board_rect = self.calc_relative_rect(0.5, 0.9, 0.3, 0.1, self.selection_gui_rect)
