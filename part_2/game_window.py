@@ -34,7 +34,7 @@ class GameWindow:
             self.manager_ui,
             self.manager_ui
         )
-        self.button_ui = ButtonUI(
+        self.button_gui = ButtonUI(
             width - self.BUTTONS_GUI_WIDTH - self.BUTTONS_GUI_MARGIN,
             height - self.BUTTONS_GUI_WIDTH // 3,
             self.BUTTONS_GUI_WIDTH,
@@ -52,7 +52,7 @@ class GameWindow:
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
         self.move_gui.create_gui()
-        self.button_ui.create_gui()
+        self.button_gui.create_gui()
 
         # Here, you should also create your UI elements and pass the manager_ui to them
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
