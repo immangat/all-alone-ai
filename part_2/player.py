@@ -23,9 +23,9 @@ class Player(ABC):
         pass
         self.clock.can_tick = False
 
-    @abstractmethod
-    def update_score(self, **kwargs):
-        pass
+
+    def update_score(self, score):
+        self.score = score
 
     def get_aggregate_time(self):
         """
@@ -54,8 +54,8 @@ class Player(ABC):
 
 class AIPlayer(Player):
 
-    def update_score(self, **kwargs):
-        pass
+    def update_score(self, score):
+        super().update_score(score)
 
     def make_move(self, **kwargs):
         pass
@@ -65,8 +65,8 @@ class AIPlayer(Player):
 
 
 class HumanPlayer(Player):
-    def update_score(self, **kwargs):
-        pass
+    def update_score(self, score):
+        super().update_score(score)
 
     def make_move(self, **kwargs):
         pass
