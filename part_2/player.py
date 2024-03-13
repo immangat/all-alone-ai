@@ -5,8 +5,8 @@ from part_2.clock import Clock
 
 
 class Player(ABC):
-    def __init__(self, name):
-        self.color = None
+    def __init__(self, name, color):
+        self.color = color
         self.score = None
         self.time = None
         self.current_position = None

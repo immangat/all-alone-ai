@@ -19,7 +19,7 @@ class Manager:
             self.is_running = False
             self.board = board  # You would set this according to your game logic
             self.clock = Clock()
-            self.players = [HumanPlayer("White"), HumanPlayer("Black")]
+            self.players = [HumanPlayer("White", "w"), HumanPlayer("Black", "b")]
             self.current_player: Player = self.players[0]
 
     @staticmethod
