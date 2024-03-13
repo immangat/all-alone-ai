@@ -1,18 +1,30 @@
 import pygame
+import pygame_gui
 
 
 class EventHandler:
     def __init__(self, game_window):
         self.game_window = game_window
+        self.test = 0
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+            elif event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == self.game_window.move_gui.undo_button:
+                        print("Button was clicked!")
+                    elif event.ui_element == self.game_window.move_gui.add_button:
+                        self.test += 1
+                        self.game_window.move_gui.add_move(str(self.test))  # Customize as needed
+                        self.game_window.move_gui.moves_gui.rebuild()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
                 # self.game_window.draw_board()
                 # self.game_window.updateWindow()
                 self.on_mouse_click(event.pos)
+                self.game_window.manager_ui.process_events(event)
+
             self.game_window.manager_ui.process_events(event)
 
     def on_mouse_click(self, mouse_pos):
