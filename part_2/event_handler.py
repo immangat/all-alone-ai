@@ -1,6 +1,8 @@
 import pygame
 import pygame_gui
 
+CUSTOM_TIMER_EVENT = pygame.USEREVENT + 1
+
 
 class EventHandler:
     def __init__(self, game_window):
@@ -24,7 +26,10 @@ class EventHandler:
                 # self.game_window.updateWindow()
                 self.on_mouse_click(event.pos)
                 self.game_window.manager_ui.process_events(event)
-
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.game_window.manager.switch_turns()
+            elif event.type == CUSTOM_TIMER_EVENT:
+                self.game_window.manager.tick_timer()
             self.game_window.manager_ui.process_events(event)
 
     def on_mouse_click(self, mouse_pos):

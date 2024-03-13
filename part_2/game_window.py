@@ -1,15 +1,17 @@
 import math
 import pygame
 import pygame_gui
-from part_2.event_handler import EventHandler
 from part_2.move_gui import move_gui
+
+from part_2.event_handler import EventHandler, CUSTOM_TIMER_EVENT
 
 
 class GameWindow:
     MOVE_GUI_WIDTH = 300
     MOVE_GUI_HEIGHT = 500
     MOVE_GUI_MARGIN = 10
-    def __init__(self, width: int, height: int, manager=None):
+
+    def __init__(self, width: int, height: int, manager):
         self.width = width
         self.height = height
         self.display_surface = None
@@ -21,12 +23,13 @@ class GameWindow:
         self.manager_ui = None
         self.move_gui = move_gui(
             width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
-            height//2 - self.MOVE_GUI_HEIGHT//2,
+            height // 2 - self.MOVE_GUI_HEIGHT // 2,
             self.MOVE_GUI_WIDTH,
             self.MOVE_GUI_HEIGHT,
             self.manager_ui,
             self.manager_ui
         )
+        self.clock = pygame.time.Clock()
 
     def initWindow(self):
         pygame.init()
@@ -38,6 +41,8 @@ class GameWindow:
         self.move_gui.create_gui()
 
         # Here, you should also create your UI elements and pass the manager_ui to them
+        pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
+        # self.loadSprites()
 
     def updateWindow(self):
         # This will update the contents of the entire display
@@ -95,9 +100,45 @@ class GameWindow:
                 if marble == (row, col):
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
+        self.draw_time()
         # self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
-        # pygame.display.flip()
 
     # def draw_move_gui(self):
     #     # Draw the move GUI
     #     self.move_gui.draw_button()
+
+    def draw_time(self):
+        font = pygame.font.SysFont(None, 30)
+        text = font.render(str("{}:{:.1f} {}:{:.1f} board:{:.1f}".format(self.manager.players[0].name,
+                                                                         self.manager.players[
+                                                                             0].clock.current_time / 1000,
+                                                                         self.manager.players[1].name,
+                                                                         self.manager.players[
+                                                                             1].clock.current_time / 1000,
+                                                                         self.manager.clock.current_time / 1000)), True,
+                           (0, 0, 0))
+        self.display_surface.blit(text, (0, 0))
+        pygame.display.update((0, 0, text.get_width() + 10, text.get_height() + 1))
+
+    # Not implemented for now due to processing power losses
+    # def load_marble_sprites(self):
+    #
+    #     empty_space_color = (127, 127, 127)  # Color for empty spaces
+    #
+    #     for row, col in self.manager.board.BOARD_COORD:
+    #         color = self.manager.board.get_circle(row, col)
+    #
+    #         position = self.board_to_pixel((row, col))  # Convert board coords to pixel coords
+    #
+    #         # if color == 'b':
+    #         #     black_marble_sprite = MySprite('assets/black_marble.png', position, (65, 65))
+    #         #     self.sprites.add(black_marble_sprite)  # Add to the sprite group
+    #         #
+    #         # elif color == 'w':
+    #         #     white_marble_sprite = MySprite('assets/marble_white.png', position, (50, 50))
+    #         #     self.sprites.add(white_marble_sprite)  # Add to the sprite group
+    #
+    #         else:  # For empty spaces, draw a gray circle directly onto the board
+    #             pygame.draw.circle(self.display_surface, empty_space_color, position, self.marble_radius)
+    #     self.sprites.draw(self.display_surface)
+    #     pygame.display.flip()  # Update the display after drawing the empty spaces
