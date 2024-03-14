@@ -3,6 +3,7 @@ import pygame_gui
 import pygame_menu
 from pygame_gui.elements import UIButton
 
+from part_2.board import Board
 from part_2.event_handler import EventHandler
 
 
@@ -19,6 +20,8 @@ class MenuScreen:
         self.manager = manager
         self.event_handler = EventHandler(self, manager)
         self.type = "menu"
+
+
 
     def initWindow(self):
         pygame.init()
@@ -64,6 +67,9 @@ class MenuScreen:
         self.menu.add.button('Start', self.start_game)
         self.menu.add.button('Quit', self.quit_game)
 
+        self.manager.board.setup_board("Default")
+
+
 
 
 
@@ -85,7 +91,19 @@ class MenuScreen:
 
     def select_board_type(self, selected: tuple, value: any):
         print("Board type selected")
-        print(f"selected: {selected[0]} value: {value}")
+        if selected[0][0] == "Default":
+            print("Default board selected")
+            self.manager.board.clear_board()
+            self.manager.board.setup_default()
+        elif selected[0][0] == "German Daisy":
+            print("German Daisy board selected")
+            self.manager.board.clear_board()
+            self.manager.board.setup_german_daisy()
+        elif selected[0][0] == "Belgian Daisy":
+            print("Belgian Daisy board selected")
+            self.manager.board.clear_board()
+            self.manager.board.setup_belgian_daisy()
+        # print(f"selected: {selected[0][0]} value: {value}")
 
     def select_total_move_limit(self):
         print("Total move limit selected")

@@ -27,7 +27,7 @@ class Manager:
             self.clock = Clock()
             self.players = [HumanPlayer("Black", "b"), HumanPlayer("White", "w")]
             self.current_player: Player = self.players[0]
-            self.current_screen = "game"
+            self.current_screen = "menu"
             self.menu_screen = MenuScreen(1280,
                                           720,
                                           self)
@@ -41,8 +41,7 @@ class Manager:
 
     def start(self):
         self.board = Board()
-        # TODO: add a function to return setup config from UI
-        self.board.setup_board("Belgian Daisy")
+        self.board.setup_board("German Daisy") # This is only a placeholder for testing without the menu
         self.states = States()
         self.states.create_initial_state(self.board)
         if self.current_screen == "menu":
