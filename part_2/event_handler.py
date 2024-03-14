@@ -1,6 +1,5 @@
 import pygame
 import pygame_gui
-from directions import Direction
 
 CUSTOM_TIMER_EVENT = pygame.USEREVENT + 1
 
