@@ -169,6 +169,11 @@ class Board:
                 marbles.append(coord)
         return marbles
 
+    def num_marbles_left_by_color(self, color):
+        initial_marbles = 14
+        marbles = self.get_marbles_by_color(color)
+        return initial_marbles - len(marbles)
+
     def get_row_letter(self, index):
         return chr(ord('A') + index - 1)
 
