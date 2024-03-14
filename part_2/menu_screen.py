@@ -3,6 +3,7 @@ import pygame_gui
 import pygame_menu
 from pygame_gui.elements import UIButton
 
+from part_2.board import Board
 from part_2.event_handler import EventHandler
 
 
@@ -19,7 +20,7 @@ class MenuScreen:
         self.manager = manager
         self.event_handler = EventHandler(self, manager)
         self.type = "menu"
-        self.manager.board.setup_default()
+
 
 
     def initWindow(self):
@@ -65,6 +66,8 @@ class MenuScreen:
 
         self.menu.add.button('Start', self.start_game)
         self.menu.add.button('Quit', self.quit_game)
+
+        self.manager.board.setup_board("Default")
 
 
 
