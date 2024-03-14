@@ -17,4 +17,4 @@ class Clock:
             self.current_time += self.tick_value
 
     def reset_timer(self):
-        self.current_time = 0
+        self.current_time.current = 0
