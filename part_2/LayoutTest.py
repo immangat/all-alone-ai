@@ -24,7 +24,8 @@ WINDOW_HEIGHT = display_info.current_h
 COLUM_LINE_1 = round(WINDOW_WIDTH * 0.75)
 ROW_LINE_1 = round(WINDOW_HEIGHT * 0.1)
 ROW_LINE_2 = round(WINDOW_HEIGHT * 0.3)
-ROW_LINE_3 = round(WINDOW_HEIGHT * 0.9)
+ROW_LINE_3 = round(WINDOW_HEIGHT * 0.75)
+ROW_LINE_4 = round(WINDOW_HEIGHT * 0.9)
 # Set the size of the pygame window
 window_size = (WINDOW_WIDTH, WINDOW_HEIGHT)
 screen = pygame.display.set_mode(window_size)
@@ -36,30 +37,28 @@ clock = pygame.time.Clock()
 # UIManager to manage UI elements
 manager = pygame_gui.UIManager(window_size, "gui_json/theme.json")
 
-# Define a UI containers (optional, depending on your needs))
-abalone_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, ROW_LINE_1), (COLUM_LINE_1, ROW_LINE_3 - ROW_LINE_1)),
+# Define a UI containers
+abalone_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, ROW_LINE_1), (COLUM_LINE_1, ROW_LINE_4 - ROW_LINE_1)),
                                              manager=manager)
 
-# not style ? why
 player_1_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0,0), (COLUM_LINE_1, ROW_LINE_1)),
                                                   manager=manager,
                                                   object_id="player1")
 
-player_2_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0,ROW_LINE_3), (COLUM_LINE_1, ROW_LINE_1)),
+player_2_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0,ROW_LINE_4), (COLUM_LINE_1, ROW_LINE_1)),
                                                   manager=manager,
                                                   object_id="player2")
-# Your button layout rect
-button_layout_rect = pygame.Rect(30, 20, 100, 20)
+
 clock_image_1 = pygame.image.load('assets/clock1.png')
 
 
 turn_remaining_window = pygame_gui.elements.UIPanel(relative_rect= pygame.Rect((COLUM_LINE_1, 0), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_2)))
 
-moves_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_2), (WINDOW_WIDTH - COLUM_LINE_1, WINDOW_HEIGHT - ROW_LINE_2 - ROW_LINE_1)))
+moves_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_2), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_3 - ROW_LINE_2)))
 
 buttons_gui_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_3), (WINDOW_WIDTH - COLUM_LINE_1, WINDOW_HEIGHT- ROW_LINE_3)))
 
-#Create and add player elements to player1 container
+# Create and add player elements to player1 container
 player_1_info = UILabel(relative_rect=pygame.Rect(0, 0, -1, 50),
                         text='Player 1: {}'.format(ai_player.name),
                         manager=manager,
@@ -94,7 +93,7 @@ buttons_gui.create_gui()
 
 # player_1_clock_label = UILabel(relative_rect=pygame.)
 
-#create and add player2 elements to player2 container
+# Create and add player2 elements to player2 container
 player_2_info = UILabel(relative_rect=pygame.Rect(0, 0, -1, 50),
                         text='Player 2: {}'.format(human_player.name),
                         manager=manager,
