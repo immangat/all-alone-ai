@@ -1,12 +1,19 @@
 import pygame
 import pygame_gui
-from pygame_gui.elements import UILabel, UIImage
+from pygame_gui.elements import UILabel, UIImage, UIPanel, UIButton
 from part_2 import player
 from part_2.player import AIPlayer, HumanPlayer
-
+from part_2.uis.button_ui_layout import ButtonUI
 ## making players for testing
 ai_player = AIPlayer(name="AI Nico", color="Red")
 human_player = HumanPlayer(name="Human Manhgott", color="Blue")
+
+MOVE_GUI_WIDTH = 300
+MOVE_GUI_HEIGHT = 500
+MOVE_GUI_MARGIN = 10
+BUTTONS_GUI_WIDTH = 300
+BUTTONS_GUI_HEIGHT = 100
+BUTTONS_GUI_MARGIN = 10
 
 pygame.init()
 
@@ -50,7 +57,7 @@ turn_remaining_window = pygame_gui.elements.UIPanel(relative_rect= pygame.Rect((
 
 moves_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_2), (WINDOW_WIDTH - COLUM_LINE_1, WINDOW_HEIGHT - ROW_LINE_2 - ROW_LINE_1)))
 
-options_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_3), (WINDOW_WIDTH - COLUM_LINE_1, WINDOW_HEIGHT- ROW_LINE_3)))
+buttons_gui_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_3), (WINDOW_WIDTH - COLUM_LINE_1, WINDOW_HEIGHT- ROW_LINE_3)))
 
 #Create and add player elements to player1 container
 player_1_info = UILabel(relative_rect=pygame.Rect(0, 0, -1, 50),
@@ -74,6 +81,10 @@ player_1_time = UILabel(relative_rect=pygame.Rect(-45, 0, -1, -1),
                         container=player_1_hud_window,
                         object_id="player2",
                         anchors={'left': 'right', 'right': 'right', 'centery': 'centery'})
+
+# create and add buttons
+buttons_gui = ButtonUI(buttons_gui_window, manager)
+buttons_gui.create_gui()
 
 # player_1_clock = UIImage(relative_rect=pygame.Rect(0, 0, 25, 25),
 #                          manager=manager,
