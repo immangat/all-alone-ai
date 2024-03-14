@@ -28,12 +28,13 @@ class Manager:
             self.clock = Clock()
             self.players = [HumanPlayer("Black", "b"), HumanPlayer("White", "w")]
             self.current_player: Player = self.players[0]
-            self.current_screen = "menu"
+            self.current_screen = "game"
             self.menu_screen = MenuScreen(1280,
                                           720,
                                           self)
             self.states = None
             self.gen = StateSpaceGen()
+            self.move_history = []
 
     @staticmethod
     def get_instance():
@@ -77,6 +78,11 @@ class Manager:
         self.game_window.event_handler.test = 0
         self.switch_to_screen("menu")
 
+    def store_move_history(self, move):
+        self.move_history.append(move)
+        self.game_window.move_gui.add_move(str(self.move_history[-1]))
+        self.game_window.move_gui.moves_gui.rebuild()
+
     def validate_and_make_move(self, marbles, direction):
         self.gen = StateSpaceGen()
         board_move = self.gen.validate_move(self.board, marbles, direction)
@@ -84,6 +90,7 @@ class Manager:
             self.board = board_move[1]
             self.states.add_state(board_move[0], board_move[1])
             print(self.states.get_states()[-1].get_move())
+            self.store_move_history(self.states.get_states()[-1].get_move())
             self.switch_turns()
             self.board.get_marbles_by_color(self.current_player.color)
         else:
@@ -104,6 +111,10 @@ class Manager:
         """
 
         deleted_state = self.states.remove_last_state()
+        for state in self.states:
+            print(print(f"state: {state.get_move()}"))
+        print(f"states: {self.states}")
+        print(deleted_state)
         if deleted_state:
             last_state = self.states.get_last_state()
             self.board = copy.deepcopy(last_state.get_board())

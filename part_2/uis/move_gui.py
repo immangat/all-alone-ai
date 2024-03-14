@@ -72,11 +72,11 @@ class move_gui:
                                     manager=self.manager_ui,
                                     container=panel)
 
-        self.add_button = UIButton(relative_rect=self.button2_rect,
-                                   starting_height=2,
-                                   text='add move',
-                                   manager=self.manager_ui,
-                                   container=panel)
+        # self.add_button = UIButton(relative_rect=self.button2_rect,
+        #                            starting_height=2,
+        #                            text='add move',
+        #                            manager=self.manager_ui,
+        #                            container=panel)
 
         self.moves_gui = UITextBox(relative_rect=self.moves_text_rect,
                                    html_text=self.moves_made,
@@ -85,9 +85,13 @@ class move_gui:
 
     def add_move(self, move):
         formatted_move = str(move).ljust(3)  # Ensures move is left-aligned in 3 characters
+        # Determine padding based on the length of the formatted move
+        padding = " " * (20 - len(formatted_move))
+        # Use string formatting to create a uniformly padded string
+        move_entry = f"<pre>{formatted_move}{padding}<pre>"
+
         if self.move_count % 2 == 0:
-            # Start a new buffer with the formatted move
-            self.moves_made += f"<pre>{formatted_move}              <pre>"
+            self.moves_made += move_entry
         else:
             # Complete the buffer with the formatted move
             self.moves_made += f"<p>{formatted_move}</p>"
