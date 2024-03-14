@@ -90,6 +90,7 @@ class Manager:
 
 if __name__ == "__main__":
     board = Board()
-    board.setup_belgian_daisy()
+    # use this if you want to test the game with no menu
+    # board.setup_belgian_daisy()
     game = Manager(board)
     game.start()

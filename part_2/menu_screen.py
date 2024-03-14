@@ -19,6 +19,8 @@ class MenuScreen:
         self.manager = manager
         self.event_handler = EventHandler(self, manager)
         self.type = "menu"
+        self.manager.board.setup_default()
+
 
     def initWindow(self):
         pygame.init()
@@ -68,6 +70,7 @@ class MenuScreen:
 
 
 
+
     def play_against_human(self):
         print("Play against human")
 
@@ -85,7 +88,19 @@ class MenuScreen:
 
     def select_board_type(self, selected: tuple, value: any):
         print("Board type selected")
-        print(f"selected: {selected[0]} value: {value}")
+        if selected[0][0] == "Default":
+            print("Default board selected")
+            self.manager.board.clear_board()
+            self.manager.board.setup_default()
+        elif selected[0][0] == "German Daisy":
+            print("German Daisy board selected")
+            self.manager.board.clear_board()
+            self.manager.board.setup_german_daisy()
+        elif selected[0][0] == "Belgian Daisy":
+            print("Belgian Daisy board selected")
+            self.manager.board.clear_board()
+            self.manager.board.setup_belgian_daisy()
+        # print(f"selected: {selected[0][0]} value: {value}")
 
     def select_total_move_limit(self):
         print("Total move limit selected")
