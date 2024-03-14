@@ -23,9 +23,9 @@ class Manager:
             self.is_running = False
             self.board = None  # You would set this according to your game logic
             self.game_paused = False
-            self.board = board  # You would set this according to your game logic
+            self.board = None  # You would set this according to your game logic
             self.clock = Clock()
-            self.players = [HumanPlayer("Black"), HumanPlayer("White")]
+            self.players = [HumanPlayer("p1", "Black"), HumanPlayer("p2", "White")]
             self.current_player: Player = self.players[0]
             self.current_screen = "menu"
             self.menu_screen = MenuScreen(1280,
@@ -57,7 +57,6 @@ class Manager:
 
     def is_game_over(self):
         return True if self.players[0].score == 6 or self.players[1].score == 6 else False
-
 
     def end_game(self):
         pass
