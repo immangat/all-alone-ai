@@ -46,15 +46,18 @@ class GameWindow:
         self.clock = pygame.time.Clock()
 
     def initWindow(self):
-        pygame.init()
+        # pygame.init()
         self.display_surface = pygame.display.set_mode((self.width, self.height))  # Create the window
         pygame.display.set_caption('Game Window')
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
+        print("I really tried")
+        print(self.move_gui)
+        print(self.manager_ui)
+        print(self.button_gui)
         self.move_gui.create_gui()
         self.button_gui.create_gui()
-
         # Here, you should also create your UI elements and pass the manager_ui to them
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
 

@@ -35,9 +35,10 @@ class EventHandler:
                         self.window.move_gui.moves_gui.rebuild()
                     elif event.ui_element == self.window.button_gui.pause:
                         print("jkaghfjhajhfajf")
-
-                        print("Before manager.pause_game()")
                         self.manager.pause_game()
+                    elif event.ui_element == self.window.button_gui.reset:
+                        print("Resetting game")
+                        self.manager.reset_game()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
                 self.on_mouse_click(event.pos)
                 self.window.manager_ui.process_events(event)
