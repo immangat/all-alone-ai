@@ -25,7 +25,7 @@ class EventHandler:
             if event.type == pygame.QUIT:
                 pygame.quit()
             elif event.type == pygame.USEREVENT:
-                print(self.window)
+                # print(self.window)
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == self.window.move_gui.undo_button:
                         print("Button was clicked!")
@@ -35,6 +35,8 @@ class EventHandler:
                         self.window.move_gui.moves_gui.rebuild()
                     elif event.ui_element == self.window.button_gui.pause:
                         print("jkaghfjhajhfajf")
+
+                        print("Before manager.pause_game()")
                         self.manager.pause_game()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
                 self.on_mouse_click(event.pos)

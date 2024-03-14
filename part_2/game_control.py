@@ -23,7 +23,7 @@ class Manager:
             self.clock = Clock()
             self.players = [HumanPlayer("White", "w"), HumanPlayer("Black", "b")]
             self.current_player: Player = self.players[0]
-            self.current_screen = "menu"
+            self.current_screen = "game"
             self.menu_screen = MenuScreen(1280,
                                           720,
                                           self)
