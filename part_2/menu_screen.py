@@ -17,7 +17,7 @@ class MenuScreen:
         self.background = None
         self.menu = None
         self.manager = manager
-        self.event_handler = EventHandler(self)
+        self.event_handler = EventHandler(self, manager)
         self.type = "menu"
 
     def initWindow(self):

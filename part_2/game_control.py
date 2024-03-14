@@ -40,7 +40,7 @@ class Manager:
             self.is_running = True
             self.main_loop()
         elif self.current_screen == "game":
-            print("game")
+            # print("game")
             self.game_window.initWindow()
             self.is_running = True
             self.main_loop()
@@ -67,6 +67,7 @@ class Manager:
     def switch_to_screen(self, screen_name):
         """Switches the current screen to the given screen name."""
         self.current_screen = screen_name
+
         if screen_name == "menu":
             self.menu_screen.initWindow()
         elif screen_name == "game":
@@ -76,10 +77,13 @@ class Manager:
         clock = pygame.time.Clock()
         while self.is_running:
             time_delta = clock.tick(60) / 1000.0
-            self.menu_screen.event_handler.handle_events()
             if self.current_screen == "menu":  # we should probably create an abstact window class
+                # print("menu loop")
+                self.menu_screen.event_handler.handle_events()
                 self.menu_screen.updateWindow()
             elif self.current_screen == "game":
+                # print("game loop")
+                self.game_window.event_handler.handle_events()
                 self.game_window.manager_ui.update(time_delta)
                 self.game_window.updateWindow()  # Draw the board state
 

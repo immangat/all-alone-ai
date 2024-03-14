@@ -57,7 +57,6 @@ class GameWindow:
 
         # Here, you should also create your UI elements and pass the manager_ui to them
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
-        # self.loadSprites()
 
     def updateWindow(self):
         # This will update the contents of the entire display
