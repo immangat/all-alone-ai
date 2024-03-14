@@ -16,7 +16,7 @@ class GameWindow:
     BUTTONS_GUI_HEIGHT = 100
     BUTTONS_GUI_MARGIN = 10
 
-    def __init__(self, width: int, height: int, manager):
+    def __init__(self, width: int, height: int, manager=None):
         self.width = width
         self.height = height
         self.display_surface = None
@@ -26,6 +26,7 @@ class GameWindow:
         self.marble_radius = 20  # Radius of the marbles
         self.highlighted_marbles = []  # Store the coordinates of the highlighted marble
         self.manager_ui = None
+        self.type = "game"
         self.move_gui = move_gui(
             width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
             height // 2 - self.MOVE_GUI_HEIGHT // 2,
@@ -56,7 +57,6 @@ class GameWindow:
 
         # Here, you should also create your UI elements and pass the manager_ui to them
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
-        # self.loadSprites()
 
     def updateWindow(self):
         # This will update the contents of the entire display
@@ -64,7 +64,6 @@ class GameWindow:
         self.manager_ui.draw_ui(self.background)  # Draws any ui using pygame_gui
         pygame.display.flip()  # Update the display
         self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
-        # self.move_gui.create_gui()
 
     def board_to_pixel(self, coord):
         # Assuming you have a method that converts board coordinates to pixel coordinates
@@ -115,11 +114,7 @@ class GameWindow:
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
         self.draw_time()
-        # self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
 
-    # def draw_move_gui(self):
-    #     # Draw the move GUI
-    #     self.move_gui.draw_button()
 
     def draw_time(self):
         font = pygame.font.SysFont(None, 30)
