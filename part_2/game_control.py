@@ -33,6 +33,7 @@ class Manager:
                                           720,
                                           self)
             self.states = None
+            self.gen = StateSpaceGen()
 
     @staticmethod
     def get_instance():
@@ -77,12 +78,13 @@ class Manager:
         self.switch_to_screen("menu")
 
     def validate_and_make_move(self, marbles, direction):
-        gen = StateSpaceGen()
-        board_move = gen.validate_move(self.board, marbles, direction)
+        self.gen = StateSpaceGen()
+        board_move = self.gen.validate_move(self.board, marbles, direction)
         if board_move[1] is not None:
             self.board = board_move[1]
             self.states.add_state(board_move[1], board_move[0])
             self.switch_turns()
+            self.board.get_marbles_by_color(self.current_player.color)
         else:
             pass
             # TODO: Feedback for invalid move????
