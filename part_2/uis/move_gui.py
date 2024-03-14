@@ -1,8 +1,5 @@
 import pygame
-import pygame_gui
 from pygame_gui.elements import UIButton, UIPanel, UILabel, UITextBox
-
-from part_2.event_handler import EventHandler
 
 
 class move_gui:
