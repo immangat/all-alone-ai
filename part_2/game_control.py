@@ -82,7 +82,8 @@ class Manager:
         board_move = self.gen.validate_move(self.board, marbles, direction)
         if board_move[1] is not None:
             self.board = board_move[1]
-            self.states.add_state(board_move[1], board_move[0])
+            self.states.add_state(board_move[0], board_move[1])
+            print(self.states.get_states()[-1].get_move())
             self.switch_turns()
             self.board.get_marbles_by_color(self.current_player.color)
         else:
