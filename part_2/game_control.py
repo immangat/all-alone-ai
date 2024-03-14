@@ -25,9 +25,9 @@ class Manager:
             self.game_paused = False
             self.board = None  # You would set this according to your game logic
             self.clock = Clock()
-            self.players = [HumanPlayer("p1", "Black"), HumanPlayer("p2", "White")]
+            self.players = [HumanPlayer("Black", "b"), HumanPlayer("White", "w")]
             self.current_player: Player = self.players[0]
-            self.current_screen = "menu"
+            self.current_screen = "game"
             self.menu_screen = MenuScreen(1280,
                                           720,
                                           self)
