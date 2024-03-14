@@ -4,13 +4,14 @@ from pygame_gui.elements import UIButton, UIPanel
 
 class ButtonUI:
 
-    def __init__(self, x_pixel: int, y_pixel: int, width: int, height: int, manager_ui=None, container=None):
+    def __init__(self, x_pixel: int, y_pixel: int, width: int, height: int, manager_ui=None):
         self.width = width
         self.height = height
         self.x_pixel = x_pixel
         self.y_pixel = y_pixel
         self.manager_ui = manager_ui
-        self.container = container
+        if self.manager_ui is None:
+            raise ValueError("UIManager is not initialized.")
         self.pause = None
         self.reset = None
         self.stop = None

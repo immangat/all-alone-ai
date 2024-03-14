@@ -73,6 +73,7 @@ class Manager:
         self.players[0].reset_player_clock()
         self.players[1].reset_player_clock()
         self.current_player = self.players[0]
+        self.game_window.event_handler.test = 0
         self.switch_to_screen("menu")
 
     def validate_and_make_move(self, marbles, direction):
