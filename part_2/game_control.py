@@ -98,7 +98,7 @@ class Manager:
 
     def update_score(self):
         white_score = self.board.num_marbles_left_by_color("b")
-        black_score = self.board.num_marbles_right_by_color("w")
+        black_score = self.board.num_marbles_left_by_color("w")
         self.players[0].update_score(black_score)
         self.players[1].update_score(white_score)
 
