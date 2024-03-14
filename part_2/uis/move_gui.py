@@ -4,7 +4,7 @@ from pygame_gui.elements import UIButton, UIPanel, UILabel, UITextBox
 
 class move_gui:
 
-    def __init__(self, x_pixel: int, y_pixel: int, width: int, height: int, manager_ui=None, container=None):
+    def __init__(self, x_pixel: int, y_pixel: int, width: int, height: int, manager_ui=None):
         self.move_buffer = None
         self.moves_made = ""
         self.move_count = 0
@@ -13,7 +13,8 @@ class move_gui:
         self.x_pixel = x_pixel
         self.y_pixel = y_pixel
         self.manager_ui = manager_ui
-        self.container = container
+        if self.manager_ui is None:
+            raise ValueError("UIManager is not initialized.")
         self.undo_button = None
         self.add_button = None
         self.panel_moves = None

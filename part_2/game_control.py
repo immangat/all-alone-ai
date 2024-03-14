@@ -18,6 +18,7 @@ class Manager:
             raise Exception("This class is a singleton")
         else:
             Manager.__instance = self
+            pygame.init()
             self.game_window = GameWindow(1280, 720, self)  # This should be an instance of GameWindow class
             self.board_state = ''  # You would set this according to your game logic
             self.is_running = False
@@ -41,15 +42,16 @@ class Manager:
 
     def start(self):
         self.board = Board()
-        self.board.setup_board("German Daisy") # This is only a placeholder for testing without the menu
+        self.board.setup_board("German Daisy")  # This is only a placeholder for testing without the menu
         self.states = States()
         self.states.create_initial_state(self.board)
         if self.current_screen == "menu":
+            print("menu")
             self.menu_screen.initWindow()
             self.is_running = True
             self.main_loop()
         elif self.current_screen == "game":
-            # print("game")
+            print("game")
             self.game_window.initWindow()
             self.is_running = True
             self.main_loop()
@@ -65,6 +67,15 @@ class Manager:
         self.game_paused = not self.game_paused
         pass
 
+    def reset_game(self):
+        print("Game reset")
+        self.clock.reset_timer()
+        self.players[0].reset_player_clock()
+        self.players[1].reset_player_clock()
+        self.current_player = self.players[0]
+        self.game_window.event_handler.test = 0
+        self.switch_to_screen("menu")
+
     def validate_and_make_move(self, marbles, direction):
         gen = StateSpaceGen()
         board_move = gen.validate_move(self.board, marbles, direction)
@@ -74,7 +85,7 @@ class Manager:
             self.switch_turns()
         else:
             pass
-            #TODO: Feedback for invalid move????
+            # TODO: Feedback for invalid move????
 
     def switch_turns(self):
         self.current_player.reset_player_clock()
@@ -109,11 +120,14 @@ class Manager:
     def switch_to_screen(self, screen_name):
         """Switches the current screen to the given screen name."""
         self.current_screen = screen_name
-
+        # self.start()
         if screen_name == "menu":
             self.menu_screen.initWindow()
+            self.main_loop()
         elif screen_name == "game":
+            print("game reset")
             self.game_window.initWindow()
+            self.main_loop()
 
     def main_loop(self):
         clock = pygame.time.Clock()
