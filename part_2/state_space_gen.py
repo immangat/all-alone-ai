@@ -110,7 +110,6 @@ class StateSpaceGen:
                 new_board.set_marble(next_coord, opponent_color)
             new_board.set_marble((coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1]), self.curr_player)
             new_board.set_marble(coords[0], None)
-            print("sumito")
             self.moves.append(new_move)
             self.boards.append(new_board)
 

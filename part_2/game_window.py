@@ -1,7 +1,9 @@
 import math
 import pygame
 import pygame_gui
-from part_2.move_gui import move_gui
+
+from part_2.uis.button_ui import ButtonUI
+from part_2.uis.move_gui import move_gui
 
 from part_2.event_handler import EventHandler, CUSTOM_TIMER_EVENT
 
@@ -10,8 +12,11 @@ class GameWindow:
     MOVE_GUI_WIDTH = 300
     MOVE_GUI_HEIGHT = 500
     MOVE_GUI_MARGIN = 10
+    BUTTONS_GUI_WIDTH = 300
+    BUTTONS_GUI_HEIGHT = 100
+    BUTTONS_GUI_MARGIN = 10
 
-    def __init__(self, width: int, height: int, manager):
+    def __init__(self, width: int, height: int, manager=None):
         self.width = width
         self.height = height
         self.display_surface = None
@@ -21,14 +26,7 @@ class GameWindow:
         self.marble_radius = 20  # Radius of the marbles
         self.highlighted_marbles = []  # Store the coordinates of the highlighted marble
         self.manager_ui = None
-        self.move_gui = move_gui(
-            width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
-            height // 2 - self.MOVE_GUI_HEIGHT // 2,
-            self.MOVE_GUI_WIDTH,
-            self.MOVE_GUI_HEIGHT,
-            self.manager_ui,
-            self.manager_ui
-        )
+        self.type = "game"
         self.clock = pygame.time.Clock()
 
     def initWindow(self):
@@ -38,11 +36,24 @@ class GameWindow:
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
+        self.move_gui = move_gui(
+            self.width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
+            self.height // 2 - self.MOVE_GUI_HEIGHT // 2,
+            self.MOVE_GUI_WIDTH,
+            self.MOVE_GUI_HEIGHT,
+            self.manager_ui
+        )
+        self.button_gui = ButtonUI(
+            self.width - self.BUTTONS_GUI_WIDTH - self.BUTTONS_GUI_MARGIN,
+            self.height - self.BUTTONS_GUI_WIDTH // 3,
+            self.BUTTONS_GUI_WIDTH,
+            self.BUTTONS_GUI_HEIGHT,
+            self.manager_ui
+        )
         self.move_gui.create_gui()
-
+        self.button_gui.create_gui()
         # Here, you should also create your UI elements and pass the manager_ui to them
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
-        # self.loadSprites()
 
     def updateWindow(self):
         # This will update the contents of the entire display
@@ -50,7 +61,6 @@ class GameWindow:
         self.manager_ui.draw_ui(self.background)  # Draws any ui using pygame_gui
         pygame.display.flip()  # Update the display
         self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
-        # self.move_gui.create_gui()
 
     def board_to_pixel(self, coord):
         # Assuming you have a method that converts board coordinates to pixel coordinates
@@ -101,11 +111,7 @@ class GameWindow:
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
         self.draw_time()
-        # self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
 
-    # def draw_move_gui(self):
-    #     # Draw the move GUI
-    #     self.move_gui.draw_button()
 
     def draw_time(self):
         font = pygame.font.SysFont(None, 30)
