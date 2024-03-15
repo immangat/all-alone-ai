@@ -74,7 +74,17 @@ class Manager:
         self.players[0].reset_player_clock()
         self.players[1].reset_player_clock()
         self.current_player = self.players[0]
-        self.game_window.event_handler.test = 0
+        self.states.clear_states()
+        # self.board.clear_board()
+        # self.states.create_initial_state(self.board)
+        # self.switch_to_screen("menu")
+
+    def stop_game(self):
+        print("Game stop")
+        self.clock.reset_timer()
+        self.players[0].reset_player_clock()
+        self.players[1].reset_player_clock()
+        self.current_player = self.players[0]
         self.states.clear_states()
         self.board.clear_board()
         self.states.create_initial_state(self.board)
@@ -138,7 +148,6 @@ class Manager:
             self.menu_screen.initWindow()
             self.main_loop()
         elif screen_name == "game":
-            print("game reset")
             self.game_window.initWindow()
             self.main_loop()
 
