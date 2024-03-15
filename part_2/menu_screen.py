@@ -23,6 +23,10 @@ class MenuScreen:
         self.event_handler = EventHandler(self, manager)
         self.type = "menu"
         self.human_player = HumanPlayer("Black", "b")
+        self.total_move_limit = 60
+        self.p1_time = 60
+        self.p2_time = 60
+        self.is_testing = False
 
     def initWindow(self):
         pygame.init()
@@ -59,7 +63,7 @@ class MenuScreen:
 
         self.menu.add.label("Move Settings:", padding=(15, 0, 15, 0), font_size=22)
         self.menu.add.text_input('Input Total Move Limit:            ',
-                                 default='60',
+                                 default=self.total_move_limit,
                                  padding=(0, 0, 0, 0),  # top, right, bottom, left
                                  align=pygame_menu.locals.ALIGN_CENTER,
                                  maxchar=3,
@@ -71,7 +75,7 @@ class MenuScreen:
                                  onchange=self.select_total_move_limit(),
                                  selection_color=(76, 0, 153))
         self.menu.add.text_input('Input P1 Time Per Move:         ',
-                                 default='60',
+                                 default=self.p1_time,
                                  align=pygame_menu.locals.ALIGN_CENTER,
                                  maxchar=3,
                                  maxwidth=3,
@@ -82,8 +86,8 @@ class MenuScreen:
                                  onchange=self.select_p1_time_per_move,
                                  selection_color=(76, 0, 153))
         self.menu.add.text_input('Input P2 Time Per Move:         ',
+                                 default=self.p2_time,
                                  align=pygame_menu.locals.ALIGN_CENTER,
-                                 default='60',
                                  maxchar=3,
                                  maxwidth=3,
                                  input_type=pygame_menu.locals.INPUT_INT,
@@ -111,7 +115,9 @@ class MenuScreen:
         frame.pack(quit_button , align=pygame_menu.locals.ALIGN_RIGHT)
 
         self.manager.board.setup_board("Default")
-        self.menu.add.button('Board Testing', self.select_total_move_limit, background_color=(0, 0, 0))
+
+        if self.is_testing:
+            self.menu.add.button('Board Testing', self.board_testing, background_color=(0, 0, 0))
 
     def select_game_type(self, *args):
         print(f"select game type {args[1]}")
@@ -164,6 +170,9 @@ class MenuScreen:
     def quit_game(self):
         # Exit the program
         pygame.quit()
+
+    def board_testing(self):
+        print("board testing")
 
     def updateWindow(self):
         # self.manager_ui.draw_ui(self.background)
