@@ -76,6 +76,9 @@ class Manager:
         self.players[1].reset_player_clock()
         self.current_player = self.players[0]
         self.game_window.event_handler.test = 0
+        self.states.clear_states()
+        self.board.clear_board()
+        self.states.create_initial_state(self.board)
         self.switch_to_screen("menu")
 
     def store_move_history(self, move):
@@ -110,14 +113,11 @@ class Manager:
         Undoes the last move made in the game
         """
 
-        deleted_state = self.states.remove_last_state()
-        for state in self.states:
-            print(print(f"state: {state.get_move()}"))
-        print(f"states: {self.states}")
-        print(deleted_state)
-        if deleted_state:
-            last_state = self.states.get_last_state()
-            self.board = copy.deepcopy(last_state.get_board())
+        self.states.remove_last_state()
+        last_state = self.states.get_last_state()
+        self.board = copy.deepcopy(last_state.get_board())
+        print(len(self.states))
+        if len(self.states) > 1:
             self.switch_turns()
 
     def update_score(self):
