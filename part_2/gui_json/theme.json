@@ -35,6 +35,33 @@
       "normal_bg": "#FF0000",
       "normal_border": "#999999"
     }
+  },
+  "player_1": {
+  "colours": {
+    "normal_bg": "#FFFFFF",
+    "normal_text": "#000000",
+    "dark_bg":"#FFFFFF"
+  },
+  "font": {
+    "name": "fira_code",
+    "size": 24,
+    "bold": true,
+    "italic": false
   }
+},
+  "player_2": {
+  "colours": {
+    "normal_bg": "#000000",
+    "normal_text": "#FFFFFF",
+    "dark_bg":"#000000"
+  },
+  "font": {
+    "name": "fira_code",
+    "size": 24,
+    "bold": true,
+    "italic": false
+  }
+}
+
 }
 
