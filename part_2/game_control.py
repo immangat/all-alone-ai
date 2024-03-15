@@ -28,7 +28,7 @@ class Manager:
             self.clock = Clock()
             self.players = [HumanPlayer("Black", "b"), HumanPlayer("White", "w")]
             self.current_player: Player = self.players[0]
-            self.current_screen = "menu"
+            self.current_screen = "game"
             self.menu_screen = MenuScreen(1280,
                                           720,
                                           self)
@@ -75,7 +75,15 @@ class Manager:
         self.players[1].reset_player_clock()
         self.current_player = self.players[0]
         self.game_window.event_handler.test = 0
+        self.states.clear_states()
+        self.board.clear_board()
+        self.states.create_initial_state(self.board)
         self.switch_to_screen("menu")
+
+    def store_move_history(self):
+        last_move = self.states.get_states()[-1].get_move()
+        self.game_window.move_gui.add_move(last_move)
+        self.game_window.move_gui.moves_gui.rebuild()
 
     def validate_and_make_move(self, marbles, direction):
         self.gen = StateSpaceGen()
@@ -84,6 +92,7 @@ class Manager:
             self.board = board_move[1]
             self.states.add_state(board_move[0], board_move[1])
             print(self.states.get_states()[-1].get_move())
+            self.store_move_history()
             self.switch_turns()
             self.board.get_marbles_by_color(self.current_player.color)
         else:
@@ -102,10 +111,11 @@ class Manager:
         """
         Undoes the last move made in the game
         """
-
-        deleted_state = self.states.remove_last_state()
-        if deleted_state:
-            last_state = self.states.get_last_state()
+        current_state = self.states.get_last_state()
+        self.states.remove_last_state()
+        last_state = self.states.get_last_state()
+        if current_state != last_state:
+            self.game_window.move_gui.remove_last_move()
             self.board = copy.deepcopy(last_state.get_board())
             self.switch_turns()
 
