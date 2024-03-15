@@ -112,12 +112,11 @@ class Manager:
         """
         Undoes the last move made in the game
         """
-
+        current_state = self.states.get_last_state()
         self.states.remove_last_state()
         last_state = self.states.get_last_state()
-        self.board = copy.deepcopy(last_state.get_board())
-        print(len(self.states))
-        if len(self.states) > 1:
+        if current_state != last_state:
+            self.board = copy.deepcopy(last_state.get_board())
             self.switch_turns()
 
     def update_score(self):
