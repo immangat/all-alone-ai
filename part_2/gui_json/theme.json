@@ -38,7 +38,6 @@
   },
   "player_1": {
   "colours": {
-    "normal_bg": "#FFFFFF",
     "normal_text": "#000000",
     "dark_bg":"#FFFFFF"
   },
@@ -51,7 +50,6 @@
 },
   "player_2": {
   "colours": {
-    "normal_bg": "#000000",
     "normal_text": "#FFFFFF",
     "dark_bg":"#000000"
   },
