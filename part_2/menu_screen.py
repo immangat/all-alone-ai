@@ -34,6 +34,7 @@ class MenuScreen:
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.draw_menu()
+        self.manager.board_type = "Default"
         self.manager.board.setup_board("Default")
 
     def draw_menu(self):
@@ -184,14 +185,17 @@ class MenuScreen:
         if selected[0][0] == "Default":
             print("Default board selected")
             self.manager.board.clear_board()
+            self.manager.board_type = "Default"
             self.manager.board.setup_default()
         elif selected[0][0] == "German Daisy":
             print("German Daisy board selected")
             self.manager.board.clear_board()
+            self.manager.board_type = "German Daisy"
             self.manager.board.setup_german_daisy()
         elif selected[0][0] == "Belgian Daisy":
             print("Belgian Daisy board selected")
             self.manager.board.clear_board()
+            self.manager.board_type = "Belgian Daisy"
             self.manager.board.setup_belgian_daisy()
         # print(f"selected: {selected[0][0]} value: {value}")
 

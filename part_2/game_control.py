@@ -34,6 +34,7 @@ class Manager:
                                           self)
             self.states = None
             self.gen = StateSpaceGen()
+            self.board_type = "German Daisy"  # set to a value for testing purposes without menu
 
     @staticmethod
     def get_instance():
@@ -75,8 +76,10 @@ class Manager:
         self.players[1].reset_player_clock()
         self.current_player = self.players[0]
         self.states.clear_states()
-        # self.board.clear_board()
-        # self.states.create_initial_state(self.board)
+        self.board.clear_board()
+        print(self.board_type)
+        self.board.setup_board(self.board_type)
+        self.states.create_initial_state(self.board)
         # self.switch_to_screen("menu")
 
     def stop_game(self):
