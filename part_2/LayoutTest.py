@@ -97,6 +97,8 @@ clock = pygame.time.Clock()
 manager = pygame_gui.UIManager(window_size, "gui_json/theme.json")
 
 # Define a UI containers
+# commented out, abalone game might not function well as a gui element, trying to keep Nico draw logic,
+# Attempting to restructure . blit surface transfer to selected grid area
 # abalone_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, ROW_LINE_1), (COLUM_LINE_1, ROW_LINE_4 - ROW_LINE_1)),
 #                                              manager=manager)
 
@@ -104,11 +106,11 @@ abalone_surface = pygame.Surface((0,0),0)
 
 player_1_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0,0), (COLUM_LINE_1, ROW_LINE_1)),
                                                   manager=manager,
-                                                  object_id="player1")
+                                                  object_id="player_1")
 
 player_2_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0,ROW_LINE_4), (COLUM_LINE_1, ROW_LINE_1)),
                                                   manager=manager,
-                                                  object_id="player2")
+                                                  object_id="player_2")
 
 clock_image_1 = pygame.image.load('assets/clock1.png')
 
