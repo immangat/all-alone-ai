@@ -13,7 +13,6 @@ class MenuScreen:
     def __init__(self, width: int, height: int, manager):
         self.width = width
         self.height = height
-        # self.manager_ui = None
         self.start_game_button = None
         self.time_select_input = None
         self.display_surface = None
@@ -34,9 +33,15 @@ class MenuScreen:
         pygame.display.set_caption('Menu Screen')
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
-        # self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
-        self.menu = pygame_menu.Menu('All-Alone', self.width, self.height,
-                                     theme=pygame_menu.themes.THEME_DEFAULT)
+        self.draw_menu()
+        self.manager.board.setup_board("Default")
+
+    def draw_menu(self):
+        self.menu = pygame_menu.Menu(
+            'All-Alone',
+            self.width,
+            self.height,
+            theme=pygame_menu.themes.THEME_DEFAULT)
 
         title = self.menu.add.label("Game Settings:", padding=(0, 0, 15, 0))  # top, right, bottom, left
         selector_game_type = self.menu.add.dropselect(
@@ -53,71 +58,85 @@ class MenuScreen:
             selection_box_width=212,
             selection_color=(76, 0, 153)
         )
+        # frame = self.menu.add.frame_h(
+        #     10,
+        #     20,
 
-        board_selector = self.menu.add.selector('Select Board Type:',
-                                                [('Default', 1), ('German Daisy', 2), ('Belgian Daisy', 3)],
-                                                onchange=self.select_board_type,
-                                                font_size=20,
-                                                style=pygame_menu.widgets.SELECTOR_STYLE_FANCY,
-                                                selection_color=(76, 0, 153))
+        board_selector = self.menu.add.selector(
+            'Select Board Type:',
+            [('Default', 1), ('German Daisy', 2), ('Belgian Daisy', 3)],
+            onchange=self.select_board_type,
+            font_size=20,
+            style=pygame_menu.widgets.SELECTOR_STYLE_FANCY,
+            selection_color=(76, 0, 153))
 
-        self.menu.add.label("Move Settings:", padding=(15, 0, 15, 0), font_size=22)
-        self.menu.add.text_input('Input Total Move Limit:            ',
-                                 default=self.total_move_limit,
-                                 padding=(0, 0, 0, 0),  # top, right, bottom, left
-                                 align=pygame_menu.locals.ALIGN_CENTER,
-                                 maxchar=3,
-                                 maxwidth=3,
-                                 input_type=pygame_menu.locals.INPUT_INT,
-                                 font_size=20,
-                                 textinput_id='board_limit',
-                                 input_underline='_',
-                                 onchange=self.select_total_move_limit(),
-                                 selection_color=(76, 0, 153))
-        self.menu.add.text_input('Input P1 Time Per Move:         ',
-                                 default=self.p1_time,
-                                 align=pygame_menu.locals.ALIGN_CENTER,
-                                 maxchar=3,
-                                 maxwidth=3,
-                                 input_type=pygame_menu.locals.INPUT_INT,
-                                 font_size=20,
-                                 textinput_id='timer_p1',
-                                 input_underline='_',
-                                 onchange=self.select_p1_time_per_move,
-                                 selection_color=(76, 0, 153))
-        self.menu.add.text_input('Input P2 Time Per Move:         ',
-                                 default=self.p2_time,
-                                 align=pygame_menu.locals.ALIGN_CENTER,
-                                 maxchar=3,
-                                 maxwidth=3,
-                                 input_type=pygame_menu.locals.INPUT_INT,
-                                 font_size=20,
-                                 textinput_id='timer_p2',
-                                 input_underline='_',
-                                 onchange=self.select_p2_time_per_move,
-                                 selection_color=(76, 0, 153))
-        # self.menu.add.button('Board Testing', self.select_total_move_limit)
+        self.menu.add.label(
+            "Move Settings:",
+            padding=(15, 0, 15, 0),
+            font_size=22)
+        self.menu.add.text_input(
+            'Input Total Move Limit:            ',
+            default=self.total_move_limit,
+            padding=(0, 0, 0, 0),  # top, right, bottom, left
+            align=pygame_menu.locals.ALIGN_CENTER,
+            maxchar=3,
+            maxwidth=3,
+            input_type=pygame_menu.locals.INPUT_INT,
+            font_size=20,
+            textinput_id='board_limit',
+            input_underline='_',
+            onchange=self.select_total_move_limit(),
+            selection_color=(76, 0, 153))
+        self.menu.add.text_input(
+            'Input P1 Time Per Move:         ',
+            default=self.p1_time,
+            align=pygame_menu.locals.ALIGN_CENTER,
+            maxchar=3,
+            maxwidth=3,
+            input_type=pygame_menu.locals.INPUT_INT,
+            font_size=20,
+            textinput_id='timer_p1',
+            input_underline='_',
+            onchange=self.select_p1_time_per_move,
+            selection_color=(76, 0, 153))
+        self.menu.add.text_input(
+            'Input P2 Time Per Move:         ',
+            default=self.p2_time,
+            align=pygame_menu.locals.ALIGN_CENTER,
+            maxchar=3,
+            maxwidth=3,
+            input_type=pygame_menu.locals.INPUT_INT,
+            font_size=20,
+            textinput_id='timer_p2',
+            input_underline='_',
+            onchange=self.select_p2_time_per_move,
+            selection_color=(76, 0, 153))
 
-        frame = self.menu.add.frame_h(400, 200, padding=(15, 0, 0, 0))  # top, right, bottom, left
+        frame = self.menu.add.frame_h(
+            400,
+            200,
+            padding=(15, 0, 0, 0))  # top, right, bottom, left
 
-        start_button = self.menu.add.button('Start',
-                                            self.start_game,
-                                            background_color=(128, 200, 0),
-                                            padding=(5, 50, 5, 50),  # top, right, bottom, left
-                                            )
-        quit_button = self.menu.add.button('Quit',
-                                           self.quit_game,
-                                           background_color=(200, 70, 0),
-                                           padding=(5, 50, 5, 50),  # top, right, bottom, left
-                                           )
-
+        start_button = self.menu.add.button(
+            'Start',
+            self.start_game,
+            background_color=(128, 200, 0),
+            padding=(5, 50, 5, 50),  # top, right, bottom, left
+        )
+        quit_button = self.menu.add.button(
+            'Quit',
+            self.quit_game,
+            background_color=(200, 70, 0),
+            padding=(5, 50, 5, 50),  # top, right, bottom, left
+        )
         frame.pack(start_button, align=pygame_menu.locals.ALIGN_LEFT)
-        frame.pack(quit_button , align=pygame_menu.locals.ALIGN_RIGHT)
-
-        self.manager.board.setup_board("Default")
+        frame.pack(quit_button, align=pygame_menu.locals.ALIGN_RIGHT)
 
         if self.is_testing:
-            self.menu.add.button('Board Testing', self.board_testing, background_color=(0, 0, 0))
+            self.menu.add.button(
+                'Board Testing',
+                self.board_testing,
+                background_color=(0, 0, 0))
 
     def select_game_type(self, *args):
         print(f"select game type {args[1]}")
@@ -180,9 +199,3 @@ class MenuScreen:
         pygame.display.flip()
         self.display_surface.blit(self.background, (0, 0))
 
-        # board_type_frame.pack(title_board, align=pygame_menu.locals.ALIGN_LEFT)
-        # board_type_frame.pack(board_selector, align=pygame_menu.locals.ALIGN_RIGHT)
-        # self.menu.add.label("Select Board Type:", padding=(15, 0, 15, 0))
-        # self.menu.add.selector('',
-        #                        [('Default', 1), ('German Daisy', 2), ('Belgian Daisy', 3)],
-        #                        onchange=self.select_board_type)
