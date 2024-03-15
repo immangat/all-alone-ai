@@ -15,13 +15,9 @@ class ButtonUI:
         self.small_button_height = round(self.container_height * 0.25)
         self.small_button_width = round(self.container_width * 0.25)
         self.reset = None
-
+        self.stop = None
 
     def create_gui(self):
-        # panel = UIPanel(relative_rect=self.button_gui_rect,
-        #                 starting_height=1,
-        #                 manager=self.manager_ui,
-        #                 object_id="buttons_panel")
 
         self.pause = UIButton(relative_rect=pygame.Rect(0, 0, self.pause_button_width, self.pause_button_height),
                               starting_height=2,
@@ -30,7 +26,6 @@ class ButtonUI:
                               container=self.container,
                               object_id="pause_button",
                               anchors={"centerx": "centerx"}
-
                               )
         self.reset = UIButton(relative_rect=pygame.Rect(0, - self.small_button_height, self.small_button_width, self.small_button_height),
                               starting_height=2,
