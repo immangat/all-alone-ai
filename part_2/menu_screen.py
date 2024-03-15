@@ -58,14 +58,16 @@ class MenuScreen:
             selection_box_width=212,
             selection_color=(76, 0, 153)
         )
-        # frame = self.menu.add.frame_h(
-        #     10,
-        #     20,
+        self.menu.add.frame_v(
+            1000,
+            10,
+        )
 
         board_selector = self.menu.add.selector(
             'Select Board Type:',
             [('Default', 1), ('German Daisy', 2), ('Belgian Daisy', 3)],
             onchange=self.select_board_type,
+            padding=(0, 1, 0, 8),
             font_size=20,
             style=pygame_menu.widgets.SELECTOR_STYLE_FANCY,
             selection_color=(76, 0, 153))
@@ -74,6 +76,7 @@ class MenuScreen:
             "Move Settings:",
             padding=(15, 0, 15, 0),
             font_size=22)
+
         self.menu.add.text_input(
             'Input Total Move Limit:            ',
             default=self.total_move_limit,
@@ -87,9 +90,16 @@ class MenuScreen:
             input_underline='_',
             onchange=self.select_total_move_limit(),
             selection_color=(76, 0, 153))
+
+        self.menu.add.frame_v(
+            1000,
+            10,
+        )
+
         self.menu.add.text_input(
             'Input P1 Time Per Move:         ',
             default=self.p1_time,
+            padding=(0, 0, 0, 0),  # top, right, bottom, left
             align=pygame_menu.locals.ALIGN_CENTER,
             maxchar=3,
             maxwidth=3,
@@ -99,9 +109,16 @@ class MenuScreen:
             input_underline='_',
             onchange=self.select_p1_time_per_move,
             selection_color=(76, 0, 153))
+
+        self.menu.add.frame_v(
+            1000,
+            10,
+        )
+
         self.menu.add.text_input(
             'Input P2 Time Per Move:         ',
             default=self.p2_time,
+            padding=(0, 0, 0, 0),  # top, right, bottom, left
             align=pygame_menu.locals.ALIGN_CENTER,
             maxchar=3,
             maxwidth=3,
@@ -111,6 +128,11 @@ class MenuScreen:
             input_underline='_',
             onchange=self.select_p2_time_per_move,
             selection_color=(76, 0, 153))
+
+        self.menu.add.frame_v(
+            1000,
+            10,
+        )
 
         frame = self.menu.add.frame_h(
             400,
