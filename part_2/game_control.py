@@ -77,10 +77,9 @@ class Manager:
         self.current_player = self.players[0]
         self.states.clear_states()
         self.board.clear_board()
-        print(self.board_type)
         self.board.setup_board(self.board_type)
         self.states.create_initial_state(self.board)
-        # self.switch_to_screen("menu")
+        self.game_window.initWindow()
 
     def stop_game(self):
         print("Game stop")
