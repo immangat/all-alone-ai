@@ -1,12 +1,13 @@
 import pygame
 from pygame_gui.elements import UIButton, UIPanel, UILabel, UITextBox
+import math
 
 
 class move_gui:
 
     def __init__(self, x_pixel: int, y_pixel: int, width: int, height: int, manager_ui=None):
         self.move_buffer = None
-        self.moves_made = ""
+        self.moves_made = []
         self.move_count = 0
         self.width = width
         self.height = height
@@ -79,22 +80,37 @@ class move_gui:
         #                            container=panel)
 
         self.moves_gui = UITextBox(relative_rect=self.moves_text_rect,
-                                   html_text=self.moves_made,
+                                   html_text=''.join(self.moves_made),
                                    manager=self.manager_ui,
                                    container=self.panel_moves)
 
     def add_move(self, move):
         formatted_move = str(move).ljust(3)  # Ensures move is left-aligned in 3 characters
         # Determine padding based on the length of the formatted move
-        padding = " " * (20 - len(formatted_move))
+        padding = " " * (15 - len(formatted_move))
+        if math.ceil((self.move_count + 1) / 2) % 100 < 10:
+            padding_move = " "
+        else:
+            padding_move = ""
         # Use string formatting to create a uniformly padded string
-        move_entry = f"<pre>{formatted_move}{padding}<pre>"
+        move_entry = f"<pre><i>{math.ceil((self.move_count + 1) / 2)}{padding_move}</i>| {formatted_move}{padding}</pre>"
 
         if self.move_count % 2 == 0:
-            self.moves_made += move_entry
+            # self.moves_made += move_entry
+            self.moves_made.append(move_entry)
         else:
             # Complete the buffer with the formatted move
-            self.moves_made += f"<p>{formatted_move}</p>"
-        self.moves_gui.html_text = self.moves_made  # Update the html_text of the UITextBox
+            # self.moves_made += f"<p>{formatted_move}</p>"
+            self.moves_made.append(f"<p>{formatted_move}</p>")
+        # self.move_text.append(self.moves_made)
+        # self.moves_gui.html_text = self.moves_made  # Update the html_text of the UITextBox
+        self.moves_gui.html_text = ''.join(self.moves_made)  # Update the html_text of the UITextBox
         self.moves_gui.rebuild()  # Rebuild the UITextBox to reflect the changes
         self.move_count += 1
+
+    def remove_last_move(self):
+        self.moves_made.pop()
+        self.move_count -= 1
+        self.moves_gui.html_text = ''.join(self.moves_made)
+        self.moves_gui.rebuild()
+

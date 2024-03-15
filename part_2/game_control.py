@@ -34,7 +34,6 @@ class Manager:
                                           self)
             self.states = None
             self.gen = StateSpaceGen()
-            self.move_history = []
 
     @staticmethod
     def get_instance():
@@ -81,9 +80,9 @@ class Manager:
         self.states.create_initial_state(self.board)
         self.switch_to_screen("menu")
 
-    def store_move_history(self, move):
-        self.move_history.append(move)
-        self.game_window.move_gui.add_move(str(self.move_history[-1]))
+    def store_move_history(self):
+        last_move = self.states.get_states()[-1].get_move()
+        self.game_window.move_gui.add_move(last_move)
         self.game_window.move_gui.moves_gui.rebuild()
 
     def validate_and_make_move(self, marbles, direction):
@@ -93,7 +92,7 @@ class Manager:
             self.board = board_move[1]
             self.states.add_state(board_move[0], board_move[1])
             print(self.states.get_states()[-1].get_move())
-            self.store_move_history(self.states.get_states()[-1].get_move())
+            self.store_move_history()
             self.switch_turns()
             self.board.get_marbles_by_color(self.current_player.color)
         else:
@@ -116,6 +115,7 @@ class Manager:
         self.states.remove_last_state()
         last_state = self.states.get_last_state()
         if current_state != last_state:
+            self.game_window.move_gui.remove_last_move()
             self.board = copy.deepcopy(last_state.get_board())
             self.switch_turns()
 
