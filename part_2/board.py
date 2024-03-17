@@ -146,10 +146,30 @@ class Board:
             row = ord(row_letter) - ord('A') + 1
             col = int(col_str)
             coord = (row, col)
-            new_board.set_marble(coord, color)
+            if coord in Board.BOARD_COORD:
+                new_board.set_marble(coord, color)
+            else:
+                print(f"Invalid coordinate: {coord}")
+                return None
+
+        white_marbles = new_board.num_marbles_left_by_color("w") # from 14 - 14 = 0 to 14 - 9 = 5 -> 0 to 5
+        black_marbles = new_board.num_marbles_left_by_color("b")
+        print(f"Number of white marbles: {white_marbles}")
+        print(f"Number of black marbles: {black_marbles}")
+
+        if 0 <= white_marbles < 6 and 0 <= black_marbles < 6:
+            print("returning board")
+            return new_board
+        else:
+            print("Invalid number of marbles")
+            return None
+
 
         return new_board
 
+    @staticmethod
+    def validate_board(board):
+        pass
 
     def __deepcopy__(self, memo):
         # Create a new Board with deep copies of circles
