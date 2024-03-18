@@ -3,7 +3,9 @@ import pygame_gui
 import pygame_menu
 from pygame_gui.elements import UIButton
 from functools import partial
+import os
 
+from part_2.IO_handler import IOHandler
 from part_2.board import Board
 from part_2.event_handler import EventHandler
 from part_2.player import HumanPlayer
@@ -11,6 +13,9 @@ from part_2.player import HumanPlayer
 
 class MenuScreen:
     def __init__(self, width: int, height: int, manager):
+        self.current_directory = os.path.dirname(os.path.abspath(__file__))
+        self.files = filenames_to_tuples(list_files_in_directory(self.current_directory))
+        self.selected_file_name = None
         self.width = width
         self.height = height
         self.start_game_button = None
@@ -155,6 +160,23 @@ class MenuScreen:
         frame.pack(start_button, align=pygame_menu.locals.ALIGN_LEFT)
         frame.pack(quit_button, align=pygame_menu.locals.ALIGN_RIGHT)
 
+        file_selector = self.menu.add.dropselect(
+            title='File Selection:',
+            padding=(0, 0, 0, 8),
+            items=self.files,
+            font_size=20,
+            selection_option_font_size=20,
+            onchange=self.select_file,
+            default=0,
+            selection_box_height=5,
+            selection_box_width=212,
+            selection_color=(76, 0, 153)
+        )
+        self.menu.add.frame_v(
+            1000,
+            10,
+        )
+
         if self.is_testing:
             self.menu.add.button(
                 'Board Testing',
@@ -169,6 +191,11 @@ class MenuScreen:
             self.human_vs_ai()
         elif args[1] == 2:
             self.ai_vs_human()
+
+    def select_file(self, *args):
+        self.selected_file_name = args[0][0][0]
+        print("selected file name: {}".format(self.selected_file_name))
+        # TODO add the iohandler logic here or in a button
 
     def human_vs_human(self):
         print("human vs human")
@@ -229,4 +256,21 @@ class MenuScreen:
         self.menu.draw(self.background)
         pygame.display.flip()
         self.display_surface.blit(self.background, (0, 0))
+
+
+def filenames_to_tuples(filenames):
+    formatted_tuples = []
+    for index, filename in enumerate(filenames):
+        # Replace underscores with spaces but keep the file extension
+        formatted_name = filename.replace("_", " ")
+        # Create a tuple with the formatted name and its index
+        formatted_tuple = (formatted_name, index)
+        formatted_tuples.append(formatted_tuple)
+    return formatted_tuples
+
+
+def list_files_in_directory(directory):
+    # Filter out .py files
+    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)) and os.path.splitext(f)[1] != '.py' and os.path.splitext(f)[1] != '.md']
+
 
