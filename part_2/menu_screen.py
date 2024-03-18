@@ -89,7 +89,7 @@ class MenuScreen:
             font_size=20,
             textinput_id='board_limit',
             input_underline='_',
-            onchange=self.select_total_move_limit(),
+            onchange=self.select_total_move_limit,
             selection_color=(76, 0, 153))
 
         self.menu.add.frame_v(
@@ -199,8 +199,11 @@ class MenuScreen:
             self.manager.board.setup_belgian_daisy()
         # print(f"selected: {selected[0][0]} value: {value}")
 
-    def select_total_move_limit(self):
-        print("Total move limit selected")
+    def select_total_move_limit(self, value, **kwargs):
+        # Convert the incoming value to an integer
+        new_limit = int(value)
+        print("Total move limit selected:", new_limit)
+        self.total_move_limit = new_limit
 
     def select_p1_time_per_move(self, *args):
         print(f"P1 time per move selected {args[0]}")
@@ -210,6 +213,8 @@ class MenuScreen:
 
     def start_game(self):
         print("Game started")
+        self.manager.total_move_limit = self.total_move_limit
+        self.manager.total_moves_left = self.manager.total_move_limit
         self.manager.switch_to_screen("game")
 
     def quit_game(self):

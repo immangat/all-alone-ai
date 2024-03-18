@@ -37,7 +37,8 @@ class Manager:
             self.gen = StateSpaceGen()
             self.board_type = "German Daisy"  # set to a value for testing purposes without menu
             # added here because no game class
-            self.moves_remaining = None
+            self.total_move_limit = None
+            self.total_moves_left = None
 
     @staticmethod
     def get_instance():
@@ -109,7 +110,11 @@ class Manager:
             print(self.states.get_states()[-1].get_move())
             self.store_move_history()
             self.switch_turns()
+            self.decrement_moves_remaining()
+            self.game_window.moves_left.update_gui()
+            self.game_window.move_gui.moves_gui.rebuild()
             self.board.get_marbles_by_color(self.current_player.color)
+
         else:
             pass
             # TODO: Feedback for invalid move????
@@ -131,6 +136,8 @@ class Manager:
         last_state = self.states.get_last_state()
         if current_state != last_state:
             self.game_window.move_gui.remove_last_move()
+            self.increment_moves_remaining()
+            self.game_window.moves_left.update_gui()
             self.board = copy.deepcopy(last_state.get_board())
             self.switch_turns()
 
@@ -157,10 +164,10 @@ class Manager:
             self.main_loop()
 
     def increment_moves_remaining(self):
-        self.moves_remaining = self.moves_remaining + 1
+        self.total_moves_left = self.total_moves_left + 1
 
     def decrement_moves_remaining(self):
-        self.moves_remaining = self.moves_remaining - 1
+        self.total_moves_left = self.total_moves_left - 1
 
     def main_loop(self):
         clock = pygame.time.Clock()

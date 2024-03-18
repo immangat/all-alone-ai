@@ -71,6 +71,12 @@
       "normal_text": "#FFFFFF",
       "normal_border": "#B59A7E"
     }
+  },
+  "moves_remaining_text": {
+    "font": {
+      "name": "fira_code",
+    "size": 64
+    }
   }
 
 }

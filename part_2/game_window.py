@@ -91,8 +91,8 @@ class GameWindow:
         player2.create_gui()
 
         # Create and add turn indicator elements to moves remaining container
-        moves_left = MovesRemainingGUI(self.manager_ui, turn_remaining_gui, self.manager)
-        moves_left.create_gui()
+        self.moves_left = MovesRemainingGUI(self.manager_ui, turn_remaining_gui, self.manager)
+        self.moves_left.create_gui()
 
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
 
