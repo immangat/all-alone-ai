@@ -8,6 +8,7 @@ from part_2.menu_screen import MenuScreen
 from part_2.states import States
 from part_2.state_space_gen import StateSpaceGen
 import copy
+from part_2.uis.moves_remaining_gui import MovesRemainingGUI
 
 
 class Manager:
@@ -35,6 +36,8 @@ class Manager:
             self.states = None
             self.gen = StateSpaceGen()
             self.board_type = "German Daisy"  # set to a value for testing purposes without menu
+            # added here because no game class
+            self.moves_remaining = None
 
     @staticmethod
     def get_instance():
@@ -59,7 +62,7 @@ class Manager:
             self.main_loop()
 
     def is_game_over(self):
-        return True if self.players[0].score == 6 or self.players[1].score == 6 else False
+        return True if self.players[0].score == 6 or self.players[1].score == 6 or self.moves_remaining == 0 else False
 
     def end_game(self):
         pass
@@ -152,6 +155,12 @@ class Manager:
         elif screen_name == "game":
             self.game_window.initWindow()
             self.main_loop()
+
+    def increment_moves_remaining(self):
+        self.moves_remaining = self.moves_remaining + 1
+
+    def decrement_moves_remaining(self):
+        self.moves_remaining = self.moves_remaining - 1
 
     def main_loop(self):
         clock = pygame.time.Clock()

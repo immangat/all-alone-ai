@@ -8,7 +8,7 @@ from part_2.uis.move_gui import move_gui
 
 from part_2.event_handler import EventHandler, CUSTOM_TIMER_EVENT
 from part_2.uis.player_ui_layout import PlayerUi
-
+from part_2.uis.moves_remaining_gui import MovesRemainingGUI
 
 class GameWindow:
     MOVE_GUI_WIDTH = 300
@@ -33,7 +33,7 @@ class GameWindow:
         ## added grid
         self.COLUM_LINE_1 = round(width * 0.75)
         self.ROW_LINE_1 = round(height * 0.1)
-        self.ROW_LINE_2 = round(height * 0.20)
+        self.ROW_LINE_2 = round(height * 0.15)
         self.ROW_LINE_3 = round(height * 0.85)
         self.ROW_LINE_4 = round(height * 0.9)
 
@@ -44,10 +44,6 @@ class GameWindow:
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
-
-        # testing delete later
-        ai_player = AIPlayer(name="AI Nico", color="Red")
-        human_player = HumanPlayer(name="Human Manhgott", color="Blue")
 
         # UI panels defined below
         player_1_gui = pygame_gui.elements.UIPanel(
@@ -60,13 +56,13 @@ class GameWindow:
             manager=self.manager_ui,
             object_id="player_2")
 
-        turn_remaining_window = pygame_gui.elements.UIPanel(
+        turn_remaining_gui = pygame_gui.elements.UIPanel(
             relative_rect=pygame.Rect((self.COLUM_LINE_1, 0), (self.width - self.COLUM_LINE_1, self.ROW_LINE_2)),
             manager=self.manager_ui,
             object_id="turns_remaining")
 
-        buttons_gui_window = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect((self.COLUM_LINE_1, self.ROW_LINE_3), (self.width - self.COLUM_LINE_1, self.height - self.ROW_LINE_3)))
+        # buttons_gui_window = pygame_gui.elements.UIPanel(
+        #     relative_rect=pygame.Rect((self.COLUM_LINE_1, self.ROW_LINE_3), (self.width - self.COLUM_LINE_1, self.height - self.ROW_LINE_3)))
 
         self.move_gui = move_gui(
             self.width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
@@ -87,12 +83,16 @@ class GameWindow:
         # Here, you should also create your UI elements and pass the manager_ui to them
 
         # Create and add elements to guis
-        player1 = PlayerUi(1, human_player, "player_1", player_1_gui, self.manager_ui)
+        player1 = PlayerUi(1, self.manager.players[0], "player_1", player_1_gui, self.manager_ui)
         player1.create_gui()
 
         # Create and add player2 elements to player2 container
-        player2 = PlayerUi(2, ai_player, "player_2", player_2_gui, self.manager_ui)
+        player2 = PlayerUi(2, self.manager.players[1], "player_2", player_2_gui, self.manager_ui)
         player2.create_gui()
+
+        # Create and add turn indicator elements to moves remaining container
+        moves_left = MovesRemainingGUI(self.manager_ui, turn_remaining_gui, self.manager)
+        moves_left.create_gui()
 
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
 
