@@ -8,7 +8,6 @@ class EventHandler:
     def __init__(self, window=None, manager=None):
         self.window = window
         self.manager = manager
-        self.test = 0
         self.selected_marble = []
 
     def handle_events(self):
@@ -37,6 +36,9 @@ class EventHandler:
                     elif event.ui_element == self.window.button_gui.reset:
                         print("Resetting game")
                         self.manager.reset_game()
+                    elif event.ui_element == self.window.button_gui.stop:
+                        print("Stopping game")
+                        self.manager.stop_game()
 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
                 self.on_mouse_click(event.pos)
