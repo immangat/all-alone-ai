@@ -65,6 +65,12 @@
       "normal_bg":"#45494e",
       "dark_bg" : "000000"
     }
+  },
+  "moves_textbox": {
+        "colours": {
+      "normal_text": "#FFFFFF",
+      "normal_border": "#B59A7E"
+    }
   }
 
 }

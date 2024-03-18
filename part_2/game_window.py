@@ -28,6 +28,12 @@ class GameWindow:
         self.manager_ui = None
         self.type = "game"
         self.clock = pygame.time.Clock()
+        ## added grid
+        self.COLUM_LINE_1 = round(width * 0.75)
+        self.ROW_LINE_1 = round(height * 0.1)
+        self.ROW_LINE_2 = round(height * 0.20)
+        self.ROW_LINE_3 = round(height * 0.85)
+        self.ROW_LINE_4 = round(height * 0.9)
 
     def initWindow(self):
         pygame.init()
@@ -36,6 +42,18 @@ class GameWindow:
         self.background = pygame.Surface((self.width, self.height))  # Create the background surface
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
+
+        # UI panels defined below
+        self.player_1_gui = pygame_gui.elements.UIPanel(
+            relative_rect=pygame.Rect((0,0), (self.COLUM_LINE_1, self.ROW_LINE_1)),
+            manager=self.manager_ui,
+            object_id="player_1")
+
+        self.player_2_gui = pygame_gui.elements.UIPanel(
+            relative_rect=pygame.Rect((0,self.ROW_LINE_4), (self.COLUM_LINE_1, self.ROW_LINE_1)),
+            manager=self.manager_ui,
+            object_id="player_2")
+
         self.move_gui = move_gui(
             self.width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
             self.height // 2 - self.MOVE_GUI_HEIGHT // 2,

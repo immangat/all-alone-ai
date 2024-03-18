@@ -78,10 +78,11 @@ class MoveGui:
         # #                            manager=self.manager_ui,
         # #                            container=panel)
         #
-        # self.moves_gui = UITextBox(relative_rect=self.moves_text_rect,
-        #                            html_text=''.join(self.moves_made),
-        #                            manager=self.manager_ui,
-        #                            container=self.panel_moves)
+        self.moves_gui = UITextBox(relative_rect=pygame.Rect(0, 0, -1, -1),
+                                   html_text=''.join(self.moves_made),
+                                   manager=self.manager_ui,
+                                   container=self.panel_moves,
+                                   object_id="moves_textbox")
 
     def add_move(self, move):
         formatted_move = str(move).ljust(3)  # Ensures move is left-aligned in 3 characters
