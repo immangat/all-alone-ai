@@ -2,10 +2,12 @@ import math
 import pygame
 import pygame_gui
 
+from part_2.player import AIPlayer, HumanPlayer
 from part_2.uis.button_ui import ButtonUI
 from part_2.uis.move_gui import move_gui
 
 from part_2.event_handler import EventHandler, CUSTOM_TIMER_EVENT
+from part_2.uis.player_ui_layout import PlayerUi
 
 
 class GameWindow:
@@ -43,13 +45,17 @@ class GameWindow:
         self.background.fill(pygame.Color(200, 200, 200))  # Fill the background with a color
         self.manager_ui = pygame_gui.UIManager((self.width, self.height), "gui_json/theme.json")
 
+        # testing delete later
+        ai_player = AIPlayer(name="AI Nico", color="Red")
+        human_player = HumanPlayer(name="Human Manhgott", color="Blue")
+
         # UI panels defined below
-        self.player_1_gui = pygame_gui.elements.UIPanel(
+        player_1_gui = pygame_gui.elements.UIPanel(
             relative_rect=pygame.Rect((0,0), (self.COLUM_LINE_1, self.ROW_LINE_1)),
             manager=self.manager_ui,
             object_id="player_1")
 
-        self.player_2_gui = pygame_gui.elements.UIPanel(
+        player_2_gui = pygame_gui.elements.UIPanel(
             relative_rect=pygame.Rect((0,self.ROW_LINE_4), (self.COLUM_LINE_1, self.ROW_LINE_1)),
             manager=self.manager_ui,
             object_id="player_2")
@@ -71,6 +77,15 @@ class GameWindow:
         self.move_gui.create_gui()
         self.button_gui.create_gui()
         # Here, you should also create your UI elements and pass the manager_ui to them
+
+        # Create and add elements to guis
+        player1 = PlayerUi(1, human_player, "player_1", player_1_gui, self.manager_ui)
+        player1.create_gui()
+
+        # Create and add player2 elements to player2 container
+        player2 = PlayerUi(2, ai_player, "player_2", player_2_gui, self.manager_ui)
+        player2.create_gui()
+
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
 
     def updateWindow(self):
