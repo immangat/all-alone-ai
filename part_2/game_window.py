@@ -60,6 +60,14 @@ class GameWindow:
             manager=self.manager_ui,
             object_id="player_2")
 
+        turn_remaining_window = pygame_gui.elements.UIPanel(
+            relative_rect=pygame.Rect((self.COLUM_LINE_1, 0), (self.width - self.COLUM_LINE_1, self.ROW_LINE_2)),
+            manager=self.manager_ui,
+            object_id="turns_remaining")
+
+        buttons_gui_window = pygame_gui.elements.UIPanel(
+            relative_rect=pygame.Rect((self.COLUM_LINE_1, self.ROW_LINE_3), (self.width - self.COLUM_LINE_1, self.height - self.ROW_LINE_3)))
+
         self.move_gui = move_gui(
             self.width - self.MOVE_GUI_WIDTH - self.MOVE_GUI_MARGIN,
             self.height // 2 - self.MOVE_GUI_HEIGHT // 2,
