@@ -59,7 +59,13 @@
     "bold": true,
     "italic": false
   }
-}
+},
+  "move_label": {
+    "colours": {
+      "normal_bg":"#45494e",
+      "dark_bg" : "000000"
+    }
+  }
 
 }
 

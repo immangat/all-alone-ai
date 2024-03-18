@@ -1,7 +1,6 @@
 import pygame
 from pygame_gui.elements import UIButton, UIPanel, UILabel
 
-
 class PlayerUi:
     def __init__(self, player_num, player, theme_string, container, manager_ui=None):
         self.container = container

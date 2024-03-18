@@ -9,6 +9,7 @@ from part_2.uis.button_ui_layout import ButtonUI
 from part_2.game_control import Manager
 from part_2.board import Board
 from part_2.uis.player_ui_layout import PlayerUi
+from part_2.uis.move_gui_layout import MoveGui
 
 
 # class BoardUi:
@@ -82,8 +83,8 @@ WINDOW_WIDTH = display_info.current_w
 WINDOW_HEIGHT = display_info.current_h
 COLUM_LINE_1 = round(WINDOW_WIDTH * 0.75)
 ROW_LINE_1 = round(WINDOW_HEIGHT * 0.1)
-ROW_LINE_2 = round(WINDOW_HEIGHT * 0.3)
-ROW_LINE_3 = round(WINDOW_HEIGHT * 0.75)
+ROW_LINE_2 = round(WINDOW_HEIGHT * 0.20)
+ROW_LINE_3 = round(WINDOW_HEIGHT * 0.85)
 ROW_LINE_4 = round(WINDOW_HEIGHT * 0.9)
 # Set the size of the pygame window
 window_size = (WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -117,7 +118,9 @@ clock_image_1 = pygame.image.load('assets/clock1.png')
 
 turn_remaining_window = pygame_gui.elements.UIPanel(relative_rect= pygame.Rect((COLUM_LINE_1, 0), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_2)))
 
-moves_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_2), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_3 - ROW_LINE_2)))
+moves_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_2), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_3 - ROW_LINE_2)),
+                                           manager=manager,
+                                           object_id="panel1")
 
 buttons_gui_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_3), (WINDOW_WIDTH - COLUM_LINE_1, WINDOW_HEIGHT- ROW_LINE_3)))
 
@@ -132,6 +135,10 @@ player2.create_gui()
 # create and add buttons to  buttons gui
 buttons_gui = ButtonUI(buttons_gui_window, manager)
 buttons_gui.create_gui()
+
+# create and add elements to move gui
+move_gui = MoveGui(moves_window, manager)
+move_gui.create_gui()
 
 
 # player_1_clock = UIImage(relative_rect=pygame.Rect(0, 0, 25, 25),
