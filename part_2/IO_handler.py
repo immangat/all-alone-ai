@@ -8,7 +8,7 @@ class IOHandler:
         self.player_color = None
         self.file_number = None
 
-    def craete_outcomes_from_board_file(self, filename):
+    def create_outcomes_from_board_file(self, filename):
         self.extract_data(filename)
         self.create_outputs()
 
@@ -40,19 +40,20 @@ class IOHandler:
             return
 
         board = Board.create_custom_board(self.board_string)
-        gen = StateSpaceGen()
-        gen.generate_state_space(board, self.player_color)
+        if board is not None:
+            gen = StateSpaceGen()
+            gen.generate_state_space(board, self.player_color)
 
-        moves = gen.get_moves()
-        boards = gen.get_boards()
+            moves = gen.get_moves()
+            boards = gen.get_boards()
 
-        board_output_file = f'Test{self.file_number}.board'
-        move_output_file = f'Test{self.file_number}.move'
+            board_output_file = f'Test{self.file_number}.board'
+            move_output_file = f'Test{self.file_number}.move'
 
-        # boards
-        with open(board_output_file, 'w') as board_file:
-            board_file.write('\n'.join(map(str, boards)))
+            # boards
+            with open(board_output_file, 'w') as board_file:
+                board_file.write('\n'.join(map(str, boards)))
 
-        # moves
-        with open(move_output_file, 'w') as move_file:
-            move_file.write('\n'.join(map(str, moves)))
+            # moves
+            with open(move_output_file, 'w') as move_file:
+                move_file.write('\n'.join(map(str, moves)))
