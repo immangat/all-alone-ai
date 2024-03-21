@@ -9,6 +9,7 @@ from part_2.IO_handler import IOHandler
 from part_2.board import Board
 from part_2.event_handler import EventHandler
 from part_2.player import HumanPlayer
+from part_2.IO_handler import IOHandler
 
 
 class MenuScreen:
@@ -195,7 +196,8 @@ class MenuScreen:
     def select_file(self, *args):
         self.selected_file_name = args[0][0][0]
         print("selected file name: {}".format(self.selected_file_name))
-        # TODO add the iohandler logic here or in a button
+        io_handler = IOHandler()
+        io_handler.create_outcomes_from_board_file(self.selected_file_name)
 
     def human_vs_human(self):
         print("human vs human")
