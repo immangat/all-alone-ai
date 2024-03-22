@@ -204,7 +204,7 @@ o	11: Up Left
 1. **Mangat Toor**
     - Worked on timer logic for the game.
     - Worked on move notation and problem formulation.
-    - Worked on move logic.
+    - Worked on move logic. 
     - Worked on pause functionality.
     - Worked on documentation.
     - Worked on State_Space_Generation
