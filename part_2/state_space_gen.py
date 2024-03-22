@@ -1,6 +1,6 @@
-from board import Board
-from directions import Direction
-from move import Move
+from part_2.board import Board
+from part_2.directions import Direction
+from part_2.move import Move
 import copy
 
 class StateSpaceGen:

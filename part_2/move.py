@@ -1,4 +1,4 @@
-from directions import Direction
+
 class Move():
 
     def __init__(self, move_type, direction, marbles):

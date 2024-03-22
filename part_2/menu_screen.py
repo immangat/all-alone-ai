@@ -273,6 +273,6 @@ def filenames_to_tuples(filenames):
 
 def list_files_in_directory(directory):
     # Filter out .py files
-    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)) and os.path.splitext(f)[1] != '.py' and os.path.splitext(f)[1] != '.md']
+    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)) and os.path.splitext(f)[1] =='.input']
 
 

@@ -8,7 +8,6 @@ from part_2.menu_screen import MenuScreen
 from part_2.states import States
 from part_2.state_space_gen import StateSpaceGen
 import copy
-from part_2.uis.moves_remaining_gui import MovesRemainingGUI
 
 
 class Manager:

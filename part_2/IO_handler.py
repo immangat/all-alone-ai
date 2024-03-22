@@ -1,6 +1,6 @@
 import re
-from state_space_gen import StateSpaceGen
-from board import Board
+from part_2.state_space_gen import StateSpaceGen
+from part_2.board import Board
 class IOHandler:
 
     def __init__(self):

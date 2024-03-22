@@ -2,7 +2,6 @@ import math
 import pygame
 import pygame_gui
 
-from part_2.player import AIPlayer, HumanPlayer
 from part_2.uis.button_ui import ButtonUI
 from part_2.uis.move_gui import move_gui
 
