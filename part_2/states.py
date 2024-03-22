@@ -1,4 +1,4 @@
-from state import State
+from part_2.state import State
 
 class States:
 
