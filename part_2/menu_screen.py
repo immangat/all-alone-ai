@@ -187,6 +187,12 @@ class MenuScreen:
             1000,
             10,
         )
+        state_button = self.menu.add.button(
+            'Search States',
+            self.search_states,
+            background_color=(200, 70, 0),
+            padding=(5, 50, 5, 50),  # top, right, bottom, left
+        )
 
         if self.is_testing:
             self.menu.add.button(
@@ -206,8 +212,6 @@ class MenuScreen:
     def select_file(self, *args):
         self.selected_file_name = args[0][0][0]
         print("selected file name: {}".format(self.selected_file_name))
-        io_handler = IOHandler()
-        io_handler.create_outcomes_from_board_file(self.selected_file_name)
 
     def human_vs_human(self):
         print("human vs human")
@@ -259,6 +263,10 @@ class MenuScreen:
     def quit_game(self):
         # Exit the program
         pygame.quit()
+
+    def search_states(self):
+        io_handler = IOHandler()
+        io_handler.create_outcomes_from_board_file(self.selected_file_name)
 
     def board_testing(self):
         print("board testing")
