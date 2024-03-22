@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from functools import reduce
 
-from part_2.clock import Clock
+from clock import Clock
 
 
 class Player(ABC):

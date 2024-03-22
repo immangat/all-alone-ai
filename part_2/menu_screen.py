@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 import pygame_gui
 import pygame_menu
@@ -5,16 +7,23 @@ from pygame_gui.elements import UIButton
 from functools import partial
 import os
 
-from part_2.IO_handler import IOHandler
-from part_2.board import Board
-from part_2.event_handler import EventHandler
-from part_2.player import HumanPlayer
-from part_2.IO_handler import IOHandler
+from IO_handler import IOHandler
+from board import Board
+from event_handler import EventHandler
+from player import HumanPlayer
+from IO_handler import IOHandler
 
 
 class MenuScreen:
     def __init__(self, width: int, height: int, manager):
-        self.current_directory = os.path.dirname(os.path.abspath(__file__))
+        if getattr(sys, 'frozen', False):
+            application_path = os.path.dirname(sys.executable)
+            self.current_directory = application_path
+            print(application_path)
+            os.chdir(application_path)
+        else:
+            self.current_directory = os.path.dirname(os.path.abspath(__file__))
+        print(f"{self.current_directory}")
         self.files = filenames_to_tuples(list_files_in_directory(self.current_directory))
         self.selected_file_name = None
         self.width = width
@@ -161,18 +170,19 @@ class MenuScreen:
         frame.pack(start_button, align=pygame_menu.locals.ALIGN_LEFT)
         frame.pack(quit_button, align=pygame_menu.locals.ALIGN_RIGHT)
 
-        file_selector = self.menu.add.dropselect(
-            title='File Selection:',
-            padding=(0, 0, 0, 8),
-            items=self.files,
-            font_size=20,
-            selection_option_font_size=20,
-            onchange=self.select_file,
-            default=0,
-            selection_box_height=5,
-            selection_box_width=212,
-            selection_color=(76, 0, 153)
-        )
+        if len(self.files) != 0:
+            file_selector = self.menu.add.dropselect(
+                title='File Selection:',
+                padding=(0, 0, 0, 8),
+                items=self.files,
+                font_size=20,
+                selection_option_font_size=20,
+                onchange=self.select_file,
+                default=0,
+                selection_box_height=5,
+                selection_box_width=212,
+                selection_color=(76, 0, 153)
+            )
         self.menu.add.frame_v(
             1000,
             10,
@@ -273,6 +283,5 @@ def filenames_to_tuples(filenames):
 
 def list_files_in_directory(directory):
     # Filter out .py files
-    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f)) and os.path.splitext(f)[1] =='.input']
-
-
+    return [f for f in os.listdir(directory) if
+            os.path.isfile(os.path.join(directory, f)) and os.path.splitext(f)[1] == '.input']

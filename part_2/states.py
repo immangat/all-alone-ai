@@ -1,4 +1,5 @@
-from part_2.state import State
+from state import State
+
 
 class States:
 
@@ -13,7 +14,7 @@ class States:
         self.states.append(initial_state)
 
     def remove_last_state(self):
-        if len(self.states) > 1: #Do not remove the first state as it is the initial board for the game
+        if len(self.states) > 1:  # Do not remove the first state as it is the initial board for the game
             self.states.pop()
 
     def get_last_state(self):

@@ -2,12 +2,13 @@ import math
 import pygame
 import pygame_gui
 
-from part_2.uis.button_ui import ButtonUI
-from part_2.uis.move_gui import move_gui
+from uis.button_ui import ButtonUI
+from uis.move_gui import move_gui
 
-from part_2.event_handler import EventHandler, CUSTOM_TIMER_EVENT
-from part_2.uis.player_ui_layout import PlayerUi
-from part_2.uis.moves_remaining_gui import MovesRemainingGUI
+from event_handler import EventHandler, CUSTOM_TIMER_EVENT
+from uis.player_ui_layout import PlayerUi
+from uis.moves_remaining_gui import MovesRemainingGUI
+
 
 class GameWindow:
     MOVE_GUI_WIDTH = 300
@@ -46,12 +47,12 @@ class GameWindow:
 
         # UI panels defined below
         player_1_gui = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect((0,0), (self.COLUM_LINE_1, self.ROW_LINE_1)),
+            relative_rect=pygame.Rect((0, 0), (self.COLUM_LINE_1, self.ROW_LINE_1)),
             manager=self.manager_ui,
             object_id="player_1")
 
         player_2_gui = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect((0,self.ROW_LINE_4), (self.COLUM_LINE_1, self.ROW_LINE_1)),
+            relative_rect=pygame.Rect((0, self.ROW_LINE_4), (self.COLUM_LINE_1, self.ROW_LINE_1)),
             manager=self.manager_ui,
             object_id="player_2")
 
@@ -151,7 +152,6 @@ class GameWindow:
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
         self.draw_time()
-
 
     def draw_time(self):
         font = pygame.font.SysFont(None, 30)
