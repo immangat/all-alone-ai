@@ -18,6 +18,9 @@ To run the game, execute the `ab-ablone-game.eve` file or in the command console
 
 To build the game run `pyinstaller --name="name_of_game" --onefile -w --add-data "gui_json/theme.json:gui_json/" game_control.py`
 
+the build file will need to be moved to folder where the test files are located if state space
+generation needs to be tested
+
 ## Configuration
 
 The game can be configured using the drop-down menus in the game interface.
