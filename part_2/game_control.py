@@ -1,12 +1,12 @@
 import pygame
 
-from part_2.board import Board
-from part_2.clock import Clock
-from part_2.game_window import GameWindow
-from part_2.player import Player, HumanPlayer
-from part_2.menu_screen import MenuScreen
-from part_2.states import States
-from part_2.state_space_gen import StateSpaceGen
+from board import Board
+from clock import Clock
+from game_window import GameWindow
+from player import Player, HumanPlayer
+from menu_screen import MenuScreen
+from states import States
+from state_space_gen import StateSpaceGen
 import copy
 
 

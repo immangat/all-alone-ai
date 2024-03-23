@@ -1,16 +1,11 @@
-import math
-
 import pygame
 import pygame_gui
-from pygame_gui.elements import UILabel, UIImage, UIPanel, UIButton
-from part_2 import player
-from part_2.player import AIPlayer, HumanPlayer
-from part_2.uis.button_ui_layout import ButtonUI
-from part_2.game_control import Manager
-from part_2.board import Board
-from part_2.uis.player_ui_layout import PlayerUi
-from part_2.uis.move_gui_layout import MoveGui
-
+from player import AIPlayer, HumanPlayer
+from uis.button_ui_layout import ButtonUI
+from game_control import Manager
+from board import Board
+from uis.player_ui_layout import PlayerUi
+from uis.move_gui_layout import MoveGui
 
 # class BoardUi:
 #     def __init__(self, container, manager):
@@ -69,15 +64,13 @@ from part_2.uis.move_gui_layout import MoveGui
 #         return self.board.BOARD_COORD
 
 
-
 ## making players for testing
 ai_player = AIPlayer(name="AI Nico", color="Red")
 human_player = HumanPlayer(name="Human Manhgott", color="Blue")
 
-
 pygame.init()
 
-#constants
+# constants
 display_info = pygame.display.Info()
 WINDOW_WIDTH = display_info.current_w
 WINDOW_HEIGHT = display_info.current_h
@@ -103,26 +96,29 @@ manager = pygame_gui.UIManager(window_size, "gui_json/theme.json")
 # abalone_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, ROW_LINE_1), (COLUM_LINE_1, ROW_LINE_4 - ROW_LINE_1)),
 #                                              manager=manager)
 
-abalone_surface = pygame.Surface((0,0),0)
+abalone_surface = pygame.Surface((0, 0), 0)
 
-player_1_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0,0), (COLUM_LINE_1, ROW_LINE_1)),
+player_1_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0, 0), (COLUM_LINE_1, ROW_LINE_1)),
                                                   manager=manager,
                                                   object_id="player_1")
 
-player_2_hud_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((0,ROW_LINE_4), (COLUM_LINE_1, ROW_LINE_1)),
-                                                  manager=manager,
-                                                  object_id="player_2")
+player_2_hud_window = pygame_gui.elements.UIPanel(
+    relative_rect=pygame.Rect((0, ROW_LINE_4), (COLUM_LINE_1, ROW_LINE_1)),
+    manager=manager,
+    object_id="player_2")
 
 clock_image_1 = pygame.image.load('assets/clock1.png')
 
+turn_remaining_window = pygame_gui.elements.UIPanel(
+    relative_rect=pygame.Rect((COLUM_LINE_1, 0), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_2)))
 
-turn_remaining_window = pygame_gui.elements.UIPanel(relative_rect= pygame.Rect((COLUM_LINE_1, 0), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_2)))
+moves_window = pygame_gui.elements.UIPanel(
+    relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_2), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_3 - ROW_LINE_2)),
+    manager=manager,
+    object_id="panel1")
 
-moves_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_2), (WINDOW_WIDTH - COLUM_LINE_1, ROW_LINE_3 - ROW_LINE_2)),
-                                           manager=manager,
-                                           object_id="panel1")
-
-buttons_gui_window = pygame_gui.elements.UIPanel(relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_3), (WINDOW_WIDTH - COLUM_LINE_1, WINDOW_HEIGHT- ROW_LINE_3)))
+buttons_gui_window = pygame_gui.elements.UIPanel(
+    relative_rect=pygame.Rect((COLUM_LINE_1, ROW_LINE_3), (WINDOW_WIDTH - COLUM_LINE_1, WINDOW_HEIGHT - ROW_LINE_3)))
 
 # Create and add player elements to player1 gui
 player1 = PlayerUi(1, human_player, "player_1", player_1_hud_window, manager)
@@ -140,7 +136,6 @@ buttons_gui.create_gui()
 move_gui = MoveGui(moves_window, manager)
 move_gui.create_gui()
 
-
 # player_1_clock = UIImage(relative_rect=pygame.Rect(0, 0, 25, 25),
 #                          manager=manager,
 #                          container=player_1_hud_window,
@@ -154,7 +149,7 @@ move_gui.create_gui()
 
 running = True
 while running:
-    time_delta = clock.tick(60)/1000.0
+    time_delta = clock.tick(60) / 1000.0
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -176,7 +171,7 @@ while running:
     human_player.clock.tick_timer()
     ai_player.clock.tick_timer()
 
-    #updates the clockuilabel with current time
+    # updates the clockuilabel with current time
     # player_1_time.set_text(' TIME: {:.2f}'.format(human_player.clock.current_time))
     # above logic needs to be moved else where, as human ui is in seperate class now
     # board_ui.draw_board()
@@ -185,10 +180,3 @@ while running:
     pygame.display.flip()
 
 pygame.quit()
-
-
-
-
-
-
-
