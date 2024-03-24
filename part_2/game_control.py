@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 from board import Board
@@ -100,6 +102,20 @@ class Manager:
         self.game_window.move_gui.add_move(last_move)
         self.game_window.move_gui.moves_gui.rebuild()
 
+    def make_random_move(self):
+        self.gen = StateSpaceGen()
+        self.gen.generate_state_space(self.board, self.current_player.color)
+        print(self.gen.moves)
+
+        # Ensure there is at least one move to choose from
+        if self.gen.moves:
+            random_move = random.choice(self.gen.moves)
+            print(f"Randomly selected move: {random_move}")
+            return random_move
+        else:
+            print("No moves available.")
+            return None
+
     def validate_and_make_move(self, marbles, direction):
         self.gen = StateSpaceGen()
         board_move = self.gen.validate_move(self.board, marbles, direction)
@@ -122,6 +138,7 @@ class Manager:
         self.current_player.reset_player_clock()
         if self.current_player == self.players[0]:
             self.current_player = self.players[1]
+            self.make_random_move()
         else:
             self.current_player = self.players[0]
         self.update_score()
