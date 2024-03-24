@@ -22,7 +22,32 @@ class move_evaluation:
         self.player_color = manager.current_player.color
         self.opponent_color = "w" if self.player_color == "b" else "b"
 
-    def evaluate_board_state(self, board, player_color):
+    def choose_best_move(self):
+        best_score = -float('inf')  # Initialize with the lowest possible score
+        best_move = None
+        best_board = None
+
+        # Loop through all possible moves and their resulting boards
+        for move, resulting_board in zip(self.manager.gen.moves, self.manager.gen.boards):
+            # Evaluate the board state resulting from making the current move
+
+            score = self.nico_heuristic(resulting_board, self.player_color)
+            # score = self.vitor_heuristic(resulting_board, self.player_color)
+            # score = self.mangat_heuristic(resulting_board, self.player_color)
+            # score = self.tomek_heuristic(resulting_board, self.player_color)
+
+            # If the current move's score is better than the best found so far, update best_move and best_score
+            if score > best_score:
+                best_score = score
+                best_move = move
+                best_board = resulting_board
+
+        # Optionally, print or log the best move and its score for debugging
+        print(f"Best move: {best_move}, Score: {best_score}")
+
+        return best_move, best_board, best_score
+
+    def nico_heuristic(self, board, player_color):
 
         score = 0
 
@@ -81,7 +106,7 @@ class move_evaluation:
     def find_knockout_moves(self):
         knockout_moves_player = []
         knockout_boards = []
-        player_marbles_remaining = self.num_marbles_by_color(self.player_color)
+        player_marbles_remaining = self._num_marbles_by_color(self.player_color)
         print(f"total player marbles remaining: {self.opponent_color}", player_marbles_remaining)
         for move, resulting_board in zip(self.manager.gen.moves, self.manager.gen.boards):
             resulting_board_length = len(str(resulting_board))
@@ -96,9 +121,7 @@ class move_evaluation:
     def num_marbles_taken(self, color):
         return self.manager.board.num_marbles_left_by_color(color)
 
-
-
-    def num_marbles_by_color(self, color):
+    def _num_marbles_by_color(self, color):
         return len(self.manager.board.get_marbles_by_color(color))
 
     def is_marble_near_edge(self, coord):

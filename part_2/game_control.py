@@ -104,16 +104,14 @@ class Manager:
         self.game_window.move_gui.add_move(last_move)
         self.game_window.move_gui.moves_gui.rebuild()
 
+    #TODO we need to make the first ai move for black be random
     def make_random_move(self):
         self.gen = StateSpaceGen()
         self.gen.generate_state_space(self.board, self.current_player.color)
 
-        state = self.move_eval.evaluate_board_state(self.board, self.current_player.color)
+        best_move = self.move_eval.choose_best_move()
 
-        print(f"board state: {state}")
-        # print(f"board: {self.board}")
-        # for move in self.gen.moves:
-        #     print(f"moves: {move}")
+        self.ai_make_move(best_move[0], best_move[1]) # This is only for testing purposes.
 
         # Ensure there is at least one move to choose from
         if self.gen.moves:
@@ -123,6 +121,17 @@ class Manager:
         else:
             print("No moves available.")
             return None
+
+    def ai_make_move(self, move, board):
+        self.board = board
+        self.states.add_state(move, board)
+        # print(self.states.get_states()[-1].get_move())
+        self.store_move_history()
+        self.switch_turns()
+        self.decrement_moves_remaining()
+        self.game_window.moves_left.update_gui()
+        self.game_window.move_gui.moves_gui.rebuild()
+        self.board.get_marbles_by_color(self.current_player.color)
 
     def validate_and_make_move(self, marbles, direction):
         self.gen = StateSpaceGen()
