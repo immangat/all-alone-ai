@@ -9,6 +9,7 @@ from player import Player, HumanPlayer
 from menu_screen import MenuScreen
 from states import States
 from state_space_gen import StateSpaceGen
+from ai_evaluation import move_evaluation
 import copy
 
 
@@ -40,6 +41,7 @@ class Manager:
             # added here because no game class
             self.total_move_limit = None
             self.total_moves_left = None
+            self.move_eval = move_evaluation(self)
 
     @staticmethod
     def get_instance():
@@ -105,7 +107,13 @@ class Manager:
     def make_random_move(self):
         self.gen = StateSpaceGen()
         self.gen.generate_state_space(self.board, self.current_player.color)
-        print(self.gen.moves)
+
+        state = self.move_eval.evaluate_board_state(self.board, self.current_player.color)
+
+        print(f"board state: {state}")
+        # print(f"board: {self.board}")
+        # for move in self.gen.moves:
+        #     print(f"moves: {move}")
 
         # Ensure there is at least one move to choose from
         if self.gen.moves:

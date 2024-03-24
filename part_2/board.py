@@ -17,6 +17,20 @@ class Board:
         (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)
     ]
 
+    EDGE_COORD = [
+
+        (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+        (2, 1), (2, 6),
+        (3, 1), (3, 7),
+        (4, 1), (4, 8),
+        (5, 1), (5, 9),
+        (6, 2), (6, 9),
+        (7, 3), (7, 9),
+        (8, 4), (8, 9),
+        (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)
+
+    ]
+
     def __init__(self):
         """
         Initialise the board with the empty board
@@ -44,6 +58,7 @@ class Board:
 
     def set_marble(self, coord, color=None):
         self.circles[coord] = color
+
 
     @staticmethod
     def is_within_bounds(coord):
@@ -94,7 +109,6 @@ class Board:
 
         for coord in white_marbles:
             self.set_marble(coord, "w")
-
 
     def setup_german_daisy(self):
         """
@@ -152,7 +166,7 @@ class Board:
                 print(f"Invalid coordinate: {coord}")
                 return None
 
-        white_marbles = new_board.num_marbles_left_by_color("w") # from 14 - 14 = 0 to 14 - 9 = 5 -> 0 to 5
+        white_marbles = new_board.num_marbles_left_by_color("w")  # from 14 - 14 = 0 to 14 - 9 = 5 -> 0 to 5
         black_marbles = new_board.num_marbles_left_by_color("b")
         print(f"Number of white marbles: {white_marbles}")
         print(f"Number of black marbles: {black_marbles}")
@@ -163,7 +177,6 @@ class Board:
         else:
             print("Invalid number of marbles")
             return None
-
 
         return new_board
 
@@ -177,7 +190,6 @@ class Board:
         new_board.circles = copy.deepcopy(self.circles, memo)
         memo[id(self)] = new_board
         return new_board
-
 
     def get_marble(self, coord):
         return self.circles[coord]
@@ -207,4 +219,3 @@ class Board:
 
         # Remove the trailing comma and space
         return board_str.rstrip(',')
-
