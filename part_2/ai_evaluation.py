@@ -19,9 +19,15 @@ class move_evaluation:
 
     def __init__(self, manager):
         self.manager = manager
+        self.player_color = manager.current_player.color
+        self.opponent_color = "w" if self.player_color == "b" else "b"
 
     def evaluate_board_state(self, board, player_color):
+
         score = 0
+
+        num_marbles_taken = self.num_marbles_taken(self.player_color)
+        num_marbles_lost = self.num_marbles_taken(self.opponent_color)
         player_marbles = board.get_marbles_by_color(player_color)
         opponent_color = "w" if player_color == "b" else "b"
         opponent_marbles = board.get_marbles_by_color(opponent_color)
@@ -49,14 +55,13 @@ class move_evaluation:
             score -= group_bonus
 
         # Direct Knockout Bonus
-        for marble in player_marbles:
-            if self.can_knockout(marble, board, player_color):
-                score += 10  # Assign a high score for potential knockouts
-
-        # Positional Advantage for Future Knockouts
-        for marble in player_marbles:
-            if self.is_position_advantageous_for_knockout(marble, board, player_color):
-                score += 5  # Reward positions that could lead to knockouts
+        # print(self.find_knockout_moves())
+        knockout_moves = self.find_knockout_moves()[0]
+        # Assuming each knockout move is highly valuable, add a significant score for each.
+        if num_marbles_taken == 4:
+            score += len(knockout_moves) * 10000  # Modify the multiplier as needed to balance gameplay.
+        else:
+            score += len(knockout_moves) * 10  # Modify the multiplier as needed to balance gameplay.
 
         # Center Control: Additional points for controlling the center of the board
         center_control_bonus = sum(1 for marble in player_marbles if marble in self.CENTER_COORD)
@@ -65,7 +70,36 @@ class move_evaluation:
         center_control_bonus = sum(1 for marble in opponent_marbles if marble in self.CENTER_COORD)
         score -= center_control_bonus * 5  # Weight center control more heavily
 
+        # Number of marbles taken: Increase score for each marble taken
+        score += num_marbles_taken * 10  # Modify the multiplier as needed to balance gameplay.
+
+        # Number of marbles lost: Decrease score for each marble lost
+        score -= num_marbles_lost * 10
+
         return score
+
+    def find_knockout_moves(self):
+        knockout_moves_player = []
+        knockout_boards = []
+        player_marbles_remaining = self.num_marbles_by_color(self.player_color)
+        print(f"total player marbles remaining: {self.opponent_color}", player_marbles_remaining)
+        for move, resulting_board in zip(self.manager.gen.moves, self.manager.gen.boards):
+            resulting_board_length = len(str(resulting_board))
+            current_board_length = len(str(self.manager.board))
+            if resulting_board_length < current_board_length:
+                print("Knockout Move")
+                knockout_moves_player.append(move)
+                knockout_boards.append(resulting_board)
+
+        return knockout_moves_player, knockout_boards
+
+    def num_marbles_taken(self, color):
+        return self.manager.board.num_marbles_left_by_color(color)
+
+
+
+    def num_marbles_by_color(self, color):
+        return len(self.manager.board.get_marbles_by_color(color))
 
     def is_marble_near_edge(self, coord):
         if coord in self.EDGE_COORD:
