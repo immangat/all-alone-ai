@@ -1,4 +1,7 @@
+from state_space_gen import StateSpaceGen
+
 class move_evaluation:
+
     EDGE_COORD = [
 
         (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
@@ -19,33 +22,100 @@ class move_evaluation:
 
     def __init__(self, manager):
         self.manager = manager
+        self.gen = StateSpaceGen()
         self.player_color = manager.current_player.color
+        print(f"player color: {self.player_color}")
         self.opponent_color = "w" if self.player_color == "b" else "b"
+        self.best_board = None
+
+    # def choose_best_move(self):
+    #     best_score = -float('inf')  # Initialize with the lowest possible score
+    #     best_move = None
+    #     best_board = None
+    #
+    #     # Loop through all possible moves and their resulting boards
+    #     for move, resulting_board in zip(self.manager.gen.moves, self.manager.gen.boards):
+    #         # Evaluate the board state resulting from making the current move
+    #
+    #         score = self.nico_heuristic(resulting_board, self.player_color)
+    #
+    #         # If the current move's score is better than the best found so far, update best_move and best_score
+    #         if score > best_score:
+    #             best_score = score
+    #             best_move = move
+    #             best_board = resulting_board
+    #
+    #     # Optionally, print or log the best move and its score for debugging
+    #     print(f"Best move: {best_move}, Score: {best_score}")
+    #
+    #     return best_move, best_board, best_score
 
     def choose_best_move(self):
-        best_score = -float('inf')  # Initialize with the lowest possible score
+        print(f"player color: {self.player_color}")
+        if self.manager.current_player.color != self.player_color:
+            self.switch_players()
+        result = self.minimax(self.manager.board, 1, -float('inf'), float('inf'), True)
+        print("Move chosen:",result[1])
+        # print(f"player color: {self.player_color}")
+        return result[1], result[2]
+
+    def minimax(self, board, depth, alpha, beta, maximizingPlayer):
+        count = 0
+        original_player_color = self.player_color
+        original_opponent_color = self.opponent_color
+
+        if maximizingPlayer:
+            self.player_color = original_player_color
+            self.opponent_color = original_opponent_color
+        else:
+            # Switch context for minimizing player
+            self.player_color = original_opponent_color
+            self.opponent_color = original_player_color
+
+        self.gen = StateSpaceGen()
+        print("color: ",self.player_color)
+        # self.switch_players()
+        self.gen.generate_state_space(board, self.player_color)
+        for move, resulting_board in zip(self.gen.moves, self.gen.boards):
+            count+= 1
+            print(f"Move: {move}")
+            print(resulting_board)
+        print(count)
+        # if depth == 0 or board.is_game_over():
+        if depth == 0:
+            score = self.nico_heuristic(board, self.player_color)
+            # Restore original player context
+            self.player_color = original_player_color
+            self.opponent_color = original_opponent_color
+            return score, None, board
+
         best_move = None
         best_board = None
 
-        # Loop through all possible moves and their resulting boards
-        for move, resulting_board in zip(self.manager.gen.moves, self.manager.gen.boards):
-            # Evaluate the board state resulting from making the current move
-
-            score = self.nico_heuristic(resulting_board, self.player_color)
-            # score = self.vitor_heuristic(resulting_board, self.player_color)
-            # score = self.mangat_heuristic(resulting_board, self.player_color)
-            # score = self.tomek_heuristic(resulting_board, self.player_color)
-
-            # If the current move's score is better than the best found so far, update best_move and best_score
-            if score > best_score:
-                best_score = score
-                best_move = move
-                best_board = resulting_board
-
-        # Optionally, print or log the best move and its score for debugging
-        print(f"Best move: {best_move}, Score: {best_score}")
-
-        return best_move, best_board, best_score
+        if maximizingPlayer:
+            maxEval = -float('inf')
+            for move, resulting_board in zip(self.gen.moves, self.gen.boards):
+                evaluation, _, _ = self.minimax(resulting_board, depth - 1, alpha, beta, False)
+                if evaluation > maxEval:
+                    maxEval = evaluation
+                    best_move = move
+                    best_board = resulting_board
+                alpha = max(alpha, evaluation)
+                if beta <= alpha:
+                    break
+            return maxEval, best_move, best_board
+        else:
+            minEval = float('inf')
+            for move, resulting_board in zip(self.gen.moves, self.gen.boards):
+                evaluation, _, _ = self.minimax(resulting_board, depth - 1, alpha, beta, True)
+                if evaluation < minEval:
+                    minEval = evaluation
+                    best_move = move
+                    best_board = resulting_board
+                beta = min(beta, evaluation)
+                if beta <= alpha:
+                    break
+            return minEval, best_move, best_board
 
     def nico_heuristic(self, board, player_color):
 
@@ -69,13 +139,13 @@ class move_evaluation:
 
         # Formation Strength: Bonus for each marble that is part of a larger group
         for marble in player_marbles:
-            neighbors, _ = self.manager.gen.get_neighbors(marble)
+            neighbors, _ = self.gen.get_neighbors(marble)
             group_bonus = sum(1 for neighbor in neighbors if neighbor in player_marbles)
             score += group_bonus
 
         # Formation Strength: Bonus for each marble that is part of a larger group
         for marble in opponent_marbles:
-            neighbors, _ = self.manager.gen.get_neighbors(marble)
+            neighbors, _ = self.gen.get_neighbors(marble)
             group_bonus = sum(1 for neighbor in neighbors if neighbor in opponent_marbles)
             score -= group_bonus
 
@@ -107,12 +177,12 @@ class move_evaluation:
         knockout_moves_player = []
         knockout_boards = []
         player_marbles_remaining = self._num_marbles_by_color(self.player_color)
-        print(f"total player marbles remaining: {self.opponent_color}", player_marbles_remaining)
-        for move, resulting_board in zip(self.manager.gen.moves, self.manager.gen.boards):
+        # print(f"total player marbles remaining: {self.opponent_color}", player_marbles_remaining)
+        for move, resulting_board in zip(self.gen.moves, self.gen.boards):
             resulting_board_length = len(str(resulting_board))
             current_board_length = len(str(self.manager.board))
             if resulting_board_length < current_board_length:
-                print("Knockout Move")
+                # print("Knockout Move")
                 knockout_moves_player.append(move)
                 knockout_boards.append(resulting_board)
 
@@ -128,6 +198,10 @@ class move_evaluation:
         if coord in self.EDGE_COORD:
             return True
 
-        neighbors, _ = self.manager.gen.get_neighbors(coord)
+        neighbors, _ = self.gen.get_neighbors(coord)
 
         return any(neighbor in self.EDGE_COORD for neighbor in neighbors)
+
+    def switch_players(self):
+        self.player_color = "w" if self.player_color == "b" else "b"
+        self.opponent_color = "w" if self.player_color == "b" else "b"

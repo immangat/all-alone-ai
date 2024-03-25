@@ -101,6 +101,7 @@ class Manager:
 
     def store_move_history(self):
         last_move = self.states.get_states()[-1].get_move()
+        print("Last move: ", last_move)
         self.game_window.move_gui.add_move(last_move)
         self.game_window.move_gui.moves_gui.rebuild()
 
@@ -125,7 +126,8 @@ class Manager:
     def ai_make_move(self, move, board):
         self.board = board
         self.states.add_state(move, board)
-        # print(self.states.get_states()[-1].get_move())
+        print("States ai move: ", self.states.get_states()[-1].get_move())
+        print("AI move made", move)
         self.store_move_history()
         self.switch_turns()
         self.decrement_moves_remaining()
@@ -155,6 +157,7 @@ class Manager:
         self.current_player.reset_player_clock()
         if self.current_player == self.players[0]:
             self.current_player = self.players[1]
+            print("Switching to player 2", self.current_player.color)
             self.make_random_move()
         else:
             self.current_player = self.players[0]
