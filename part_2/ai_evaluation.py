@@ -1,3 +1,5 @@
+import time
+
 from state_space_gen import StateSpaceGen
 
 class move_evaluation:
@@ -50,72 +52,132 @@ class move_evaluation:
     #
     #     return best_move, best_board, best_score
 
-    def choose_best_move(self):
-        print(f"player color: {self.player_color}")
+    def choose_best_move(self, time_limit=20):
+        start_time = time.time()
+        depth = 1
+        best_move = None
+        best_score = -float('inf')
+        best_board = None
+
         if self.manager.current_player.color != self.player_color:
             self.switch_players()
-        result = self.minimax(self.manager.board, 1, -float('inf'), float('inf'), True)
-        print("Move chosen:",result[1])
-        # print(f"player color: {self.player_color}")
-        return result[1], result[2]
 
-    def minimax(self, board, depth, alpha, beta, maximizingPlayer):
-        count = 0
+        # Continue deepening until the time limit is reached.
+        while True:
+            score, move, board = self.minimax(self.manager.board, depth, -float('inf'), float('inf'), True, start_time, time_limit)
+            if move is None:  # Time's up, no move found
+                break
+            if score > best_score:
+                best_score, best_move, best_board = score, move, board
+            depth += 1
+            if time.time() - start_time >= time_limit:
+                break
+
+        print(f"Best move at depth {depth-1}: {best_move}, score: {best_score}")
+        return best_move, best_board
+
+    def minimax(self, board, depth, alpha, beta, maximizingPlayer, start_time, time_limit):
+        # Time check to stop the search
+        if time.time() - start_time > time_limit:
+            return -float('inf') if maximizingPlayer else float('inf'), None, None
+
         original_player_color = self.player_color
         original_opponent_color = self.opponent_color
 
-        if maximizingPlayer:
-            self.player_color = original_player_color
-            self.opponent_color = original_opponent_color
-        else:
-            # Switch context for minimizing player
-            self.player_color = original_opponent_color
-            self.opponent_color = original_player_color
+        # Switch context for minimizing player
+        if not maximizingPlayer:
+            self.player_color, self.opponent_color = self.opponent_color, self.player_color
 
         self.gen = StateSpaceGen()
-        print("color: ",self.player_color)
-        # self.switch_players()
         self.gen.generate_state_space(board, self.player_color)
-        for move, resulting_board in zip(self.gen.moves, self.gen.boards):
-            count+= 1
-            print(f"Move: {move}")
-            print(resulting_board)
-        print(count)
-        # if depth == 0 or board.is_game_over():
+
         if depth == 0:
             score = self.nico_heuristic(board, self.player_color)
-            # Restore original player context
-            self.player_color = original_player_color
-            self.opponent_color = original_opponent_color
+            self.player_color, self.opponent_color = original_player_color, original_opponent_color
             return score, None, board
 
         best_move = None
-        best_board = None
+        best_score = -float('inf') if maximizingPlayer else float('inf')
 
-        if maximizingPlayer:
-            maxEval = -float('inf')
-            for move, resulting_board in zip(self.gen.moves, self.gen.boards):
-                evaluation, _, _ = self.minimax(resulting_board, depth - 1, alpha, beta, False)
-                if evaluation > maxEval:
-                    maxEval = evaluation
-                    best_move = move
-                    best_board = resulting_board
+        for move, resulting_board in zip(self.gen.moves, self.gen.boards):
+            # Recursive minimax call
+            evaluation, _, _ = self.minimax(resulting_board, depth - 1, alpha, beta, not maximizingPlayer, start_time,
+                                            time_limit)
+
+            if maximizingPlayer:
+                if evaluation > best_score:
+                    best_score, best_move = evaluation, move
                 alpha = max(alpha, evaluation)
-                if beta <= alpha:
-                    break
-            return maxEval, best_move, best_board
-        else:
-            minEval = float('inf')
-            for move, resulting_board in zip(self.gen.moves, self.gen.boards):
-                evaluation, _, _ = self.minimax(resulting_board, depth - 1, alpha, beta, True)
-                if evaluation < minEval:
-                    minEval = evaluation
-                    best_move = move
-                    best_board = resulting_board
+            else:
+                if evaluation < best_score:
+                    best_score, best_move = evaluation, move
                 beta = min(beta, evaluation)
-                if beta <= alpha:
-                    break
-            return minEval, best_move, best_board
+
+            if beta <= alpha:
+                break
+
+        # Restore the original player context
+        self.player_color, self.opponent_color = original_player_color, original_opponent_color
+
+        return best_score, best_move, resulting_board if best_move else board
+
+    # def minimax(self, board, depth, alpha, beta, maximizingPlayer):
+    #     count = 0
+    #     original_player_color = self.player_color
+    #     original_opponent_color = self.opponent_color
+    #
+    #     if maximizingPlayer:
+    #         self.player_color = original_player_color
+    #         self.opponent_color = original_opponent_color
+    #     else:
+    #         # Switch context for minimizing player
+    #         self.player_color = original_opponent_color
+    #         self.opponent_color = original_player_color
+    #
+    #     self.gen = StateSpaceGen()
+    #     print("color: ",self.player_color)
+    #     # self.switch_players()
+    #     self.gen.generate_state_space(board, self.player_color)
+    #     for move, resulting_board in zip(self.gen.moves, self.gen.boards):
+    #         count+= 1
+    #         print(f"Move: {move}")
+    #         print(resulting_board)
+    #     print(count)
+    #     # if depth == 0 or board.is_game_over():
+    #     if depth == 0:
+    #         score = self.nico_heuristic(board, self.player_color)
+    #         # Restore original player context
+    #         self.player_color = original_player_color
+    #         self.opponent_color = original_opponent_color
+    #         return score, None, board
+    #
+    #     best_move = None
+    #     best_board = None
+    #
+    #     if maximizingPlayer:
+    #         maxEval = -float('inf')
+    #         for move, resulting_board in zip(self.gen.moves, self.gen.boards):
+    #             evaluation, _, _ = self.minimax(resulting_board, depth - 1, alpha, beta, False)
+    #             if evaluation > maxEval:
+    #                 maxEval = evaluation
+    #                 best_move = move
+    #                 best_board = resulting_board
+    #             alpha = max(alpha, evaluation)
+    #             if beta <= alpha:
+    #                 break
+    #         return maxEval, best_move, best_board
+    #     else:
+    #         minEval = float('inf')
+    #         for move, resulting_board in zip(self.gen.moves, self.gen.boards):
+    #             evaluation, _, _ = self.minimax(resulting_board, depth - 1, alpha, beta, True)
+    #             if evaluation < minEval:
+    #                 minEval = evaluation
+    #                 # best_move = move
+    #                 # best_board = resulting_board
+    #             beta = min(beta, evaluation)
+    #             if beta <= alpha:
+    #                 break
+    #         return minEval, best_move, best_board
 
     def nico_heuristic(self, board, player_color):
 
