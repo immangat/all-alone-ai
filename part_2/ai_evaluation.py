@@ -117,7 +117,10 @@ class move_evaluation:
         best_score = -float('inf') if maximizingPlayer else float('inf')
         best_board = None
 
-        for move, resulting_board in zip(self.gen.moves, self.gen.boards):
+        # Example of sorting moves based on a simple heuristic evaluation
+        sorted_moves = sorted(zip(self.gen.moves, self.gen.boards),
+                              key=lambda mb: self.nico_heuristic(mb[1], self.player_color), reverse=maximizingPlayer)
+        for move, resulting_board in sorted_moves:
             # Recursive minimax call
             evaluation, _, _ = self.minimax(resulting_board, depth - 1, alpha, beta, not maximizingPlayer, start_time,
                                             time_limit)
@@ -172,12 +175,12 @@ class move_evaluation:
 
         # Direct Knockout Bonus
         # print(self.find_knockout_moves())
-        knockout_moves = self.find_knockout_moves()[0]
-        # Assuming each knockout move is highly valuable, add a significant score for each.
-        if num_marbles_taken == 4:
-            score += len(knockout_moves) * 10000  # Modify the multiplier as needed to balance gameplay.
-        else:
-            score += len(knockout_moves) * 10  # Modify the multiplier as needed to balance gameplay.
+        # knockout_moves = self.find_knockout_moves()[0]
+        # # Assuming each knockout move is highly valuable, add a significant score for each.
+        # if num_marbles_taken == 4:
+        #     score += len(knockout_moves) * 10000  # Modify the multiplier as needed to balance gameplay.
+        # else:
+        #     score += len(knockout_moves) * 10  # Modify the multiplier as needed to balance gameplay.
 
         # Center Control: Additional points for controlling the center of the board
         center_control_bonus = sum(1 for marble in player_marbles if marble in self.CENTER_COORD)
