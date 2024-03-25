@@ -164,3 +164,9 @@ cython_debug/
 /.idea/modules.xml
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/vcs.xml
+/part_2/Test3.board
+/part_2/Test3.move
+/part_2/Test3.input
+/part_2/Test8.board
+/part_2/Test8.move
+/part_3/myTest.py
