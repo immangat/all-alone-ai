@@ -23,7 +23,6 @@ class Player(ABC):
         pass
         self.clock.can_tick = False
 
-
     def update_score(self, score):
         self.score = score
 
@@ -57,9 +56,11 @@ class AIPlayer(Player):
     def update_score(self, score):
         super().update_score(score)
 
+    @abstractmethod
     def make_move(self, **kwargs):
         pass
 
+    @abstractmethod
     def _calculate_move(self, **kwargs):
         pass
 
@@ -70,3 +71,20 @@ class HumanPlayer(Player):
 
     def make_move(self, **kwargs):
         pass
+
+
+class MangatAI(AIPlayer):
+    def make_move(self, **kwargs):
+        pass
+
+    def _calculate_move(self, **kwargs):
+        pass
+
+
+def game_over(position):
+    pass
+
+
+def minimax(position, depth, maximizing_player):
+    if depth == 0 or game_over(position):
+        return 1
