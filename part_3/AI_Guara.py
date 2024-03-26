@@ -1,5 +1,5 @@
-from part_3.state_space_gen import StateSpaceGen
-from part_3.board import Board
+from state_space_gen import StateSpaceGen
+from board import Board
 
 
 class AIAgent:
@@ -147,8 +147,8 @@ class AIAgent:
         weights["w_pos"] = -2
         weights["b_coherence"] = 2
         weights["w_coherence"] = -2
-        weights["b_mobility"] = 2
-        weights["w_mobility"] = -2
+        # weights["b_mobility"] = 2
+        # weights["w_mobility"] = -2
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):
