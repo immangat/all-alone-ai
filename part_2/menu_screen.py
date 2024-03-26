@@ -23,9 +23,8 @@ class MenuScreen:
             os.chdir(application_path)
         else:
             self.current_directory = os.path.dirname(os.path.abspath(__file__))
-        print(f"{self.current_directory}")
         self.files = filenames_to_tuples(list_files_in_directory(self.current_directory))
-        self.selected_file_name = None
+        self.selected_file_name = self.files[0][0] if len(self.files) > 0 else None
         self.width = width
         self.height = height
         self.start_game_button = None
