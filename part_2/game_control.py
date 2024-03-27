@@ -134,6 +134,7 @@ class Manager:
         self.game_window.moves_left.update_gui()
         self.game_window.move_gui.moves_gui.rebuild()
         self.board.get_marbles_by_color(self.current_player.color)
+        # self.switch_turns()
 
     def validate_and_make_move(self, marbles, direction):
         self.gen = StateSpaceGen()
@@ -161,6 +162,7 @@ class Manager:
             self.make_random_move()
         else:
             self.current_player = self.players[0]
+            # self.make_random_move()
         self.update_score()
 
     def undo_move(self):

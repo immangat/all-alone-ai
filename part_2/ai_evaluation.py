@@ -52,7 +52,7 @@ class move_evaluation:
         #     depth += 1
         #     if time.time() - start_time >= time_limit:
         #         break
-        score, move, board = self.minimax(self.manager.board, 2, -float('inf'), float('inf'), True, start_time,
+        score, move, board = self.minimax(self.manager.board, 1, -float('inf'), float('inf'), True, start_time,
                                           time_limit)
         best_score, best_move, best_board = score, move, board
 
@@ -127,10 +127,13 @@ class move_evaluation:
             if maximizingPlayer:
                 if evaluation > best_score:
                     best_score, best_move, best_board = evaluation, move, resulting_board
+                    print(f"best score: {best_score}")
                 alpha = max(alpha, evaluation)
             else:
+                # print("minimizing player")
                 if evaluation < best_score:
                     best_score, best_move, best_board = evaluation, move, resulting_board
+
                 beta = min(beta, evaluation)
 
             if beta <= alpha:
@@ -141,9 +144,82 @@ class move_evaluation:
         self.transposition_table[board_hash] = (best_score, best_move, best_board if best_move else board)
         return best_score, best_move, best_board if best_move else board
 
-    def nico_heuristic(self, board, player_color):
+    # def nico_heuristic(self, board, player_color):
+    #
+    #     score = 0
+    #
+    #
+    #
+    #     num_marbles_taken = self.num_marbles_taken(self.player_color)
+    #     num_marbles_lost = self.num_marbles_taken(self.opponent_color)
+    #     player_marbles = board.get_marbles_by_color(player_color)
+    #     # print("color playert: ",player_color)
+    #     opponent_color = "w" if player_color == "b" else "b"
+    #     opponent_marbles = board.get_marbles_by_color(opponent_color)
+    #
+    #     # Safety: Decrease score for marbles close to the edge
+    #     for marble in player_marbles:
+    #         if self.is_marble_near_edge(marble):
+    #             score += 10
+    #
+    #     # Aggression: Increase score for opponent marbles near the edge
+    #     for marble in opponent_marbles:
+    #         if self.is_marble_near_edge(marble):
+    #             score -= 1
+    #
+    #     # Formation Strength: Bonus for each marble that is part of a larger group
+    #     for marble in player_marbles:
+    #         neighbors, _ = self.gen.get_neighbors(marble)
+    #         group_bonus = sum(1 for neighbor in neighbors if neighbor in player_marbles)
+    #         score += group_bonus * 1
+    #
+    #     # Formation Strength: Bonus for each marble that is part of a larger group
+    #     # for marble in opponent_marbles:
+    #     #     neighbors, _ = self.gen.get_neighbors(marble)
+    #     #     group_bonus = sum(1 for neighbor in neighbors if neighbor in opponent_marbles)
+    #     #     score += group_bonus
+    #
+    #     # Direct Knockout Bonus
+    #     # print(self.find_knockout_moves())
+    #     knockout_moves = self.find_knockout_moves()[0]
+    #     # Assuming each knockout move is highly valuable, add a significant score for each.
+    #     if num_marbles_taken == 4:
+    #         score += len(knockout_moves) * 10000  # Modify the multiplier as needed to balance gameplay.
+    #     else:
+    #         score += len(knockout_moves) * 10  # Modify the multiplier as needed to balance gameplay.
+    #
+    #     # Center Control: Additional points for controlling the center of the board
+    #     # center_control_bonus = sum(1 for marble in player_marbles if marble in self.CENTER_COORD)
+    #     # score += center_control_bonus * 2  # Weight center control more heavily
+    #     #
+    #     # center_control_bonus = sum(1 for marble in opponent_marbles if marble in self.CENTER_COORD)
+    #     # score -= center_control_bonus * 2  # Weight center control more heavily
+    #     #
+    #     # # Number of marbles taken: Increase score for each marble taken
+    #     # score += num_marbles_taken * 10  # Modify the multiplier as needed to balance gameplay.
+    #     #
+    #     # # Number of marbles lost: Decrease score for each marble lost
+    #     # score -= num_marbles_lost * 10
+    #
+    #     return score
 
+    def nico_heuristic(self, board, player_color):
         score = 0
+        total_marbles = len(board.get_marbles_by_color(player_color)) * 2  # Assuming get_all_marbles returns all marbles on the board
+
+        # Identify the game stage based on the number of marbles left
+        if total_marbles > 24:  # Early game
+            edge_weight = -10
+            group_bonus_weight = 1
+            knockout_bonus_weight = 10
+        elif 16 < total_marbles <= 24:  # Mid game
+            edge_weight = -5
+            group_bonus_weight = 2
+            knockout_bonus_weight = 20
+        else:  # Late game
+            edge_weight = -1
+            group_bonus_weight = 3
+            knockout_bonus_weight = 50
 
         num_marbles_taken = self.num_marbles_taken(self.player_color)
         num_marbles_lost = self.num_marbles_taken(self.opponent_color)
@@ -151,49 +227,36 @@ class move_evaluation:
         opponent_color = "w" if player_color == "b" else "b"
         opponent_marbles = board.get_marbles_by_color(opponent_color)
 
-        # Safety: Decrease score for marbles close to the edge
+        # Safety: Adjust score for marbles close to the edge based on game stage
         for marble in player_marbles:
             if self.is_marble_near_edge(marble):
-                score -= 1
+                score -= edge_weight
 
-        # Aggression: Increase score for opponent marbles near the edge
+        # Aggression: Adjust score for opponent marbles near the edge based on game stage
         for marble in opponent_marbles:
             if self.is_marble_near_edge(marble):
-                score += 1
+                score += edge_weight / 10  # Make it less impactful than player marble safety
 
-        # Formation Strength: Bonus for each marble that is part of a larger group
+        # Formation Strength: Bonus for each marble that is part of a larger group, adjusted by game stage
         for marble in player_marbles:
             neighbors, _ = self.gen.get_neighbors(marble)
             group_bonus = sum(1 for neighbor in neighbors if neighbor in player_marbles)
-            score += group_bonus
+            score += group_bonus * group_bonus_weight
 
-        # Formation Strength: Bonus for each marble that is part of a larger group
-        for marble in opponent_marbles:
-            neighbors, _ = self.gen.get_neighbors(marble)
-            group_bonus = sum(1 for neighbor in neighbors if neighbor in opponent_marbles)
-            score -= group_bonus
-
-        # Direct Knockout Bonus
-        # print(self.find_knockout_moves())
-        # knockout_moves = self.find_knockout_moves()[0]
-        # # Assuming each knockout move is highly valuable, add a significant score for each.
-        # if num_marbles_taken == 4:
-        #     score += len(knockout_moves) * 10000  # Modify the multiplier as needed to balance gameplay.
-        # else:
-        #     score += len(knockout_moves) * 10  # Modify the multiplier as needed to balance gameplay.
-
-        # Center Control: Additional points for controlling the center of the board
-        center_control_bonus = sum(1 for marble in player_marbles if marble in self.CENTER_COORD)
-        score += center_control_bonus * 5  # Weight center control more heavily
-
-        center_control_bonus = sum(1 for marble in opponent_marbles if marble in self.CENTER_COORD)
-        score -= center_control_bonus * 5  # Weight center control more heavily
+        # Direct Knockout Bonus: Adjust the significance of knockout moves based on game stage
+        knockout_moves = self.find_knockout_moves()[0]
+        if num_marbles_taken == 4:
+            score += len(knockout_moves) * 10000  # Modify the multiplier as needed to balance gameplay.
+        else:
+            score += len(knockout_moves) * knockout_bonus_weight
 
         # Number of marbles taken: Increase score for each marble taken
-        score += num_marbles_taken * 10  # Modify the multiplier as needed to balance gameplay.
+        score -= num_marbles_taken * 10  # Modify the multiplier as needed to balance gameplay.
 
         # Number of marbles lost: Decrease score for each marble lost
-        score -= num_marbles_lost * 10
+        score += num_marbles_lost * 10
+
+        # Add or adjust other game metrics as needed to fine-tune the heuristic for different stages
 
         return score
 
