@@ -79,7 +79,7 @@ class AIAgent:
             elif board.get_marble(coord) == "w":
                 white_score += self.POINT_VALUES[index] * self.weights["w_pos"]
 
-        # Points for mobility (number of legal moves) < removed due to poor efficiency
+        # Points for mobility (number of legal moves) <- removed due to poor efficiency
         # genb = StateSpaceGen()
         # genw = StateSpaceGen()
         # genb.generate_state_space(board, "b")
@@ -141,12 +141,12 @@ class AIAgent:
         Using an adapted AI_abalone weight system
         """
         weights = {}
-        weights["b_off"] = -10
-        weights["w_off"] = 10
-        weights["b_pos"] = 2
-        weights["w_pos"] = -2
-        weights["b_coherence"] = 2
-        weights["w_coherence"] = -2
+        weights["b_off"] = -15
+        weights["w_off"] = 15
+        weights["b_pos"] = 3
+        weights["w_pos"] = -3
+        weights["b_coherence"] = 10
+        weights["w_coherence"] = -10
         # weights["b_mobility"] = 2
         # weights["w_mobility"] = -2
         return weights

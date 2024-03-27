@@ -212,3 +212,14 @@ class Board:
     def hash_board(self):
         board_str = ''.join(str(self.circles.get(coord, ' ')) for coord in self.BOARD_COORD)
         return hash(board_str)
+
+    @staticmethod
+    def get_neighbors_only(coord):
+        neighbors = []
+        x= coord[0]
+        y = coord[1]
+        temp =[(x +1, y+1), (x, y+1), (x-1, y), (x-1, y-1), (x, y-1), (x + 1, y)]
+        for neighbor in temp:
+            if neighbor in Board.BOARD_COORD:
+                neighbors.append(neighbor)
+        return neighbors

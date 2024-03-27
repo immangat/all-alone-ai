@@ -183,7 +183,7 @@ if __name__ == '__main__':
     # input("press any key to continue")
 
     board = Board()
-    board.setup_board("German Daisy")
+    board.setup_board("Belgian Daisy")
     agent = AIAgent()
     start = time.process_time()
     move = agent.get_best_move(board, "b", 3)
