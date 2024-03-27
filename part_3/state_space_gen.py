@@ -23,6 +23,12 @@ class StateSpaceGen:
     def get_index_from_board(self, board):
         return self.boards.index(board)
 
+    def get_index_from_board_string(self, board):
+        board_string = str(board.get_circles())
+        for b in self.boards:
+            if board_string == str(b):
+                return self.boards.index(b)
+
     def generate_state_space(self, board, player_color):
         self.board = board
         self.curr_player = player_color
@@ -42,11 +48,11 @@ class StateSpaceGen:
                         self.check_mult_marbles(two_marbles, direction)
                     elif self.board.get_marble(neighbor) == None:
                         new_move = Move("i", direction, [marble])
-                        new_board = copy.deepcopy(self.board)
-                        new_board.set_marble(neighbor, self.curr_player)
-                        new_board.set_marble(marble, None)
+                        new_board_dict = self.board.get_circles()
+                        new_board_dict[neighbor] = self.curr_player
+                        new_board_dict[marble] = None
                         self.moves.append(new_move)
-                        self.boards.append(new_board)
+                        self.boards.append(new_board_dict)
 
 
     def check_mult_marbles(self, coords, direction):
@@ -61,11 +67,11 @@ class StateSpaceGen:
                     self.check_mult_marbles(three_marbles, direction)
             elif self.board.get_marble(next_in_line) == None:
                 new_move = Move("i", direction, coords)
-                new_board = copy.deepcopy(self.board)
-                new_board.set_marble(next_in_line, self.curr_player)
-                new_board.set_marble(coords[0], None)
+                new_board_dict = self.board.get_circles()
+                new_board_dict[next_in_line] = self.curr_player
+                new_board_dict[coords[0]] = None
                 self.moves.append(new_move)
-                self.boards.append(new_board)
+                self.boards.append(new_board_dict)
             else:
                 self.check_sumito(coords, direction)
 
@@ -83,14 +89,14 @@ class StateSpaceGen:
                         blocked = True
                         break
                 if not blocked:
-                    new_board = copy.deepcopy(self.board)
+                    new_board_dict = self.board.get_circles()
                     for coord in coords:
                         next_in_side = (coord[0] + direction_logic[0], coord[1] + direction_logic[1])
-                        new_board.set_marble(next_in_side, self.curr_player)
-                        new_board.set_marble(coord, None)
+                        new_board_dict[next_in_side] = self.curr_player
+                        new_board_dict[coord] = None
                     new_move = Move("s", posDir, coords)
                     self.moves.append(new_move)
-                    self.boards.append(new_board)
+                    self.boards.append(new_board_dict)
 
 
     def check_sumito (self, coords, direction):
@@ -108,13 +114,13 @@ class StateSpaceGen:
         if pushable:
             new_move = Move("i", direction, coords, sumito=True)
             opponent_color = self.board.get_marble((coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1]))
-            new_board = copy.deepcopy(self.board)
+            new_board_dict = self.board.get_circles()
             if next_coord in Board.BOARD_COORD:
-                new_board.set_marble(next_coord, opponent_color)
-            new_board.set_marble((coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1]), self.curr_player)
-            new_board.set_marble(coords[0], None)
+                new_board_dict[next_coord] = opponent_color
+            new_board_dict[(coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1])] = self.curr_player
+            new_board_dict[coords[0]] = None
             self.moves.append(new_move)
-            self.boards.append(new_board)
+            self.boards.append(new_board_dict)
 
     def get_inline_opposite(self, direction):
         opposite_map = {

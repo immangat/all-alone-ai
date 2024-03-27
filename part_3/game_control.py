@@ -102,10 +102,12 @@ class Manager:
 
     def validate_and_make_move(self, marbles, direction):
         self.gen = StateSpaceGen()
-        board_move = self.gen.validate_move(self.board, marbles, direction)
-        if board_move[1] is not None:
-            self.board = board_move[1]
-            self.states.add_state(board_move[0], board_move[1])
+        move_board = self.gen.validate_move(self.board, marbles, direction)
+        new_board = Board()
+        new_board.set_circles(move_board[1])
+        if move_board[1] is not None:
+            self.board = new_board
+            self.states.add_state(move_board[0], new_board)
             print(self.states.get_states()[-1].get_move())
             self.store_move_history()
             self.switch_turns()

@@ -27,6 +27,18 @@ class Board:
         # self.rows = [5, 6, 7, 8, 9, 8, 7, 6, 5]
         self.init_board()
 
+    def get_circles(self) -> dict:
+        new_circles ={}
+        for key, value in self.circles.items():
+            new_circles[key] = value
+        return new_circles
+
+
+
+
+    def set_circles(self, circles):
+        self.circles = circles
+
     def init_board(self):
 
         for coord in self.BOARD_COORD:

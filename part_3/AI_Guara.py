@@ -31,8 +31,10 @@ class AIAgent:
         evaluated_moves =[]
 
         for gen_board in gen.get_boards():
-            score = self.board_evaluation(gen_board)
-            evaluated_moves.append((gen_board, score))
+            newboard = Board()
+            newboard.set_circles(gen_board)
+            score = self.board_evaluation(newboard)
+            evaluated_moves.append((newboard, score))
 
         if current_player == 'b':
             evaluated_moves.sort(key=lambda x: x[1], reverse=True)  # Higher scores first
@@ -43,6 +45,7 @@ class AIAgent:
         beta = self.INFINITY if current_player == 'b' else -self.INFINITY
 
         for gen_board, score in evaluated_moves:
+
             if current_player == 'b':
                 score = self.alpha_beta(gen_board, depth - 1, alpha, beta, 'w')
             else:
@@ -50,7 +53,8 @@ class AIAgent:
 
             if (current_player == 'b' and score > best_score) or (current_player == 'w' and score < best_score):
                 best_score = score
-                best_move = gen.get_moves()[gen.get_index_from_board(gen_board)]
+                best_move = gen.get_moves()[gen.get_index_from_board_string(gen_board)]
+                # best_move = gen.get_moves()[gen.get_index_from_board(best_board)]
                 best_board = gen_board
 
             # Update alpha or beta for pruning
@@ -98,16 +102,16 @@ class AIAgent:
 
         return black_score + white_score
 
-    def calculate_distance(self, player, board):
-        marbles = board.get_marbles_by_color(player)
-        gen = StateSpaceGen()
-        count = 0
-        for marble in marbles:
-            neighbors = gen.get_neighbors(marble)
-            for neighbor in neighbors[0]:
-                if board.get_marble(neighbor) == player:
-                    count += 1
-        return count
+    # def calculate_distance(self, player, board):
+    #     marbles = board.get_marbles_by_color(player)
+    #     gen = StateSpaceGen()
+    #     count = 0
+    #     for marble in marbles:
+    #         neighbors = gen.get_neighbors(marble)
+    #         for neighbor in neighbors[0]:
+    #             if board.get_marble(neighbor) == player:
+    #                 count += 1
+    #     return count
 
 
     def calculate_group_score(self, player, board):
@@ -130,7 +134,7 @@ class AIAgent:
             if current_marble not in visited:
                 visited.add(current_marble)
                 group_size += 1
-                neighbors = StateSpaceGen().get_neighbors(current_marble)[0]
+                neighbors = board.get_neighbors_only(current_marble)
                 for neighbor in neighbors:
                     if board.get_marble(neighbor) == player:
                         stack.append(neighbor)
@@ -164,7 +168,9 @@ class AIAgent:
         if current_player == "b":
             value = -self.INFINITY
             for gen_board in gen.get_boards():
-                value = max(value, self.alpha_beta(gen_board, depth - 1, alpha, beta, "w"))
+                new_board = Board()
+                new_board.set_circles(gen_board)
+                value = max(value, self.alpha_beta(new_board, depth - 1, alpha, beta, "w"))
                 alpha = max(alpha, value)
                 if beta <= alpha:
                     break  # Beta cut-off
@@ -173,7 +179,9 @@ class AIAgent:
         else:
             value = self.INFINITY
             for gen_board in gen.get_boards():
-                value = min(value, self.alpha_beta(gen_board, depth - 1, alpha, beta, "b"))
+                new_board = Board()
+                new_board.set_circles(gen_board)
+                value = min(value, self.alpha_beta(new_board, depth - 1, alpha, beta, "b"))
                 beta = min(beta, value)
                 if beta <= alpha:
                     break  # Alpha cut-off
