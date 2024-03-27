@@ -186,7 +186,7 @@ if __name__ == '__main__':
     board.setup_board("Belgian Daisy")
     agent = AIAgent()
     start = time.process_time()
-    move = agent.get_best_move(board, "b", 5)
+    move = agent.get_best_move(board, "b", 4)
     print(f"b:{move[0]}")
     print(time.process_time() - start)
     # move = agent.get_best_move(move[1], "w", 3)
