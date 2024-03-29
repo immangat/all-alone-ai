@@ -140,8 +140,10 @@ class Board:
 
     @classmethod
     def create_custom_board(cls, string_list):
+        print(string_list)
         new_board = cls()
         for string in string_list:
+
             row_letter, col_str, color = string[0], string[1:-1], string[-1]
             row = ord(row_letter) - ord('A') + 1
             col = int(col_str)
