@@ -1,0 +1,83 @@
+{
+  "panel1": {
+    "colours": {
+      "dark_bg": "#B59A7E",
+      "normal_border": "#999999"
+    }
+  },
+  "buttons_panel": {
+    "colours": {
+      "dark_bg": "#c8c8c8",
+      "normal_border": "#c8c8c8"
+    },
+    "misc": {
+      "border_width": "0",
+      "shadow_width": "0"
+    }
+  },
+  "pause_button": {
+    "colours": {
+      "normal_text": "#FFFFFF",
+      "normal_bg": "#34dceb",
+      "normal_border": "#999999"
+    }
+  },
+  "reset_button": {
+    "colours": {
+      "normal_text": "#FFFFFF",
+      "normal_bg": "#eb7734",
+      "normal_border": "#999999"
+    }
+  },
+  "stop_button": {
+    "colours": {
+      "normal_text": "#FFFFFF",
+      "normal_bg": "#FF0000",
+      "normal_border": "#999999"
+    }
+  },
+  "player_1": {
+  "colours": {
+    "normal_text": "#000000",
+    "dark_bg":"#FFFFFF"
+  },
+  "font": {
+    "name": "fira_code",
+    "size": 24,
+    "bold": true,
+    "italic": false
+  }
+},
+  "player_2": {
+  "colours": {
+    "normal_text": "#FFFFFF",
+    "dark_bg":"#000000"
+  },
+  "font": {
+    "name": "fira_code",
+    "size": 24,
+    "bold": true,
+    "italic": false
+  }
+},
+  "move_label": {
+    "colours": {
+      "normal_bg":"#45494e",
+      "dark_bg" : "000000"
+    }
+  },
+  "moves_textbox": {
+        "colours": {
+      "normal_text": "#FFFFFF",
+      "normal_border": "#B59A7E"
+    }
+  },
+  "moves_remaining_text": {
+    "font": {
+      "name": "fira_code",
+    "size": 64
+    }
+  }
+
+}
+
