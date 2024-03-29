@@ -109,6 +109,7 @@ class Player(ABC):
         self.list_of_moves = []
         self.current_move_time = 0
         self.name = name
+        self.time_per_move = 0
         self.clock = Clock()
 
     @abstractmethod
@@ -120,6 +121,10 @@ class Player(ABC):
     def update_score(self, score):
         self.score = score
 
+    def set_time_limit_per_move(self, time_limit_per_move):
+        self.time_per_move = time_limit_per_move
+        self.clock.set_clock_time_values(time_limit_per_move)
+
     def get_aggregate_time(self):
         """
         Gets the aggregate time of the move for the player
@@ -130,13 +135,23 @@ class Player(ABC):
         return reduce(lambda x, y: x + y, self.list_of_moves)
 
     def tick_player_clock(self):
-        self.clock.tick_timer()
+        self.clock.decrement_timer()
 
-    def reset_player_clock(self):
-        current_move_time = self.clock.current_time
-        self.list_of_moves.append(current_move_time)
-        print(self)
-        self.clock.reset_timer()
+    def reset_player_clock(self, undo = False ):
+        if not undo:
+            current_move_time = self.time_per_move - self.clock.current_time
+            self.list_of_moves.append(current_move_time)
+        self.clock.reset_to_full()
+
+    def get_last_move_time(self):
+        if len(self.list_of_moves) == 0:
+            return 0
+        return self.list_of_moves[len(self.list_of_moves) - 1]
+
+    def undo_move(self):
+        if len(self.list_of_moves) != 0:
+            self.list_of_moves.pop()
+        self.clock.reset_to_full()
 
     def __str__(self):
         output = ""
@@ -238,7 +253,7 @@ class MangatAI(AIPlayer):
         marbles_remaining = self.count_marbles_in_position(position, maximizing_player)
         board_score = self.count_board_score(position, maximizing_player)
         marble_islands = self.count_marble_islands(position, maximizing_player)
-        return (board_score * marble_islands) + (marbles_remaining *15)
+        return (board_score * marble_islands) + (marbles_remaining * 15)
 
     def get_positions(self, position, maximizing_player):
         player_color = 'b' if maximizing_player else 'w'

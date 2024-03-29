@@ -255,7 +255,6 @@ class MenuScreen:
         print(f"P2 time per move selected {args[0]}")
 
     def start_game(self):
-        print("Game started")
         self.manager.total_move_limit = self.total_move_limit
         self.manager.total_moves_left = self.manager.total_move_limit
         self.manager.switch_to_screen("game")

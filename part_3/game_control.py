@@ -56,7 +56,6 @@ class Manager:
             self.is_running = True
             self.main_loop()
         elif self.current_screen == "game":
-            print("game")
             self.game_window.initWindow()
             self.is_running = True
             self.main_loop()
@@ -126,6 +125,13 @@ class Manager:
             self.current_player = self.players[0]
         self.update_score()
 
+    def switch_turns_for_undo(self):
+        if self.current_player == self.players[0]:
+            self.current_player = self.players[1]
+        else:
+            self.current_player = self.players[0]
+        self.update_score()
+
     def undo_move(self):
         """
         Undoes the last move made in the game
@@ -134,11 +140,14 @@ class Manager:
         self.states.remove_last_state()
         last_state = self.states.get_last_state()
         if current_state != last_state:
+            self.current_player.reset_player_clock(undo=True)
             self.game_window.move_gui.remove_last_move()
             self.increment_moves_remaining()
             self.game_window.moves_left.update_gui()
             self.board = copy.deepcopy(last_state.get_board())
-            self.switch_turns()
+            self.switch_turns_for_undo()
+            self.current_player.undo_move()
+
 
     def update_score(self):
         white_score = self.board.num_marbles_left_by_color("b")
@@ -159,6 +168,8 @@ class Manager:
             self.menu_screen.initWindow()
             self.main_loop()
         elif screen_name == "game":
+            for player in self.players:
+                player.set_time_limit_per_move(self.total_move_limit * 1000)
             self.game_window.initWindow()
             self.main_loop()
 

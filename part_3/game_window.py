@@ -19,6 +19,9 @@ class GameWindow:
     BUTTONS_GUI_MARGIN = 10
 
     def __init__(self, width: int, height: int, manager=None):
+        self.moves_left = None
+        self.button_gui = None
+        self.move_gui = None
         self.width = width
         self.height = height
         self.display_surface = None
@@ -30,6 +33,8 @@ class GameWindow:
         self.manager_ui = None
         self.type = "game"
         self.clock = pygame.time.Clock()
+        self.player_1_gui = None
+        self.player_2_gui = None
         ## added grid
         self.COLUM_LINE_1 = round(width * 0.75)
         self.ROW_LINE_1 = round(height * 0.1)
@@ -83,12 +88,12 @@ class GameWindow:
         # Here, you should also create your UI elements and pass the manager_ui to them
 
         # Create and add elements to guis
-        player1 = PlayerUi(1, self.manager.players[0], "player_1", player_1_gui, self.manager_ui)
-        player1.create_gui()
+        self.player_1_gui = PlayerUi(1, self.manager.players[0], "player_1", player_1_gui, self.manager_ui)
+        self.player_1_gui.create_gui()
 
         # Create and add player2 elements to player2 container
-        player2 = PlayerUi(2, self.manager.players[1], "player_2", player_2_gui, self.manager_ui)
-        player2.create_gui()
+        self.player_2_gui = PlayerUi(2, self.manager.players[1], "player_2", player_2_gui, self.manager_ui)
+        self.player_2_gui.create_gui()
 
         # Create and add turn indicator elements to moves remaining container
         self.moves_left = MovesRemainingGUI(self.manager_ui, turn_remaining_gui, self.manager)
@@ -96,9 +101,14 @@ class GameWindow:
 
         pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
 
+    def update_player_ui(self):
+        self.player_2_gui.create_gui()
+        self.player_1_gui.create_gui()
+
     def updateWindow(self):
         # This will update the contents of the entire display
         self.draw_board()
+        self.update_player_ui()
         self.manager_ui.draw_ui(self.background)  # Draws any ui using pygame_gui
         pygame.display.flip()  # Update the display
         self.display_surface.blit(self.background, (0, 0))  # Draw the background on the display aka window
@@ -151,7 +161,7 @@ class GameWindow:
                 if marble == (row, col):
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
-        self.draw_time()
+        # self.draw_time()
 
     def draw_time(self):
         font = pygame.font.SysFont(None, 30)
