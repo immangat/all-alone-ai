@@ -174,25 +174,26 @@ class MangatAI(AIPlayer):
         self.space_gen = StateSpaceGen()
 
     def make_move(self, board, **kwargs):
-        player_color = self.color == 'b'
-        max_eval = -math.inf
-        min_eval = math.inf
-        make_move = None
-        self.space_gen.boards = []
-        if player_color:
-            for position in self.get_positions(board, player_color):
-                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
-                if eval > max_eval:
-                    max_eval = eval
-                    make_move = position
-            return make_move
-        else:
-            for position in self.get_positions(board, player_color):
-                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
-                if eval < min_eval:
-                    min_eval = eval
-                    make_move = position
-            return make_move
+        pass
+        # player_color = self.color == 'b'
+        # max_eval = -math.inf
+        # min_eval = math.inf
+        # make_move = None
+        # self.space_gen.boards = []
+        # if player_color:
+        #     for position in self.get_positions(board, player_color):
+        #         eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+        #         if eval > max_eval:
+        #             max_eval = eval
+        #             make_move = position
+        #     return make_move
+        # else:
+        #     for position in self.get_positions(board, player_color):
+        #         eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+        #         if eval < min_eval:
+        #             min_eval = eval
+        #             make_move = position
+        #     return make_move
 
     def _calculate_move(self, **kwargs):
         pass
