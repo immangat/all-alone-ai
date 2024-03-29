@@ -137,10 +137,14 @@ class Player(ABC):
     def tick_player_clock(self):
         self.clock.decrement_timer()
 
-    def reset_player_clock(self, undo = False ):
+    def reset_player_clock(self, undo=False):
         if not undo:
             current_move_time = self.time_per_move - self.clock.current_time
             self.list_of_moves.append(current_move_time)
+        self.clock.reset_to_full()
+
+    def reset_player(self):
+        self.list_of_moves = []
         self.clock.reset_to_full()
 
     def get_last_move_time(self):

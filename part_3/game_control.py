@@ -86,8 +86,8 @@ class Manager:
     def stop_game(self):
         print("Game stop")
         self.clock.reset_timer()
-        self.players[0].reset_player_clock()
-        self.players[1].reset_player_clock()
+        self.players[0].reset_player()
+        self.players[1].reset_player()
         self.current_player = self.players[0]
         self.states.clear_states()
         self.board.clear_board()
