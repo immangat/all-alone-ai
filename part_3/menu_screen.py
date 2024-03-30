@@ -1,10 +1,7 @@
 import sys
 
 import pygame
-import pygame_gui
 import pygame_menu
-from pygame_gui.elements import UIButton
-from functools import partial
 import os
 
 from IO_handler import IOHandler

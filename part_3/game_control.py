@@ -43,6 +43,7 @@ class Manager:
             self.time_limit_per_move = None
             self.next_move = None
             self.ai_move_start_time = None
+            self.ai_found_move = None
 
     @staticmethod
     def get_instance():
@@ -163,6 +164,7 @@ class Manager:
 
         if isinstance(self.current_player, AIPlayer):
             self.next_move = "Searching"
+            self.ai_found_move = False
             self.ai_move_start_time = time.time_ns()
         self.current_player.make_move(board=self.board, set_move=set_move)
 
@@ -198,21 +200,26 @@ class Manager:
         self.total_moves_left = self.total_moves_left - 1
 
     def check_for_ai_player_move(self):
+        if self.ai_found_move:
+            return
         if isinstance(self.current_player, AIPlayer):
-            # print("time ai has been searching", (time.time_ns() - self.ai_move_start_time) / 1_000_000,
-            #       self.total_move_limit * 1000)
-            if (((time.time_ns() - self.ai_move_start_time) / 1_000_000 >= self.time_limit_per_move * 1000) or
-                    not self.current_player.ai_search_process.is_alive()):
-                self.current_player.ai_search_process.terminate()
-                self.current_player.ai_search_process.join()
-                if self.current_player.queue.empty():
-                    self.next_move = "AI couldn't find a move"
-                    return
-                move, time_for_ai_move = self.current_player.get_last_item_and_empty()
-                self.current_player.add_ai_time(time_for_ai_move)
-                print("current time for ai_move", time_for_ai_move)
-                self.next_move = move
+            print("time ai has been searching", (time.time_ns() - self.ai_move_start_time) / 1_000_000,
+                  self.total_move_limit * 1000)
+        if (((time.time_ns() - self.ai_move_start_time) / 1_000_000 >= self.time_limit_per_move * 1000) or
+                not self.current_player.ai_search_process.is_alive()):
+            print("setting an ai move")
+            self.current_player.ai_search_process.terminate()
+            self.current_player.ai_search_process.join()
+            if self.current_player.queue.empty() and not self.ai_found_move:
+                self.next_move = "AI couldn't find a move"
                 self.game_window.moves_left.update_gui()
+                return
+            move, time_for_ai_move = self.current_player.get_last_item_and_empty()
+            self.current_player.add_ai_time(time_for_ai_move)
+            self.ai_found_move = True
+            print("current time for ai_move", time_for_ai_move)
+            self.next_move = move
+            self.game_window.moves_left.update_gui()
 
     def main_loop(self):
         clock = pygame.time.Clock()
@@ -224,7 +231,8 @@ class Manager:
                 self.menu_screen.updateWindow()
             elif self.current_screen == "game":
                 # print("game loop")
-                self.check_for_ai_player_move()
+                if isinstance(self.current_player, AIPlayer):
+                    self.check_for_ai_player_move()
                 self.game_window.event_handler.handle_events()
                 self.game_window.manager_ui.update(time_delta)
                 self.game_window.updateWindow()  # Draw the board state
