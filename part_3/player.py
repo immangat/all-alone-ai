@@ -2,12 +2,15 @@ import math
 import time
 from abc import ABC, abstractmethod
 from functools import reduce
+# from multiprocessing import Queue
+from multiprocess import Process, Queue
 
 from board import Board
 from clock import Clock
 from state_space_gen import StateSpaceGen
+from threading import Thread
 
-SEARCH_DEPTH = 6
+SEARCH_DEPTH = 20
 FIRST_CIRCLE = 0.5
 SECOND_CIRCLE = 1
 THIRD_CIRCLE = 3
@@ -114,9 +117,7 @@ class Player(ABC):
 
     @abstractmethod
     def make_move(self, **kwargs):
-        self.clock.can_tick = True
-        pass
-        self.clock.can_tick = False
+        print("making move kajfkajfkjaf")
 
     def update_score(self, score):
         self.score = score
@@ -165,6 +166,12 @@ class Player(ABC):
 
 
 class AIPlayer(Player):
+    def __init__(self, name, color):
+        super().__init__(name, color)
+        self.in_search = False
+        self.space_gen = StateSpaceGen()
+        self.best_move = None
+        self.queue = Queue()
 
     def update_score(self, score):
         super().update_score(score)
@@ -177,23 +184,65 @@ class AIPlayer(Player):
     def _calculate_move(self, **kwargs):
         pass
 
+    def add_ai_time(self, time_of_ai_move):
+        self.list_of_moves.append(time_of_ai_move)
+
+    def reset_player_clock(self, undo=False):
+        self.clock.reset_to_full()
 
 class HumanPlayer(Player):
     def update_score(self, score):
         super().update_score(score)
 
-    def make_move(self, **kwargs):
-        pass
+    def make_move(self, board, **kwargs):
+        print(self.color, "being asked to make a move")
 
 
 class MangatAI(AIPlayer):
 
-    def __init__(self, name, color):
-        super().__init__(name, color)
-        self.space_gen = StateSpaceGen()
+    def apply_move(self, best_move):
+        self.best_move = best_move
 
-    def make_move(self, board, **kwargs):
-        pass
+    def make_move(self, board, set_move, **kwargs):
+        print(self.color, "being asked to make a move")
+        if not self.in_search:
+            print(self.color, "move started")
+            self.in_search = True  # Ensure to reset this flag appropriately later
+
+            def search_and_apply_move(queue, board):
+                time_start = time.time_ns()
+                best_move = self._calculate_move(board)
+                time_end = time.time_ns()
+                total_time = (time_end - time_start) / 1_000_000
+                queue.put((best_move, total_time))
+
+            # Start the process
+            p = Process(target=search_and_apply_move, args=(self.queue, board))
+            p.start()
+            # p.join()  # Wait for the process to complete
+
+            # # Get the result and apply the move
+            # best_move = self.queue.get()
+            # # best_move = self._calculate_move(board)
+            # set_move(best_move)
+            self.in_search = False
+            print("After the thread")
+            # print(self.color, "being asked to make a move")
+        # if not self.in_search:
+        #     print(self.color, "move started")
+        #     self.in_search = True  # Ensure to reset this flag appropriately later
+        #
+        #     def search_and_apply_move():
+        #         best_move = self._calculate_move(board)
+        #         # Ensure this operation is thread-safe, especially if it modifies shared state
+        #         self.apply_move(best_move)
+        #         self.in_search = False  # Reset the flag after move is calculated
+        #
+        #         # If you need to update UI or game state, consider queueing this update
+        #         # to be performed on the main thread.
+        #
+        #     search_thread = Thread(target=search_and_apply_move)
+        #     search_thread.start()
         # player_color = self.color == 'b'
         # max_eval = -math.inf
         # min_eval = math.inf
@@ -205,6 +254,7 @@ class MangatAI(AIPlayer):
         #         if eval > max_eval:
         #             max_eval = eval
         #             make_move = position
+        #             print("moafjfakjfajf", make_move)
         #     return make_move
         # else:
         #     for position in self.get_positions(board, player_color):
@@ -212,10 +262,32 @@ class MangatAI(AIPlayer):
         #         if eval < min_eval:
         #             min_eval = eval
         #             make_move = position
+        #             print("moafjfakjfajf", make_move)
         #     return make_move
 
-    def _calculate_move(self, **kwargs):
-        pass
+    def _calculate_move(self, board, **kwargs):
+        player_color = self.color == 'b'
+        max_eval = -math.inf
+        min_eval = math.inf
+        make_move = None
+        print("inside searching")
+        self.space_gen.boards = []
+        if player_color:
+            for position in self.get_positions(board, player_color):
+                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                if eval > max_eval:
+                    max_eval = eval
+                    make_move = position
+            print("done searching")
+            return make_move
+        else:
+            for position in self.get_positions(board, player_color):
+                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                if eval < min_eval:
+                    min_eval = eval
+                    make_move = position
+            print("done searching")
+            return make_move
 
     def game_over(self, position):
         pass
@@ -298,21 +370,22 @@ class MangatAI(AIPlayer):
             return min_eval
 
 
-whitePlayer = MangatAI("white", "w")
-blackPlayer = MangatAI("black", "b")
-b = Board()
-b.setup_board("Belgian Daisy")
-time_start = time.time()
-for _ in range(40):
-    black_move = blackPlayer.make_move(b)
-    print(black_move)
-    white_move = whitePlayer.make_move(black_move)
-    print(white_move)
-    b = white_move
+if __name__ == '__main__':
+    whitePlayer = MangatAI("white", "w")
+    blackPlayer = MangatAI("black", "b")
+    b = Board()
+    b.setup_board("Belgian Daisy")
+    time_start = time.time()
+    for _ in range(40):
+        black_move = blackPlayer.make_move(b)
+        print(black_move)
+        white_move = whitePlayer.make_move(black_move)
+        print(white_move)
+        b = white_move
 
-"""
-All the positon of current positons,
-then get the val of all postoin. then check which is the best
-"""
-time_end = time.time()
-print(time_end - time_start)
+    """
+    All the positon of current positons,
+    then get the val of all postoin. then check which is the best
+    """
+    time_end = time.time()
+    print(time_end - time_start)

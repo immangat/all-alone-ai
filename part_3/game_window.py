@@ -105,6 +105,8 @@ class GameWindow:
         self.player_2_gui.create_gui()
         self.player_1_gui.create_gui()
 
+
+
     def updateWindow(self):
         # This will update the contents of the entire display
         self.draw_board()
