@@ -249,6 +249,9 @@ class MenuScreen:
         self.total_move_limit = new_limit
 
     def select_p1_time_per_move(self, *args):
+        move_time_limit = args[0]
+        move_time_limit = int(move_time_limit)
+        self.p1_time = move_time_limit
         print(f"P1 time per move selected {args[0]}")
 
     def select_p2_time_per_move(self, *args):
@@ -256,7 +259,8 @@ class MenuScreen:
 
     def start_game(self):
         self.manager.total_move_limit = self.total_move_limit
-        self.manager.total_moves_left = self.manager.total_move_limit
+        self.manager.total_moves_left = self.total_move_limit
+        self.manager.time_limit_per_move = self.p1_time
         self.manager.switch_to_screen("game")
 
     def quit_game(self):

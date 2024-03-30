@@ -75,7 +75,7 @@
   "moves_remaining_text": {
     "font": {
       "name": "fira_code",
-    "size": 64
+    "size": 30
     }
   }
 
