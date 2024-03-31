@@ -159,6 +159,9 @@ class Player(ABC):
             self.list_of_moves.pop()
         self.clock.reset_to_full()
 
+    def get_name(self):
+        return self.name
+
     def __str__(self):
         output = ""
         for time in self.list_of_moves:
@@ -224,62 +227,14 @@ class MangatAI(AIPlayer):
 
     def make_move(self, board, **kwargs):
         print(self.color, "being asked to make a move")
-        if not self.in_search:
-            print(self.color, "move started")
-            self.in_search = True  # Ensure to reset this flag appropriately later
 
-            def search_and_apply_move(queue, board):
-                time_start = time.time_ns()
-                best_move = self._calculate_move(board, queue=self.queue, start_time=time_start)
+        def search_and_apply_move(queue, board):
+            time_start = time.time_ns()
+            best_move = self._calculate_move(board, queue=self.queue, start_time=time_start)
 
-            # Start the process
-            self.ai_search_process = Process(target=search_and_apply_move, args=(self.queue, board))
-            self.ai_search_process.start()
-            # p.join()  # Wait for the process to complete
-
-            # # Get the result and apply the move
-            # best_move = self.queue.get()
-            # # best_move = self._calculate_move(board)
-            # set_move(best_move)
-            self.in_search = False
-            print("After the thread")
-            # print(self.color, "being asked to make a move")
-        # if not self.in_search:
-        #     print(self.color, "move started")
-        #     self.in_search = True  # Ensure to reset this flag appropriately later
-        #
-        #     def search_and_apply_move():
-        #         best_move = self._calculate_move(board)
-        #         # Ensure this operation is thread-safe, especially if it modifies shared state
-        #         self.apply_move(best_move)
-        #         self.in_search = False  # Reset the flag after move is calculated
-        #
-        #         # If you need to update UI or game state, consider queueing this update
-        #         # to be performed on the main thread.
-        #
-        #     search_thread = Thread(target=search_and_apply_move)
-        #     search_thread.start()
-        # player_color = self.color == 'b'
-        # max_eval = -math.inf
-        # min_eval = math.inf
-        # make_move = None
-        # self.space_gen.boards = []
-        # if player_color:
-        #     for position in self.get_positions(board, player_color):
-        #         eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
-        #         if eval > max_eval:
-        #             max_eval = eval
-        #             make_move = position
-        #             print("moafjfakjfajf", make_move)
-        #     return make_move
-        # else:
-        #     for position in self.get_positions(board, player_color):
-        #         eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
-        #         if eval < min_eval:
-        #             min_eval = eval
-        #             make_move = position
-        #             print("moafjfakjfajf", make_move)
-        #     return make_move
+        # Start the process
+        self.ai_search_process = Process(target=search_and_apply_move, args=(self.queue, board))
+        self.ai_search_process.start()
 
     def _calculate_move(self, board, queue, start_time, **kwargs):
         player_color = self.color == 'b'
