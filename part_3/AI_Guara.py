@@ -1,7 +1,7 @@
 from state_space_gen import StateSpaceGen
 from board import Board
 from player import AIPlayer
-
+import time
 
 class AIAgent(AIPlayer):
     POINT_VALUES = [
@@ -32,8 +32,7 @@ class AIAgent(AIPlayer):
     def _calculate_move(self, **kwargs):
         pass
 
-    def get_best_move(self, board, current_player, depth):
-        self.countTP = 0
+    def get_best_move(self, board, current_player, depth, time_limit=None):
         best_move = None
         best_board = None
         best_score = -self.INFINITY if current_player == 'b' else self.INFINITY
@@ -42,6 +41,8 @@ class AIAgent(AIPlayer):
 
         alpha = -self.INFINITY
         beta = self.INFINITY
+
+        start_time = time.time()
 
         for gen_board in gen.get_boards():
             newboard = Board()
@@ -65,7 +66,7 @@ class AIAgent(AIPlayer):
                 beta = min(beta, best_score)
 
             # Perform pruning
-            if beta <= alpha:
+            if beta <= alpha or time.time() - start_time >= time_limit:
                 break
 
         return best_move, best_board
