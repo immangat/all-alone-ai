@@ -15,19 +15,19 @@ class MovesRemainingGUI:
         self.next_move = None
 
     def create_gui(self):
-        self.ui_title = UILabel(relative_rect=pygame.Rect(-200, 0, -1, -1),
-                                text=' Moves Remaining: ',
+        self.ui_title = UILabel(relative_rect=pygame.Rect(10, 0, -1, -1),
+                                text='Moves Remaining: ',
                                 manager=self.manager_ui,
                                 container=self.container,
-                                anchors={"right": "right", "top": "top"})
+                                anchors={"left": "left", "top": "top"})
 
         self.ui_text = UILabel(
-            relative_rect=pygame.Rect(-40, 0, -1, -1),
+            relative_rect=pygame.Rect(0, 0, -1, -1),
             text="{}".format(self.manager.total_move_limit),
             container=self.container,
             manager=self.manager_ui,
             object_id="moves_remaining_text",
-            anchors={"right": "right", "left_target": self.ui_title})
+            anchors={"left_target": self.ui_title})
         self.next_move_tile = UILabel(relative_rect=pygame.Rect(10, 40, -1, -1),
                                       text='AI Move: ',
                                       manager=self.manager_ui,
