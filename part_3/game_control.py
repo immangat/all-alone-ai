@@ -1,9 +1,11 @@
+import time
+
 import pygame
 
 from board import Board
 from clock import Clock
 from game_window import GameWindow
-from player import Player, HumanPlayer
+from player import Player, HumanPlayer, MangatAI, AIPlayer
 from menu_screen import MenuScreen
 from states import States
 from state_space_gen import StateSpaceGen
@@ -26,7 +28,7 @@ class Manager:
             self.game_paused = False
             self.board = None  # You would set this according to your game logic
             self.clock = Clock()
-            self.players = [HumanPlayer("Black", "b"), HumanPlayer("White", "w")]
+            self.players = [HumanPlayer("Black", "b"), MangatAI("White", "w")]
             self.current_player: Player = self.players[0]
             self.current_screen = "menu"
             self.menu_screen = MenuScreen(1280,
@@ -38,6 +40,10 @@ class Manager:
             # added here because no game class
             self.total_move_limit = None
             self.total_moves_left = None
+            self.time_limit_per_move = None
+            self.next_move = None
+            self.ai_move_start_time = None
+            self.ai_found_move = None
 
     @staticmethod
     def get_instance():
@@ -123,6 +129,7 @@ class Manager:
             self.current_player = self.players[1]
         else:
             self.current_player = self.players[0]
+        self.ask_for_move()
         self.update_score()
 
     def switch_turns_for_undo(self):
@@ -130,6 +137,7 @@ class Manager:
             self.current_player = self.players[1]
         else:
             self.current_player = self.players[0]
+        self.ask_for_move()
         self.update_score()
 
     def undo_move(self):
@@ -148,6 +156,17 @@ class Manager:
             self.switch_turns_for_undo()
             self.current_player.undo_move()
 
+    def ask_for_move(self):
+        def set_move(next_move):
+            self.next_move = next_move
+            print("next move set")
+            print(next_move)
+
+        if isinstance(self.current_player, AIPlayer):
+            self.next_move = "Searching"
+            self.ai_found_move = False
+            self.ai_move_start_time = time.time_ns()
+        self.current_player.make_move(board=self.board, set_move=set_move)
 
     def update_score(self):
         white_score = self.board.num_marbles_left_by_color("b")
@@ -169,8 +188,9 @@ class Manager:
             self.main_loop()
         elif screen_name == "game":
             for player in self.players:
-                player.set_time_limit_per_move(self.total_move_limit * 1000)
+                player.set_time_limit_per_move(self.time_limit_per_move * 1000)
             self.game_window.initWindow()
+            self.ask_for_move()
             self.main_loop()
 
     def increment_moves_remaining(self):
@@ -178,6 +198,28 @@ class Manager:
 
     def decrement_moves_remaining(self):
         self.total_moves_left = self.total_moves_left - 1
+
+    def check_for_ai_player_move(self):
+        if self.ai_found_move:
+            return
+        if isinstance(self.current_player, AIPlayer):
+            print("time ai has been searching", (time.time_ns() - self.ai_move_start_time) / 1_000_000,
+                  self.total_move_limit * 1000)
+        if (((time.time_ns() - self.ai_move_start_time) / 1_000_000 >= self.time_limit_per_move * 1000) or
+                not self.current_player.ai_search_process.is_alive()):
+            print("setting an ai move")
+            self.current_player.ai_search_process.terminate()
+            self.current_player.ai_search_process.join()
+            if self.current_player.queue.empty() and not self.ai_found_move:
+                self.next_move = "AI couldn't find a move"
+                self.game_window.moves_left.update_gui()
+                return
+            move, time_for_ai_move = self.current_player.get_last_item_and_empty()
+            self.current_player.add_ai_time(time_for_ai_move)
+            self.ai_found_move = True
+            print("current time for ai_move", time_for_ai_move)
+            self.next_move = move
+            self.game_window.moves_left.update_gui()
 
     def main_loop(self):
         clock = pygame.time.Clock()
@@ -189,6 +231,8 @@ class Manager:
                 self.menu_screen.updateWindow()
             elif self.current_screen == "game":
                 # print("game loop")
+                if isinstance(self.current_player, AIPlayer):
+                    self.check_for_ai_player_move()
                 self.game_window.event_handler.handle_events()
                 self.game_window.manager_ui.update(time_delta)
                 self.game_window.updateWindow()  # Draw the board state

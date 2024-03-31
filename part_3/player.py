@@ -2,12 +2,16 @@ import math
 import time
 from abc import ABC, abstractmethod
 from functools import reduce
+# from multiprocessing import Queue
+from multiprocess import Process, Queue
+from queue import Empty
 
 from board import Board
 from clock import Clock
 from state_space_gen import StateSpaceGen
+from threading import Thread
 
-SEARCH_DEPTH = 6
+SEARCH_DEPTH = 20
 FIRST_CIRCLE = 0.5
 SECOND_CIRCLE = 1
 THIRD_CIRCLE = 3
@@ -114,9 +118,7 @@ class Player(ABC):
 
     @abstractmethod
     def make_move(self, **kwargs):
-        self.clock.can_tick = True
-        pass
-        self.clock.can_tick = False
+        print("making move kajfkajfkjaf")
 
     def update_score(self, score):
         self.score = score
@@ -165,6 +167,13 @@ class Player(ABC):
 
 
 class AIPlayer(Player):
+    def __init__(self, name, color):
+        super().__init__(name, color)
+        self.in_search = False
+        self.space_gen = StateSpaceGen()
+        self.best_move = None
+        self.queue = Queue()
+        self.ai_search_process = None
 
     def update_score(self, score):
         super().update_score(score)
@@ -177,23 +186,79 @@ class AIPlayer(Player):
     def _calculate_move(self, **kwargs):
         pass
 
+    def add_ai_time(self, time_of_ai_move):
+        self.list_of_moves.append(time_of_ai_move)
+
+    def reset_player_clock(self, undo=False):
+        self.clock.reset_to_full()
+
+    def empty_queue(self):
+        try:
+            while True:  # Continue until the queue is empty
+                item = self.queue.get_nowait()  # Attempt to get an item without blocking
+        except Exception as e:
+            print("queue is empty")
+
+    def get_last_item_and_empty(self):
+        last_item = None
+        try:
+            while True:  # Keep dequeuing until the queue is empty
+                last_item = self.queue.get_nowait()
+        except Empty:
+            pass  # The queue is empty
+        return last_item
+
 
 class HumanPlayer(Player):
     def update_score(self, score):
         super().update_score(score)
 
-    def make_move(self, **kwargs):
-        pass
+    def make_move(self, board, **kwargs):
+        print(self.color, "being asked to make a move")
 
 
 class MangatAI(AIPlayer):
 
-    def __init__(self, name, color):
-        super().__init__(name, color)
-        self.space_gen = StateSpaceGen()
+    def apply_move(self, best_move):
+        self.best_move = best_move
 
     def make_move(self, board, **kwargs):
-        pass
+        print(self.color, "being asked to make a move")
+        if not self.in_search:
+            print(self.color, "move started")
+            self.in_search = True  # Ensure to reset this flag appropriately later
+
+            def search_and_apply_move(queue, board):
+                time_start = time.time_ns()
+                best_move = self._calculate_move(board, queue=self.queue, start_time=time_start)
+
+            # Start the process
+            self.ai_search_process = Process(target=search_and_apply_move, args=(self.queue, board))
+            self.ai_search_process.start()
+            # p.join()  # Wait for the process to complete
+
+            # # Get the result and apply the move
+            # best_move = self.queue.get()
+            # # best_move = self._calculate_move(board)
+            # set_move(best_move)
+            self.in_search = False
+            print("After the thread")
+            # print(self.color, "being asked to make a move")
+        # if not self.in_search:
+        #     print(self.color, "move started")
+        #     self.in_search = True  # Ensure to reset this flag appropriately later
+        #
+        #     def search_and_apply_move():
+        #         best_move = self._calculate_move(board)
+        #         # Ensure this operation is thread-safe, especially if it modifies shared state
+        #         self.apply_move(best_move)
+        #         self.in_search = False  # Reset the flag after move is calculated
+        #
+        #         # If you need to update UI or game state, consider queueing this update
+        #         # to be performed on the main thread.
+        #
+        #     search_thread = Thread(target=search_and_apply_move)
+        #     search_thread.start()
         # player_color = self.color == 'b'
         # max_eval = -math.inf
         # min_eval = math.inf
@@ -205,6 +270,7 @@ class MangatAI(AIPlayer):
         #         if eval > max_eval:
         #             max_eval = eval
         #             make_move = position
+        #             print("moafjfakjfajf", make_move)
         #     return make_move
         # else:
         #     for position in self.get_positions(board, player_color):
@@ -212,10 +278,41 @@ class MangatAI(AIPlayer):
         #         if eval < min_eval:
         #             min_eval = eval
         #             make_move = position
+        #             print("moafjfakjfajf", make_move)
         #     return make_move
 
-    def _calculate_move(self, **kwargs):
-        pass
+    def _calculate_move(self, board, queue, start_time, **kwargs):
+        player_color = self.color == 'b'
+        max_eval = -math.inf
+        min_eval = math.inf
+        make_move = None
+        print("inside searching")
+        self.space_gen.boards = []
+        if player_color:
+            positions, moves = self.get_positions(board, player_color)
+            for i, position in enumerate(positions):
+                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                if eval > max_eval:
+                    max_eval = eval
+                    make_move = moves[i]
+                    time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+                    print("found move", (make_move, time_for_this_move))
+                    queue.put((make_move, time_for_this_move))
+
+            print("done searching")
+            return make_move
+        else:
+            positions, moves = self.get_positions(board, player_color)
+            for i, position in enumerate(positions):
+                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                if eval < min_eval:
+                    min_eval = eval
+                    make_move = moves[i]
+                    time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+                    print("found move", make_move, time_for_this_move)
+                    queue.put((make_move, time_for_this_move))
+            print("done searching")
+            return make_move
 
     def game_over(self, position):
         pass
@@ -262,8 +359,9 @@ class MangatAI(AIPlayer):
     def get_positions(self, position, maximizing_player):
         player_color = 'b' if maximizing_player else 'w'
         self.space_gen.boards = []
+        self.space_gen.moves = []
         self.space_gen.generate_state_space(position, player_color)
-        return self.space_gen.boards
+        return self.space_gen.boards, self.space_gen.moves
 
     def minimax(self, position: Board, depth, alpha, beta, maximizing_player):
         if depth == 0 or self.game_over(position):
@@ -273,8 +371,8 @@ class MangatAI(AIPlayer):
 
         if maximizing_player:
             max_eval = -math.inf
-
-            for child_position in self.get_positions(position, not maximizing_player):
+            positions, moves = self.get_positions(position, not maximizing_player)
+            for i, child_position in enumerate(positions):
                 position_evaluated = self.minimax(child_position, depth - 1, alpha, beta,
                                                   not maximizing_player)
                 if position_evaluated > max_eval:
@@ -286,7 +384,8 @@ class MangatAI(AIPlayer):
             return max_eval
         else:
             min_eval = math.inf
-            for child_position in self.get_positions(position, not maximizing_player):
+            positions, moves = self.get_positions(position, not maximizing_player)
+            for i, child_position in enumerate(positions):
                 position_evaluated = self.minimax(child_position, depth - 1, alpha, beta,
                                                   not maximizing_player)
                 if position_evaluated < min_eval:
@@ -298,21 +397,22 @@ class MangatAI(AIPlayer):
             return min_eval
 
 
-whitePlayer = MangatAI("white", "w")
-blackPlayer = MangatAI("black", "b")
-b = Board()
-b.setup_board("Belgian Daisy")
-time_start = time.time()
-for _ in range(40):
-    black_move = blackPlayer.make_move(b)
-    print(black_move)
-    white_move = whitePlayer.make_move(black_move)
-    print(white_move)
-    b = white_move
+if __name__ == '__main__':
+    whitePlayer = MangatAI("white", "w")
+    blackPlayer = MangatAI("black", "b")
+    b = Board()
+    b.setup_board("Belgian Daisy")
+    time_start = time.time()
+    for _ in range(40):
+        black_move = blackPlayer.make_move(b)
+        print(black_move)
+        white_move = whitePlayer.make_move(black_move)
+        print(white_move)
+        b = white_move
 
-"""
-All the positon of current positons,
-then get the val of all postoin. then check which is the best
-"""
-time_end = time.time()
-print(time_end - time_start)
+    """
+    All the positon of current positons,
+    then get the val of all postoin. then check which is the best
+    """
+    time_end = time.time()
+    print(time_end - time_start)

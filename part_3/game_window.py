@@ -9,6 +9,7 @@ from event_handler import EventHandler, CUSTOM_TIMER_EVENT
 from uis.player_ui_layout import PlayerUi
 from uis.moves_remaining_gui import MovesRemainingGUI
 
+RED = (255, 0, 0)
 
 class GameWindow:
     MOVE_GUI_WIDTH = 300
@@ -99,7 +100,7 @@ class GameWindow:
         self.moves_left = MovesRemainingGUI(self.manager_ui, turn_remaining_gui, self.manager)
         self.moves_left.create_gui()
 
-        pygame.time.set_timer(CUSTOM_TIMER_EVENT, 16)
+        pygame.time.set_timer(CUSTOM_TIMER_EVENT, 333)
 
     def update_player_ui(self):
         self.player_2_gui.create_gui()
@@ -161,7 +162,16 @@ class GameWindow:
                 if marble == (row, col):
                     pygame.draw.circle(self.background, (255, 102, 102), (x_pixel, y_pixel),
                                        self.marble_radius + 3, 3)
-        # self.draw_time()
+            # Draw cordinates now board
+            font = pygame.font.SysFont(None, 24)  # Use default font with size 24
+            label = font.render(f"{chr(row + 64)}{col}", True, RED)  # Render label text
+            label_rect = label.get_rect(center=(x_pixel, y_pixel))  # Position label at center of circle
+            self.display_surface.blit(label, label_rect)
+
+    def draw_labels(self):
+        pass
+
+    # self.draw_time()
 
     def draw_time(self):
         font = pygame.font.SysFont(None, 30)
