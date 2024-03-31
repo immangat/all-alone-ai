@@ -5,7 +5,8 @@ import pygame
 from board import Board
 from clock import Clock
 from game_window import GameWindow
-from player import Player, HumanPlayer, MangatAI, AIPlayer
+from player import Player, HumanPlayer, AIPlayer, MangatAI
+# from ais.mangat_ai import MangatAI
 from menu_screen import MenuScreen
 from states import States
 from state_space_gen import StateSpaceGen
@@ -45,6 +46,7 @@ class Manager:
             self.next_move = None
             self.ai_move_start_time = None
             self.ai_found_move = None
+            self.first_move_done = False
 
     @staticmethod
     def get_instance():
@@ -219,14 +221,21 @@ class Manager:
         self.total_moves_left = self.total_moves_left - 1
 
     def check_for_ai_player_move(self):
+        if not self.first_move_done and self.current_player.color != "w":
+            move, time_for_ai_move = self.current_player.get_first_random_move(self.board, self.ai_move_start_time)
+            self.current_player.add_ai_time(time_for_ai_move)
+            self.ai_found_move = True
+            self.next_move = move
+            self.game_window.moves_left.update_gui()
+            self.first_move_done = True
+        else:
+            self.first_move_done = True
         if self.ai_found_move:
             return
         if isinstance(self.current_player, AIPlayer):
             pass
-            # print("time ai has been searching", (time.time_ns() - self.ai_move_start_time) / 1_000_000,
-            #       self.total_move_limit * 1000)
-        if (((time.time_ns() - self.ai_move_start_time) / 1_000_000 >= self.current_player.time_per_move) or
-                not self.current_player.ai_search_process.is_alive()):
+        if ((((time.time_ns() - self.ai_move_start_time) / 1_000_000 >= self.current_player.time_per_move) or
+             not self.current_player.ai_search_process.is_alive())):
             self.current_player.ai_search_process.terminate()
             self.current_player.ai_search_process.join()
             if self.current_player.queue.empty() and not self.ai_found_move:

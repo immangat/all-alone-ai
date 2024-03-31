@@ -5,101 +5,13 @@ from functools import reduce
 # from multiprocessing import Queue
 from multiprocess import Process, Queue
 from queue import Empty
-
+import random
 from board import Board
 from clock import Clock
 from state_space_gen import StateSpaceGen
 from threading import Thread
 
 SEARCH_DEPTH = 20
-FIRST_CIRCLE = 0.5
-SECOND_CIRCLE = 1
-THIRD_CIRCLE = 3
-FOURTH_CIRCLE = 5
-FIFTH_CIRCLE = 10
-
-board_scores = {('I', 5): FIRST_CIRCLE,
-                ('I', 6): FIRST_CIRCLE,
-                ('I', 7): FIRST_CIRCLE,
-                ('I', 8): FIRST_CIRCLE,
-                ('I', 9): FIRST_CIRCLE,
-                ('H', 4): FIRST_CIRCLE,
-                ('H', 5): SECOND_CIRCLE,
-                ('H', 6): SECOND_CIRCLE,
-                ('H', 7): SECOND_CIRCLE,
-                ('H', 8): SECOND_CIRCLE,
-                ('H', 9): FIRST_CIRCLE,
-                ('G', 3): FIRST_CIRCLE,
-                ('G', 4): SECOND_CIRCLE,
-                ('G', 5): THIRD_CIRCLE,
-                ('G', 6): THIRD_CIRCLE,
-                ('G', 7): THIRD_CIRCLE,
-                ('G', 8): SECOND_CIRCLE,
-                ('G', 9): FIRST_CIRCLE,
-                ('F', 2): FIRST_CIRCLE,
-                ('F', 3): SECOND_CIRCLE,
-                ('F', 4): THIRD_CIRCLE,
-                ('F', 5): FOURTH_CIRCLE,
-                ('F', 6): FOURTH_CIRCLE,
-                ('F', 7): THIRD_CIRCLE,
-                ('F', 8): SECOND_CIRCLE,
-                ('F', 9): FIRST_CIRCLE,
-                ('E', 1): FIRST_CIRCLE,
-                ('E', 2): SECOND_CIRCLE,
-                ('E', 3): THIRD_CIRCLE,
-                ('E', 4): FOURTH_CIRCLE,
-                ('E', 5): FIFTH_CIRCLE,
-                ('E', 6): FOURTH_CIRCLE,
-                ('E', 7): THIRD_CIRCLE,
-                ('E', 8): SECOND_CIRCLE,
-                ('E', 9): FIRST_CIRCLE,
-                ('D', 1): FIRST_CIRCLE,
-                ('D', 2): SECOND_CIRCLE,
-                ('D', 3): THIRD_CIRCLE,
-                ('D', 4): FOURTH_CIRCLE,
-                ('D', 5): FOURTH_CIRCLE,
-                ('D', 6): THIRD_CIRCLE,
-                ('D', 7): SECOND_CIRCLE,
-                ('D', 8): FIRST_CIRCLE,
-                ('C', 1): FIRST_CIRCLE,
-                ('C', 2): SECOND_CIRCLE,
-                ('C', 3): THIRD_CIRCLE,
-                ('C', 4): THIRD_CIRCLE,
-                ('C', 5): THIRD_CIRCLE,
-                ('C', 6): SECOND_CIRCLE,
-                ('C', 7): FIRST_CIRCLE,
-                ('B', 1): FIRST_CIRCLE,
-                ('B', 2): SECOND_CIRCLE,
-                ('B', 3): SECOND_CIRCLE,
-                ('B', 4): SECOND_CIRCLE,
-                ('B', 5): SECOND_CIRCLE,
-                ('B', 6): FIRST_CIRCLE,
-                ('A', 1): FIRST_CIRCLE,
-                ('A', 2): FIRST_CIRCLE,
-                ('A', 3): FIRST_CIRCLE,
-                ('A', 4): FIRST_CIRCLE,
-                ('A', 5): FIRST_CIRCLE
-                }
-
-center_positions = [('E', 5), ('E', 6), ('F', 5), ('F', 6)]
-
-
-def print_abalone_board(board):
-    # Define the row and column ranges
-    rows = ['I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
-    columns = range(1, 10)
-    # Iterate over rows in reverse to print from top to bottom
-    for row in rows:
-        # Print the row label
-        print(row, end=' ')
-        # Iterate over columns to print each cell's value
-        for column in columns:
-            # Get the value at the current position
-            value = board.get((row, column))
-            # Print the value or a dot if the cell is empty
-            print(value.upper() if value else '.', end=' ')
-        # Move to the next line after printing each row
-        print()
 
 
 class Player(ABC):
@@ -181,12 +93,58 @@ class AIPlayer(Player):
     def update_score(self, score):
         super().update_score(score)
 
-    @abstractmethod
-    def make_move(self, **kwargs):
-        pass
+    def make_move(self, board, **kwargs):
+        print(self.color, "being asked to make a move")
+
+        def search_and_apply_move(queue, board):
+            time_start = time.time_ns()
+            best_move = self._calculate_move(board, queue=self.queue, start_time=time_start)
+
+        # Start the process
+        self.ai_search_process = Process(target=search_and_apply_move, args=(self.queue, board))
+        self.ai_search_process.start()
+
+    def get_first_random_move(self, board, start_time):
+        player_color = self.color == 'b'
+        positions, moves = self.get_positions(board, player_color)
+        make_move = random.choice(moves)
+        time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+        return (make_move, time_for_this_move)
+
+    def _calculate_move(self, board, queue, start_time, **kwargs):
+        player_color = self.color == 'b'
+        max_eval = -math.inf
+        min_eval = math.inf
+        make_move = None
+        print("inside searching")
+        self.space_gen.boards = []
+        if player_color:
+            positions, moves = self.get_positions(board, player_color)
+            for i, position in enumerate(positions):
+                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                if eval > max_eval:
+                    max_eval = eval
+                    make_move = moves[i]
+                    time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+                    queue.put((make_move, time_for_this_move))
+
+            print("done searching")
+            return make_move
+        else:
+            positions, moves = self.get_positions(board, player_color)
+            for i, position in enumerate(positions):
+                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                if eval < min_eval:
+                    min_eval = eval
+                    make_move = moves[i]
+                    time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+                    print("found move", make_move, time_for_this_move)
+                    queue.put((make_move, time_for_this_move))
+            print("done searching")
+            return make_move
 
     @abstractmethod
-    def _calculate_move(self, **kwargs):
+    def evaluate_position(self, position, maximizing_player):
         pass
 
     def add_ai_time(self, time_of_ai_move):
@@ -211,6 +169,52 @@ class AIPlayer(Player):
             pass  # The queue is empty
         return last_item
 
+    def minimax(self, position: Board, depth, alpha, beta, maximizing_player):
+        if depth == 0 or self.game_over(position):
+            score = self.evaluate_position(position, maximizing_player)
+            # print_abalone_board(position.circles)
+            return score
+
+        if maximizing_player:
+            max_eval = -math.inf
+            positions, moves = self.get_positions(position, not maximizing_player)
+            for i, child_position in enumerate(positions):
+                position_evaluated = self.minimax(child_position, depth - 1, alpha, beta,
+                                                  not maximizing_player)
+                if position_evaluated > max_eval:
+                    max_eval = position_evaluated
+
+                alpha = max(alpha, max_eval)
+                if beta <= alpha:
+                    break
+            return max_eval
+        else:
+            min_eval = math.inf
+            positions, moves = self.get_positions(position, not maximizing_player)
+            for i, child_position in enumerate(positions):
+                position_evaluated = self.minimax(child_position, depth - 1, alpha, beta,
+                                                  not maximizing_player)
+                if position_evaluated < min_eval:
+                    min_eval = position_evaluated
+
+                beta = min(beta, min_eval)
+                if beta <= alpha:
+                    break
+            return min_eval
+
+    def apply_move(self, best_move):
+        self.best_move = best_move
+
+    def game_over(self, position):
+        pass
+
+    def get_positions(self, position, maximizing_player):
+        player_color = 'b' if maximizing_player else 'w'
+        self.space_gen.boards = []
+        self.space_gen.moves = []
+        self.space_gen.generate_state_space(position, player_color)
+        return self.space_gen.boards, self.space_gen.moves
+
 
 class HumanPlayer(Player):
     def update_score(self, score):
@@ -220,57 +224,79 @@ class HumanPlayer(Player):
         print(self.color, "being asked to make a move")
 
 
+FIRST_CIRCLE = 0.5
+SECOND_CIRCLE = 1
+THIRD_CIRCLE = 3
+FOURTH_CIRCLE = 5
+FIFTH_CIRCLE = 10
+
+board_scores = {('I', 5): FIRST_CIRCLE,
+                ('I', 6): FIRST_CIRCLE,
+                ('I', 7): FIRST_CIRCLE,
+                ('I', 8): FIRST_CIRCLE,
+                ('I', 9): FIRST_CIRCLE,
+                ('H', 4): FIRST_CIRCLE,
+                ('H', 5): SECOND_CIRCLE,
+                ('H', 6): SECOND_CIRCLE,
+                ('H', 7): SECOND_CIRCLE,
+                ('H', 8): SECOND_CIRCLE,
+                ('H', 9): FIRST_CIRCLE,
+                ('G', 3): FIRST_CIRCLE,
+                ('G', 4): SECOND_CIRCLE,
+                ('G', 5): THIRD_CIRCLE,
+                ('G', 6): THIRD_CIRCLE,
+                ('G', 7): THIRD_CIRCLE,
+                ('G', 8): SECOND_CIRCLE,
+                ('G', 9): FIRST_CIRCLE,
+                ('F', 2): FIRST_CIRCLE,
+                ('F', 3): SECOND_CIRCLE,
+                ('F', 4): THIRD_CIRCLE,
+                ('F', 5): FOURTH_CIRCLE,
+                ('F', 6): FOURTH_CIRCLE,
+                ('F', 7): THIRD_CIRCLE,
+                ('F', 8): SECOND_CIRCLE,
+                ('F', 9): FIRST_CIRCLE,
+                ('E', 1): FIRST_CIRCLE,
+                ('E', 2): SECOND_CIRCLE,
+                ('E', 3): THIRD_CIRCLE,
+                ('E', 4): FOURTH_CIRCLE,
+                ('E', 5): FIFTH_CIRCLE,
+                ('E', 6): FOURTH_CIRCLE,
+                ('E', 7): THIRD_CIRCLE,
+                ('E', 8): SECOND_CIRCLE,
+                ('E', 9): FIRST_CIRCLE,
+                ('D', 1): FIRST_CIRCLE,
+                ('D', 2): SECOND_CIRCLE,
+                ('D', 3): THIRD_CIRCLE,
+                ('D', 4): FOURTH_CIRCLE,
+                ('D', 5): FOURTH_CIRCLE,
+                ('D', 6): THIRD_CIRCLE,
+                ('D', 7): SECOND_CIRCLE,
+                ('D', 8): FIRST_CIRCLE,
+                ('C', 1): FIRST_CIRCLE,
+                ('C', 2): SECOND_CIRCLE,
+                ('C', 3): THIRD_CIRCLE,
+                ('C', 4): THIRD_CIRCLE,
+                ('C', 5): THIRD_CIRCLE,
+                ('C', 6): SECOND_CIRCLE,
+                ('C', 7): FIRST_CIRCLE,
+                ('B', 1): FIRST_CIRCLE,
+                ('B', 2): SECOND_CIRCLE,
+                ('B', 3): SECOND_CIRCLE,
+                ('B', 4): SECOND_CIRCLE,
+                ('B', 5): SECOND_CIRCLE,
+                ('B', 6): FIRST_CIRCLE,
+                ('A', 1): FIRST_CIRCLE,
+                ('A', 2): FIRST_CIRCLE,
+                ('A', 3): FIRST_CIRCLE,
+                ('A', 4): FIRST_CIRCLE,
+                ('A', 5): FIRST_CIRCLE
+                }
+
+center_positions = [('E', 5), ('E', 6), ('F', 5), ('F', 6)]
+
+
 class MangatAI(AIPlayer):
-
-    def apply_move(self, best_move):
-        self.best_move = best_move
-
-    def make_move(self, board, **kwargs):
-        print(self.color, "being asked to make a move")
-
-        def search_and_apply_move(queue, board):
-            time_start = time.time_ns()
-            best_move = self._calculate_move(board, queue=self.queue, start_time=time_start)
-
-        # Start the process
-        self.ai_search_process = Process(target=search_and_apply_move, args=(self.queue, board))
-        self.ai_search_process.start()
-
-    def _calculate_move(self, board, queue, start_time, **kwargs):
-        player_color = self.color == 'b'
-        max_eval = -math.inf
-        min_eval = math.inf
-        make_move = None
-        print("inside searching")
-        self.space_gen.boards = []
-        if player_color:
-            positions, moves = self.get_positions(board, player_color)
-            for i, position in enumerate(positions):
-                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
-                if eval > max_eval:
-                    max_eval = eval
-                    make_move = moves[i]
-                    time_for_this_move = (time.time_ns() - start_time) / 1_000_000
-                    print("found move", (make_move, time_for_this_move))
-                    queue.put((make_move, time_for_this_move))
-
-            print("done searching")
-            return make_move
-        else:
-            positions, moves = self.get_positions(board, player_color)
-            for i, position in enumerate(positions):
-                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
-                if eval < min_eval:
-                    min_eval = eval
-                    make_move = moves[i]
-                    time_for_this_move = (time.time_ns() - start_time) / 1_000_000
-                    print("found move", make_move, time_for_this_move)
-                    queue.put((make_move, time_for_this_move))
-            print("done searching")
-            return make_move
-
-    def game_over(self, position):
-        pass
 
     def count_marbles_in_position(self, position, maximizing_player):
         black_count = len(position.get_marbles_by_color('b'))
@@ -310,64 +336,3 @@ class MangatAI(AIPlayer):
         board_score = self.count_board_score(position, maximizing_player)
         marble_islands = self.count_marble_islands(position, maximizing_player)
         return (board_score * marble_islands) + (marbles_remaining * 15)
-
-    def get_positions(self, position, maximizing_player):
-        player_color = 'b' if maximizing_player else 'w'
-        self.space_gen.boards = []
-        self.space_gen.moves = []
-        self.space_gen.generate_state_space(position, player_color)
-        return self.space_gen.boards, self.space_gen.moves
-
-    def minimax(self, position: Board, depth, alpha, beta, maximizing_player):
-        if depth == 0 or self.game_over(position):
-            score = self.evaluate_position(position, maximizing_player)
-            # print_abalone_board(position.circles)
-            return score
-
-        if maximizing_player:
-            max_eval = -math.inf
-            positions, moves = self.get_positions(position, not maximizing_player)
-            for i, child_position in enumerate(positions):
-                position_evaluated = self.minimax(child_position, depth - 1, alpha, beta,
-                                                  not maximizing_player)
-                if position_evaluated > max_eval:
-                    max_eval = position_evaluated
-
-                alpha = max(alpha, max_eval)
-                if beta <= alpha:
-                    break
-            return max_eval
-        else:
-            min_eval = math.inf
-            positions, moves = self.get_positions(position, not maximizing_player)
-            for i, child_position in enumerate(positions):
-                position_evaluated = self.minimax(child_position, depth - 1, alpha, beta,
-                                                  not maximizing_player)
-                if position_evaluated < min_eval:
-                    min_eval = position_evaluated
-
-                beta = min(beta, min_eval)
-                if beta <= alpha:
-                    break
-            return min_eval
-
-
-if __name__ == '__main__':
-    whitePlayer = MangatAI("white", "w")
-    blackPlayer = MangatAI("black", "b")
-    b = Board()
-    b.setup_board("Belgian Daisy")
-    time_start = time.time()
-    for _ in range(40):
-        black_move = blackPlayer.make_move(b)
-        print(black_move)
-        white_move = whitePlayer.make_move(black_move)
-        print(white_move)
-        b = white_move
-
-    """
-    All the positon of current positons,
-    then get the val of all postoin. then check which is the best
-    """
-    time_end = time.time()
-    print(time_end - time_start)
