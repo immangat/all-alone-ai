@@ -1,6 +1,6 @@
 from state_space_gen import StateSpaceGen
 from board import Board
-
+from IO_handler import IOHandler
 
 class AIAgent:
     POINT_VALUES = [
@@ -20,42 +20,35 @@ class AIAgent:
     def __init__(self):
         self.weights = self.get_weights()
         self.transposition_table = {}
+        self.countTP = 0
+        self.countAB = 0
+        self.countSetAB = 0
 
     def get_best_move(self, board, current_player, depth):
+        self.countTP = 0
         best_move = None
         best_board = None
         best_score = -self.INFINITY if current_player == 'b' else self.INFINITY
         gen = StateSpaceGen()
         gen.generate_state_space(board, current_player)
 
-        evaluated_moves =[]
+        alpha = -self.INFINITY
+        beta = self.INFINITY
 
         for gen_board in gen.get_boards():
             newboard = Board()
             newboard.set_circles(gen_board)
             score = self.board_evaluation(newboard)
-            evaluated_moves.append((newboard, score))
-
-        if current_player == 'b':
-            evaluated_moves.sort(key=lambda x: x[1], reverse=True)  # Higher scores first
-        else:
-            evaluated_moves.sort(key=lambda x: x[1])  # Lower scores first
-
-        alpha = -self.INFINITY if current_player == 'b' else self.INFINITY
-        beta = self.INFINITY if current_player == 'b' else -self.INFINITY
-
-        for gen_board, score in evaluated_moves:
 
             if current_player == 'b':
-                score = self.alpha_beta(gen_board, depth - 1, alpha, beta, 'w')
+                score = self.alpha_beta(newboard, depth - 1, alpha, beta, 'w')
             else:
-                score = self.alpha_beta(gen_board, depth - 1, alpha, beta, 'b')
+                score = self.alpha_beta(newboard, depth - 1, alpha, beta, 'b')
 
             if (current_player == 'b' and score > best_score) or (current_player == 'w' and score < best_score):
                 best_score = score
-                best_move = gen.get_moves()[gen.get_index_from_board_string(gen_board)]
-                # best_move = gen.get_moves()[gen.get_index_from_board(best_board)]
-                best_board = gen_board
+                best_move = gen.get_moves()[gen.get_index_from_board_string(newboard)]
+                best_board = newboard
 
             # Update alpha or beta for pruning
             if current_player == 'b':
@@ -63,9 +56,16 @@ class AIAgent:
             else:
                 beta = min(beta, best_score)
 
-            # Pruning when scores do not improve for the player
+            # Perform pruning
             if beta <= alpha:
                 break
+
+        # print(self.transposition_table)
+        print(f"TP length {len(self.transposition_table)}")
+        print(f"Best score: {best_score}")
+        print(f"count TP {self.countTP}")
+        print(f"count AB {self.countAB}")
+        print(f"count set AB {self.countSetAB}")
 
         return best_move, best_board
 
@@ -82,19 +82,6 @@ class AIAgent:
                 black_score += self.POINT_VALUES[index] * self.weights["b_pos"]
             elif board.get_marble(coord) == "w":
                 white_score += self.POINT_VALUES[index] * self.weights["w_pos"]
-
-        # Points for mobility (number of legal moves) <- removed due to poor efficiency
-        # genb = StateSpaceGen()
-        # genw = StateSpaceGen()
-        # genb.generate_state_space(board, "b")
-        # genw.generate_state_space(board, "w")
-        # b_moves = genb.get_moves()
-        # w_moves = genw.get_moves()
-        #
-        # black_mobility = len(b_moves)
-        # white_mobility = len(w_moves)
-        # black_score += black_mobility * self.weights["b_mobility"]
-        # white_score += white_mobility * self.weights["w_mobility"]
 
         # points for coherence
         black_score += self.calculate_group_score("b", board) * self.weights["b_coherence"]
@@ -156,10 +143,11 @@ class AIAgent:
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):
+
         hash_key = board.hash_board()
         if hash_key in self.transposition_table:
+            self.countTP += 1
             return self.transposition_table[hash_key]
-
         if depth == 0:
             return self.board_evaluation(board)
 
@@ -172,7 +160,8 @@ class AIAgent:
                 new_board.set_circles(gen_board)
                 value = max(value, self.alpha_beta(new_board, depth - 1, alpha, beta, "w"))
                 alpha = max(alpha, value)
-                if beta <= alpha:
+                if beta >= alpha:
+                    self.countAB += 1
                     break  # Beta cut-off
             self.transposition_table[hash_key] = value
             return value
@@ -184,6 +173,7 @@ class AIAgent:
                 value = min(value, self.alpha_beta(new_board, depth - 1, alpha, beta, "b"))
                 beta = min(beta, value)
                 if beta <= alpha:
+                    self.countAB += 1
                     break  # Alpha cut-off
             self.transposition_table[hash_key] = value
             return value

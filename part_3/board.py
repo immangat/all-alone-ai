@@ -23,8 +23,6 @@ class Board:
         """
 
         self.circles = {}  # This will map board coordinates to Circle objects
-        # self.starting_numbers = [5, 4, 3, 2, 1, 1, 1, 1, 1]
-        # self.rows = [5, 6, 7, 8, 9, 8, 7, 6, 5]
         self.init_board()
 
     def get_circles(self) -> dict:
@@ -68,7 +66,7 @@ class Board:
         # Check if the row and col are within the hexagonal board bounds
         return coord in Board.BOARD_COORD
 
-    def setup_board(self, setup_type="Default"):
+    def setup_board(self, setup_type="Default", invert=False):
         """
         Sets up the board for a game with a given setup type
         :param setup_type: A string representing the setup type
@@ -76,7 +74,7 @@ class Board:
         self.clear_board()
 
         if setup_type == "Default":
-            self.setup_default()
+            self.setup_default(invert)
         elif setup_type == "German Daisy":
             self.setup_german_daisy()
         elif setup_type == "Belgian Daisy":
@@ -89,7 +87,7 @@ class Board:
         self.circles = {}
         self.init_board()
 
-    def setup_default(self):
+    def setup_default(self, invert=False):
         """
         Sets up the board for a game with a default setup type
         """
@@ -106,6 +104,13 @@ class Board:
 
         for coord in white_marbles:
             self.set_marble(coord, "w")
+
+        if invert == True:
+            for coord in black_marbles:
+                self.set_marble(coord, "w")
+
+            for coord in white_marbles:
+                self.set_marble(coord, "b")
 
 
     def setup_german_daisy(self):
@@ -166,11 +171,11 @@ class Board:
 
         white_marbles = new_board.num_marbles_left_by_color("w") # from 14 - 14 = 0 to 14 - 9 = 5 -> 0 to 5
         black_marbles = new_board.num_marbles_left_by_color("b")
-        print(f"Number of white marbles: {white_marbles}")
-        print(f"Number of black marbles: {black_marbles}")
+        # print(f"Number of white marbles: {white_marbles}")
+        # print(f"Number of black marbles: {black_marbles}")
 
         if 0 <= white_marbles < 6 and 0 <= black_marbles < 6:
-            print("returning board")
+            # print("returning board")
             return new_board
         else:
             print("Invalid number of marbles")
