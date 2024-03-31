@@ -62,7 +62,8 @@ class MenuScreen:
             padding=(0, 0, 0, 8),
             items=[('Human vs Human', 0),
                    ('Human vs AI', 1),
-                   ('AI vs Human', 2)],
+                   ('AI vs Human', 2),
+                   ('AI vs AI', 3)],
             font_size=20,
             selection_option_font_size=20,
             onchange=self.select_game_type,
@@ -205,20 +206,31 @@ class MenuScreen:
             self.human_vs_ai()
         elif args[1] == 2:
             self.ai_vs_human()
+        elif args[1] == 3:
+            self.ai_vs_ai()
 
     def select_file(self, *args):
         self.selected_file_name = args[0][0][0]
         print("selected file name: {}".format(self.selected_file_name))
 
     def human_vs_human(self):
+        self.manager.configure_player('b', 'h')
+        self.manager.configure_player('w', 'h')
         print("human vs human")
 
     def human_vs_ai(self):
-        # self.add_marble_options()
+        self.manager.configure_player('b', 'h')
+        self.manager.configure_player('w', 'a')
         print("human vs ai")
 
     def ai_vs_human(self):
+        self.manager.configure_player('b', 'a')
+        self.manager.configure_player('w', 'h')
         print("ai vs human")
+
+    def ai_vs_ai(self):
+        self.manager.configure_player('b', 'a')
+        self.manager.configure_player('w', 'a')
 
     def select_board_type(self, selected: tuple, value: any):
         print("Board type selected")
@@ -252,12 +264,16 @@ class MenuScreen:
         print(f"P1 time per move selected {args[0]}")
 
     def select_p2_time_per_move(self, *args):
+        move_time_limit = args[0]
+        move_time_limit = int(move_time_limit)
+        self.p2_time = move_time_limit
         print(f"P2 time per move selected {args[0]}")
 
     def start_game(self):
         self.manager.total_move_limit = self.total_move_limit
         self.manager.total_moves_left = self.total_move_limit
-        self.manager.time_limit_per_move = self.p1_time
+        self.manager.time_limit_per_move_p1 = self.p1_time
+        self.manager.time_limit_per_move_p2 = self.p2_time
         self.manager.switch_to_screen("game")
 
     def quit_game(self):

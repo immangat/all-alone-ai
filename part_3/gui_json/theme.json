@@ -36,7 +36,7 @@
       "normal_border": "#999999"
     }
   },
-  "player_1": {
+  "player_2": {
   "colours": {
     "normal_text": "#000000",
     "dark_bg":"#FFFFFF"
@@ -48,7 +48,7 @@
     "italic": false
   }
 },
-  "player_2": {
+  "player_1": {
   "colours": {
     "normal_text": "#FFFFFF",
     "dark_bg":"#000000"
