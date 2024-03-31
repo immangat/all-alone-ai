@@ -1,8 +1,9 @@
 from state_space_gen import StateSpaceGen
 from board import Board
-from IO_handler import IOHandler
+from player import AIPlayer
 
-class AIAgent:
+
+class AIAgent(AIPlayer):
     POINT_VALUES = [
         -2, -2, -2, -2, -2,
         -2, 0, 0, 0, 0, -2,
@@ -17,12 +18,19 @@ class AIAgent:
 
     INFINITY = float('inf')
 
-    def __init__(self):
+    def __init__(self, name, color):
+        super().__init__(name, color)
         self.weights = self.get_weights()
         self.transposition_table = {}
-        self.countTP = 0
-        self.countAB = 0
-        self.countSetAB = 0
+
+    def make_move(self, **kwargs):
+        board = kwargs['board']
+        player_color = kwargs['player_color']
+        depth = 4
+        return self.get_best_move(board, player_color, depth)
+
+    def _calculate_move(self, **kwargs):
+        pass
 
     def get_best_move(self, board, current_player, depth):
         self.countTP = 0
@@ -60,13 +68,6 @@ class AIAgent:
             if beta <= alpha:
                 break
 
-        # print(self.transposition_table)
-        print(f"TP length {len(self.transposition_table)}")
-        print(f"Best score: {best_score}")
-        print(f"count TP {self.countTP}")
-        print(f"count AB {self.countAB}")
-        print(f"count set AB {self.countSetAB}")
-
         return best_move, best_board
 
     def board_evaluation(self, board):
@@ -99,7 +100,6 @@ class AIAgent:
     #             if board.get_marble(neighbor) == player:
     #                 count += 1
     #     return count
-
 
     def calculate_group_score(self, player, board):
         marbles = board.get_marbles_by_color(player)
@@ -146,7 +146,6 @@ class AIAgent:
 
         hash_key = board.hash_board()
         if hash_key in self.transposition_table:
-            self.countTP += 1
             return self.transposition_table[hash_key]
         if depth == 0:
             return self.board_evaluation(board)
@@ -161,7 +160,6 @@ class AIAgent:
                 value = max(value, self.alpha_beta(new_board, depth - 1, alpha, beta, "w"))
                 alpha = max(alpha, value)
                 if beta >= alpha:
-                    self.countAB += 1
                     break  # Beta cut-off
             self.transposition_table[hash_key] = value
             return value
@@ -173,7 +171,6 @@ class AIAgent:
                 value = min(value, self.alpha_beta(new_board, depth - 1, alpha, beta, "b"))
                 beta = min(beta, value)
                 if beta <= alpha:
-                    self.countAB += 1
                     break  # Alpha cut-off
             self.transposition_table[hash_key] = value
             return value
