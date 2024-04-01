@@ -1,7 +1,7 @@
 import pygame
 from pygame_gui.elements import UIButton, UIPanel, UILabel
 
-from part_3.player import Player
+from player import Player
 
 
 class PlayerUi:

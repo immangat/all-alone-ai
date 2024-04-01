@@ -31,7 +31,7 @@ class StateSpaceGen:
                 return self.boards.index(b)
 
     def generate_state_space(self, board, player_color):
-        print("board inside state spave", board)
+        # print("board inside state spave", board)
         self.board = board
         self.curr_player = player_color
 
