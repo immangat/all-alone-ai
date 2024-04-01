@@ -8,6 +8,7 @@ from queue import Empty
 import random
 from board import Board
 from clock import Clock
+from part_3.IO_handler import IOHandler
 from state_space_gen import StateSpaceGen
 from threading import Thread
 
@@ -81,6 +82,16 @@ class Player(ABC):
         return f"{self.name}  {output}"
 
 
+def get_hash(position: Board):
+    output = 1
+    circles = position.get_circles()
+    circles = {key: value for key, value in circles.items() if value is not None}
+    for key, value in circles.items():
+        hash_value = hash_map_for_positions[(chr(int(key[0]) + 64), key[1])][value]
+        output = output ^ hash_value
+    return output
+
+
 class AIPlayer(Player):
     def __init__(self, name, color):
         super().__init__(name, color)
@@ -89,6 +100,7 @@ class AIPlayer(Player):
         self.best_move = None
         self.queue = Queue()
         self.ai_search_process = None
+        self.trans_table = None
 
     def update_score(self, score):
         super().update_score(score)
@@ -112,6 +124,9 @@ class AIPlayer(Player):
         return (make_move, time_for_this_move)
 
     def _calculate_move(self, board, queue, start_time, **kwargs):
+        self.trans_table = IOHandler.read_transposition_table_from_file("mangat_table.json")
+        if self.trans_table is None:
+            self.trans_table = {}
         player_color = self.color == 'b'
         max_eval = -math.inf
         min_eval = math.inf
@@ -123,13 +138,18 @@ class AIPlayer(Player):
             for i, position in enumerate(positions):
                 new_board = Board()
                 new_board.set_circles(position)
-                eval = self.minimax(new_board, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                hash = get_hash(new_board)
+                if self.trans_table.get(hash):
+                    eval = self.trans_table.get(hash)
+                else:
+                    eval = self.minimax(new_board, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                    self.trans_table[hash] = eval
                 if eval > max_eval:
                     max_eval = eval
                     make_move = moves[i]
                     time_for_this_move = (time.time_ns() - start_time) / 1_000_000
                     queue.put((make_move, time_for_this_move))
-
+            IOHandler.save_transposition_table(self.trans_table, "mangat_table.json")
             print("done searching")
             return make_move
         else:
@@ -137,13 +157,19 @@ class AIPlayer(Player):
             for i, position in enumerate(positions):
                 new_board = Board()
                 new_board.set_circles(position)
-                eval = self.minimax(new_board, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                hash = get_hash(new_board)
+                if self.trans_table.get(hash):
+                    eval = self.trans_table.get(hash)
+                else:
+                    eval = self.minimax(new_board, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                    self.trans_table[hash] = eval
                 if eval < min_eval:
                     min_eval = eval
                     make_move = moves[i]
                     time_for_this_move = (time.time_ns() - start_time) / 1_000_000
                     print("found move", make_move, time_for_this_move)
                     queue.put((make_move, time_for_this_move))
+            IOHandler.save_transposition_table(self.trans_table, "mangat_table.json")
             print("done searching")
             return make_move
 
@@ -175,9 +201,7 @@ class AIPlayer(Player):
 
     def minimax(self, position: Board, depth, alpha, beta, maximizing_player):
         if depth == 0 or self.game_over(position):
-            score = self.evaluate_position(position, maximizing_player)
-            # print_abalone_board(position.circles)
-            return score
+            return self.evaluate_position(position, maximizing_player)
 
         if maximizing_player:
             max_eval = -math.inf
@@ -220,6 +244,7 @@ class AIPlayer(Player):
         player_color = 'b' if maximizing_player else 'w'
         self.space_gen.boards = []
         self.space_gen.moves = []
+
         self.space_gen.generate_state_space(position, player_color)
         return self.space_gen.boards, self.space_gen.moves
 
@@ -303,6 +328,70 @@ board_scores = {('I', 5): FIRST_CIRCLE,
 
 center_positions = [('E', 5), ('E', 6), ('F', 5), ('F', 6)]
 
+hash_map_for_positions = {
+    ('I', 5): {'b': 496, 'w': 269},
+    ('I', 6): {'b': 89, 'w': 762},
+    ('I', 7): {'b': 313, 'w': 805},
+    ('I', 8): {'b': 545, 'w': 452},
+    ('I', 9): {'b': 683, 'w': 786},
+    ('H', 4): {'b': 269, 'w': 89},
+    ('H', 5): {'b': 762, 'w': 496},
+    ('H', 6): {'b': 805, 'w': 313},
+    ('H', 7): {'b': 452, 'w': 545},
+    ('H', 8): {'b': 786, 'w': 683},
+    ('H', 9): {'b': 564, 'w': 534},
+    ('G', 3): {'b': 431, 'w': 412},
+    ('G', 4): {'b': 598, 'w': 613},
+    ('G', 5): {'b': 987, 'w': 872},
+    ('G', 6): {'b': 315, 'w': 163},
+    ('G', 7): {'b': 894, 'w': 230},
+    ('G', 8): {'b': 862, 'w': 893},
+    ('G', 9): {'b': 109, 'w': 712},
+    ('F', 2): {'b': 963, 'w': 915},
+    ('F', 3): {'b': 104, 'w': 740},
+    ('F', 4): {'b': 792, 'w': 292},
+    ('F', 5): {'b': 268, 'w': 772},
+    ('F', 6): {'b': 453, 'w': 56},
+    ('F', 7): {'b': 466, 'w': 761},
+    ('F', 8): {'b': 856, 'w': 73},
+    ('F', 9): {'b': 891, 'w': 358},
+    ('E', 1): {'b': 783, 'w': 51},
+    ('E', 2): {'b': 916, 'w': 744},
+    ('E', 3): {'b': 886, 'w': 923},
+    ('E', 4): {'b': 497, 'w': 937},
+    ('E', 5): {'b': 853, 'w': 988},
+    ('E', 6): {'b': 881, 'w': 102},
+    ('E', 7): {'b': 75, 'w': 485},
+    ('E', 8): {'b': 332, 'w': 57},
+    ('E', 9): {'b': 699, 'w': 204},
+    ('D', 1): {'b': 302, 'w': 835},
+    ('D', 2): {'b': 977, 'w': 485},
+    ('D', 3): {'b': 815, 'w': 876},
+    ('D', 4): {'b': 511, 'w': 328},
+    ('D', 5): {'b': 749, 'w': 999},
+    ('D', 6): {'b': 155, 'w': 127},
+    ('D', 7): {'b': 863, 'w': 650},
+    ('D', 8): {'b': 230, 'w': 103},
+    ('C', 1): {'b': 523, 'w': 327},
+    ('C', 2): {'b': 209, 'w': 812},
+    ('C', 3): {'b': 890, 'w': 250},
+    ('C', 4): {'b': 939, 'w': 873},
+    ('C', 5): {'b': 579, 'w': 233},
+    ('C', 6): {'b': 840, 'w': 405},
+    ('C', 7): {'b': 557, 'w': 326},
+    ('B', 1): {'b': 587, 'w': 914},
+    ('B', 2): {'b': 127, 'w': 262},
+    ('B', 3): {'b': 74, 'w': 408},
+    ('B', 4): {'b': 814, 'w': 180},
+    ('B', 5): {'b': 705, 'w': 120},
+    ('B', 6): {'b': 746, 'w': 569},
+    ('A', 1): {'b': 951, 'w': 316},
+    ('A', 2): {'b': 123, 'w': 444},
+    ('A', 3): {'b': 549, 'w': 820},
+    ('A', 4): {'b': 266, 'w': 132},
+    ('A', 5): {'b': 127, 'w': 931}
+}
+
 
 class MangatAI(AIPlayer):
 
@@ -352,7 +441,9 @@ class TestAI(AIPlayer):
         self.move_already_picked = set()
 
     def _calculate_move(self, board, start_time, **kwargs):
-
+        self.trans_table = IOHandler.read_transposition_table_from_file("mangat_table.json")
+        if self.trans_table is None:
+            self.trans_table = {}
         player_color = self.color == 'b'
         max_eval = -math.inf
         min_eval = math.inf
@@ -361,37 +452,52 @@ class TestAI(AIPlayer):
         if player_color:
             positions, moves = self.get_positions(board, player_color)
             for i, position in enumerate(positions):
-                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                new_board = Board()
+                new_board.set_circles(position)
+                hash = get_hash(new_board)
+                if self.trans_table.get(hash):
+                    eval = self.trans_table.get(hash)
+                else:
+                    eval = self.minimax(new_board, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                    self.trans_table[hash] = eval
                 if eval > max_eval:
                     if len(self.move_already_picked) < 8:
                         max_eval = eval
-                        make_move = position
+                        make_move = new_board
                         self.move_already_picked.add(str(position))
                         time_for_this_move = (time.time_ns() - start_time) / 1_000_000
                     else:
                         if str(position) not in self.move_already_picked:
                             max_eval = eval
-                            make_move = position
+                            make_move = new_board
                             self.move_already_picked.add(str(position))
                     # queue.put((make_move, time_for_this_move))
-
+            IOHandler.save_transposition_table(self.trans_table, "mangat_table.json")
             return make_move
         else:
             positions, moves = self.get_positions(board, player_color)
             for i, position in enumerate(positions):
-                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                new_board = Board()
+                new_board.set_circles(position)
+                hash = get_hash(new_board)
+                if self.trans_table.get(hash):
+                    eval = self.trans_table.get(hash)
+                else:
+                    eval = self.minimax(new_board, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                    self.trans_table[hash] = eval
                 if eval < min_eval:
                     if len(self.move_already_picked) < 8:
-                        max_eval = eval
-                        make_move = position
+                        min_eval = eval
+                        make_move = new_board
                         self.move_already_picked.add(str(position))
                         time_for_this_move = (time.time_ns() - start_time) / 1_000_000
                     else:
                         if str(position) not in self.move_already_picked:
-                            max_eval = eval
-                            make_move = position
+                            min_eval = eval
+                            make_move = new_board
                             self.move_already_picked.pop()
                             self.move_already_picked.add(str(position))
+            IOHandler.save_transposition_table(self.trans_table, "mangat_table.json")
             return make_move
 
 
@@ -410,7 +516,6 @@ class MangatAITest(TestAI):
         return board_scores[(chr(circle[0] + 64), circle[1])]
 
     def count_board_score(self, position: Board, maximizing_player):
-
         marbles = position.get_marbles_by_color(self.color)
         board_score = 0
         for marble in marbles:
@@ -484,4 +589,7 @@ def console_writing():
 
 
 if __name__ == '__main__':
+    # b = Board()
+    # b.setup_board("Belgian Daisy")
+    # get_hash(b)
     console_writing()

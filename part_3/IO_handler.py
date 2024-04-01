@@ -7,7 +7,7 @@ import json
 class IOHandler:
 
     def __init__(self):
-        self.board_string =[]
+        self.board_string = []
         self.player_color = None
         self.file_number = None
 
@@ -23,7 +23,6 @@ class IOHandler:
             print("Invalid filename format. Couldn't extract the file number.")
             return
 
-
         with open(filename, 'r') as file:
             # Read the first line and set self.player_color
             self.player_color = file.readline().strip()
@@ -32,9 +31,9 @@ class IOHandler:
             self.board_string = file.readline().strip().split(',')
 
     @staticmethod
-    def read_transposition_table_from_file():
+    def read_transposition_table_from_file(table_name="transpositionTable.json"):
         try:
-            with open("transpositionTable.json", 'r') as file:
+            with open(table_name, 'r') as file:
                 transposition_table = json.load(file)
                 transposition_table = {int(key): value for key, value in transposition_table.items()}
                 return transposition_table
@@ -43,8 +42,8 @@ class IOHandler:
             return None
 
     @staticmethod
-    def save_transposition_table(transposition_table_data):
-        with open("transpositionTable.json", 'w') as file:
+    def save_transposition_table(transposition_table_data, table_name="transpositionTable.json"):
+        with open(table_name, 'w') as file:
             json.dump(transposition_table_data, file, indent=None)
             print("Transposition table saved successfully.")
 
