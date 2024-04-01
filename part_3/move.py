@@ -1,10 +1,11 @@
 
 class Move():
 
-    def __init__(self, move_type, direction, marbles):
+    def __init__(self, move_type, direction, marbles, sumito = False):
         self.move_type = move_type
         self.direction = direction
         self.marbles = marbles
+        self.sumito = sumito
 
     def get_move_type(self):
         return self.move_type
@@ -17,6 +18,9 @@ class Move():
 
     def get_row_letter(self, index):
         return chr(ord('A') + index - 1)
+
+    def get_sumito(self):
+        return self.sumito
 
     @classmethod
     def string_to_move(cls, move_str):

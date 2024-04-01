@@ -23,9 +23,19 @@ class Board:
         """
 
         self.circles = {}  # This will map board coordinates to Circle objects
-        # self.starting_numbers = [5, 4, 3, 2, 1, 1, 1, 1, 1]
-        # self.rows = [5, 6, 7, 8, 9, 8, 7, 6, 5]
         self.init_board()
+
+    def get_circles(self) -> dict:
+        new_circles ={}
+        for key, value in self.circles.items():
+            new_circles[key] = value
+        return new_circles
+
+
+
+
+    def set_circles(self, circles):
+        self.circles = circles
 
     def init_board(self):
 
@@ -56,7 +66,7 @@ class Board:
         # Check if the row and col are within the hexagonal board bounds
         return coord in Board.BOARD_COORD
 
-    def setup_board(self, setup_type="Default"):
+    def setup_board(self, setup_type="Default", invert=False):
         """
         Sets up the board for a game with a given setup type
         :param setup_type: A string representing the setup type
@@ -64,7 +74,7 @@ class Board:
         self.clear_board()
 
         if setup_type == "Default":
-            self.setup_default()
+            self.setup_default(invert)
         elif setup_type == "German Daisy":
             self.setup_german_daisy()
         elif setup_type == "Belgian Daisy":
@@ -77,7 +87,7 @@ class Board:
         self.circles = {}
         self.init_board()
 
-    def setup_default(self):
+    def setup_default(self, invert=False):
         """
         Sets up the board for a game with a default setup type
         """
@@ -94,6 +104,13 @@ class Board:
 
         for coord in white_marbles:
             self.set_marble(coord, "w")
+
+        if invert == True:
+            for coord in black_marbles:
+                self.set_marble(coord, "w")
+
+            for coord in white_marbles:
+                self.set_marble(coord, "b")
 
 
     def setup_german_daisy(self):
@@ -140,10 +157,8 @@ class Board:
 
     @classmethod
     def create_custom_board(cls, string_list):
-        print(string_list)
         new_board = cls()
         for string in string_list:
-
             row_letter, col_str, color = string[0], string[1:-1], string[-1]
             row = ord(row_letter) - ord('A') + 1
             col = int(col_str)
@@ -156,16 +171,15 @@ class Board:
 
         white_marbles = new_board.num_marbles_left_by_color("w") # from 14 - 14 = 0 to 14 - 9 = 5 -> 0 to 5
         black_marbles = new_board.num_marbles_left_by_color("b")
-        print(f"Number of white marbles: {white_marbles}")
-        print(f"Number of black marbles: {black_marbles}")
+        # print(f"Number of white marbles: {white_marbles}")
+        # print(f"Number of black marbles: {black_marbles}")
 
         if 0 <= white_marbles < 6 and 0 <= black_marbles < 6:
-            print("returning board")
+            # print("returning board")
             return new_board
         else:
             print("Invalid number of marbles")
             return None
-
 
         return new_board
 
@@ -179,7 +193,6 @@ class Board:
         new_board.circles = copy.deepcopy(self.circles, memo)
         memo[id(self)] = new_board
         return new_board
-
 
     def get_marble(self, coord):
         return self.circles[coord]
@@ -210,3 +223,26 @@ class Board:
         # Remove the trailing comma and space
         return board_str.rstrip(',')
 
+    def __iter__(self):
+        return iter(self.circles)
+
+    def hash_board(self):
+        board_str = ''.join(str(self.circles.get(coord, ' ')) for coord in self.BOARD_COORD)
+
+        # Simple custom hash function
+        hash_value = 0
+        for char in board_str:
+            hash_value = (hash_value * 37 + ord(char)) % (2 ** 38)
+
+        return hash_value
+
+    @staticmethod
+    def get_neighbors_only(coord):
+        neighbors = []
+        x= coord[0]
+        y = coord[1]
+        temp =[(x +1, y+1), (x, y+1), (x-1, y), (x-1, y-1), (x, y-1), (x + 1, y)]
+        for neighbor in temp:
+            if neighbor in Board.BOARD_COORD:
+                neighbors.append(neighbor)
+        return neighbors

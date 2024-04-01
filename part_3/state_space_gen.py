@@ -1,6 +1,7 @@
 from board import Board
 from directions import Direction
 from move import Move
+from state import State
 import copy
 
 
@@ -8,8 +9,8 @@ class StateSpaceGen:
     def __init__(self):
         self.board = None
         self.curr_player = None
-        self.moves = []
-        self.boards = []
+        self.moves =[]
+        self.boards =[]
 
     def get_boards(self):
         return self.boards
@@ -20,12 +21,20 @@ class StateSpaceGen:
     def clear_states(self):
         self.__init__()
 
+    def get_index_from_board(self, board):
+        return self.boards.index(board)
+
+    def get_index_from_board_string(self, board):
+        board_string = str(board.get_circles())
+        for b in self.boards:
+            if board_string == str(b):
+                return self.boards.index(b)
+
     def generate_state_space(self, board, player_color):
         self.board = board
         self.curr_player = player_color
 
         curr_marbles = self.board.get_marbles_by_color(self.curr_player)
-
         self.check_single_marble(curr_marbles)
 
     def check_single_marble(self, curr_marbles):
@@ -40,33 +49,34 @@ class StateSpaceGen:
                         self.check_mult_marbles(two_marbles, direction)
                     elif self.board.get_marble(neighbor) == None:
                         new_move = Move("i", direction, [marble])
-                        new_board = copy.deepcopy(self.board)
-                        new_board.set_marble(neighbor, self.curr_player)
-                        new_board.set_marble(marble, None)
+                        new_board_dict = self.board.get_circles()
+                        new_board_dict[neighbor] = self.curr_player
+                        new_board_dict[marble] = None
                         self.moves.append(new_move)
-                        self.boards.append(new_board)
+                        self.boards.append(new_board_dict)
+
 
     def check_mult_marbles(self, coords, direction):
 
-        # check inline movement
+        #check inline movement
         inline_logic = self.get_direction_logic(direction)
         next_in_line = (coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1])
         if next_in_line in Board.BOARD_COORD:
             if self.board.get_marble(next_in_line) == self.curr_player:
                 if len(coords) < 3:
-                    three_marbles = coords + [next_in_line]
+                    three_marbles = coords +[next_in_line]
                     self.check_mult_marbles(three_marbles, direction)
             elif self.board.get_marble(next_in_line) == None:
                 new_move = Move("i", direction, coords)
-                new_board = copy.deepcopy(self.board)
-                new_board.set_marble(next_in_line, self.curr_player)
-                new_board.set_marble(coords[0], None)
+                new_board_dict = self.board.get_circles()
+                new_board_dict[next_in_line] = self.curr_player
+                new_board_dict[coords[0]] = None
                 self.moves.append(new_move)
-                self.boards.append(new_board)
+                self.boards.append(new_board_dict)
             else:
                 self.check_sumito(coords, direction)
 
-        # now check side movement
+        #now check side movement
         opposite_inline = self.get_inline_opposite(direction)
         possible_side = [posDir for posDir in Direction if posDir != direction and posDir != opposite_inline]
         duplicate_check = True if coords[-1][1] < coords[0][1] or coords[-1][0] < coords[0][0] else False
@@ -80,16 +90,17 @@ class StateSpaceGen:
                         blocked = True
                         break
                 if not blocked:
-                    new_board = copy.deepcopy(self.board)
+                    new_board_dict = self.board.get_circles()
                     for coord in coords:
                         next_in_side = (coord[0] + direction_logic[0], coord[1] + direction_logic[1])
-                        new_board.set_marble(next_in_side, self.curr_player)
-                        new_board.set_marble(coord, None)
+                        new_board_dict[next_in_side] = self.curr_player
+                        new_board_dict[coord] = None
                     new_move = Move("s", posDir, coords)
                     self.moves.append(new_move)
-                    self.boards.append(new_board)
+                    self.boards.append(new_board_dict)
 
-    def check_sumito(self, coords, direction):
+
+    def check_sumito (self, coords, direction):
         inline_logic = self.get_direction_logic(direction)
         next_coord = (coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1])
         opponent_marbles = 1
@@ -100,17 +111,17 @@ class StateSpaceGen:
                 pushable = False
                 break
             next_coord = (next_coord[0] + inline_logic[0], next_coord[1] + inline_logic[1])
-            opponent_marbles += 1
+            opponent_marbles +=1
         if pushable:
-            new_move = Move("i", direction, coords)
+            new_move = Move("i", direction, coords, sumito=True)
             opponent_color = self.board.get_marble((coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1]))
-            new_board = copy.deepcopy(self.board)
+            new_board_dict = self.board.get_circles()
             if next_coord in Board.BOARD_COORD:
-                new_board.set_marble(next_coord, opponent_color)
-            new_board.set_marble((coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1]), self.curr_player)
-            new_board.set_marble(coords[0], None)
+                new_board_dict[next_coord] = opponent_color
+            new_board_dict[(coords[-1][0] + inline_logic[0], coords[-1][1] + inline_logic[1])] = self.curr_player
+            new_board_dict[coords[0]] = None
             self.moves.append(new_move)
-            self.boards.append(new_board)
+            self.boards.append(new_board_dict)
 
     def get_inline_opposite(self, direction):
         opposite_map = {
@@ -164,11 +175,19 @@ class StateSpaceGen:
         neighbors = []
         directions_temp = [direction for direction in Direction]
         neighbors_directions = []
-        x = coord[0]
+        x= coord[0]
         y = coord[1]
-        temp = [(x + 1, y + 1), (x, y + 1), (x - 1, y), (x - 1, y - 1), (x, y - 1), (x + 1, y)]
+        temp =[(x +1, y+1), (x, y+1), (x-1, y), (x-1, y-1), (x, y-1), (x + 1, y)]
         for neighbor in temp:
             if neighbor in Board.BOARD_COORD:
                 neighbors.append(neighbor)
                 neighbors_directions.append(directions_temp[temp.index(neighbor)])
         return (neighbors, neighbors_directions)
+
+    def create_states(self):
+        states_list = []
+        for move in self.moves:
+            move_index = self.moves.index(move)
+            new_state = State(move, self.board[move_index])
+            self.states.append(new_state)
+        return states_list
