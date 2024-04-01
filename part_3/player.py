@@ -13,7 +13,7 @@ from state_space_gen import StateSpaceGen
 from threading import Thread
 from IO_handler import IOHandler
 
-SEARCH_DEPTH = 100
+SEARCH_DEPTH = 20
 FIRST_CIRCLE = 0.5
 SECOND_CIRCLE = 1
 THIRD_CIRCLE = 3
@@ -631,6 +631,13 @@ class AIAgent(AIPlayer):
 
         ordered_boards = [board for board, _ in ordered_boards]
         return ordered_boards
+
+    def get_first_random_move(self, board, start_time):
+        player_color = self.color == 'b'
+        positions, moves = self.get_positions(board, player_color)
+        make_move = random.choice(moves)
+        time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+        return (make_move, time_for_this_move)
 
 
 class AIAgent2(AIPlayer):
