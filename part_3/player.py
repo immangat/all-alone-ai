@@ -12,7 +12,7 @@ from part_3.IO_handler import IOHandler
 from state_space_gen import StateSpaceGen
 from threading import Thread
 
-SEARCH_DEPTH = 10
+SEARCH_DEPTH = 100
 
 
 class Player(ABC):
@@ -589,7 +589,12 @@ def console_writing():
 
 
 if __name__ == '__main__':
-    # b = Board()
-    # b.setup_board("Belgian Daisy")
-    # get_hash(b)
-    console_writing()
+    b = Board()
+    b.setup_board("Belgian Daisy")
+    blackPlayer = MangatAITest("black", "b")
+    time_start = time.time()
+    black_move = blackPlayer._calculate_move(b, time.time_ns())
+    time_end = time.time()
+    print(time_end - time_start)
+
+    # console_writing()
