@@ -121,7 +121,9 @@ class AIPlayer(Player):
         if player_color:
             positions, moves = self.get_positions(board, player_color)
             for i, position in enumerate(positions):
-                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                new_board = Board()
+                new_board.set_circles(position)
+                eval = self.minimax(new_board, SEARCH_DEPTH, math.inf, -math.inf, player_color)
                 if eval > max_eval:
                     max_eval = eval
                     make_move = moves[i]
@@ -133,7 +135,9 @@ class AIPlayer(Player):
         else:
             positions, moves = self.get_positions(board, player_color)
             for i, position in enumerate(positions):
-                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                new_board = Board()
+                new_board.set_circles(position)
+                eval = self.minimax(new_board, SEARCH_DEPTH, math.inf, -math.inf, player_color)
                 if eval < min_eval:
                     min_eval = eval
                     make_move = moves[i]
@@ -179,7 +183,9 @@ class AIPlayer(Player):
             max_eval = -math.inf
             positions, moves = self.get_positions(position, not maximizing_player)
             for i, child_position in enumerate(positions):
-                position_evaluated = self.minimax(child_position, depth - 1, alpha, beta,
+                new_board = Board()
+                new_board.set_circles(child_position)
+                position_evaluated = self.minimax(new_board, depth - 1, alpha, beta,
                                                   not maximizing_player)
                 if position_evaluated > max_eval:
                     max_eval = position_evaluated
@@ -192,7 +198,9 @@ class AIPlayer(Player):
             min_eval = math.inf
             positions, moves = self.get_positions(position, not maximizing_player)
             for i, child_position in enumerate(positions):
-                position_evaluated = self.minimax(child_position, depth - 1, alpha, beta,
+                new_board = Board()
+                new_board.set_circles(child_position)
+                position_evaluated = self.minimax(new_board, depth - 1, alpha, beta,
                                                   not maximizing_player)
                 if position_evaluated < min_eval:
                     min_eval = position_evaluated
