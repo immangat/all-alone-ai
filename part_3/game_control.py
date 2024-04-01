@@ -5,7 +5,7 @@ import pygame
 from board import Board
 from clock import Clock
 from game_window import GameWindow
-from player import Player, HumanPlayer, AIPlayer, MangatAI
+from player import Player, HumanPlayer, AIPlayer, MangatAI, AIAgent
 # from ais.mangat_ai import MangatAI
 from menu_screen import MenuScreen
 from states import States
@@ -208,12 +208,12 @@ class Manager:
             if player_type == 'h':
                 self.players[0] = HumanPlayer("Black", "b")
             if player_type == 'a':
-                self.players[0] = MangatAI("Black", "b")
+                self.players[0] = AIAgent("Black", "b")
         if player_color == 'w':
             if player_type == 'h':
                 self.players[1] = HumanPlayer("White", "w")
             if player_type == 'a':
-                self.players[1] = MangatAI("White", "w")
+                self.players[1] = AIAgent("White", "w")
         self.current_player = self.players[0]
 
     def increment_moves_remaining(self):
