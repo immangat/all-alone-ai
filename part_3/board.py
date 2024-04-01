@@ -228,7 +228,13 @@ class Board:
 
     def hash_board(self):
         board_str = ''.join(str(self.circles.get(coord, ' ')) for coord in self.BOARD_COORD)
-        return hash(board_str)
+
+        # Simple custom hash function
+        hash_value = 0
+        for char in board_str:
+            hash_value = (hash_value * 37 + ord(char)) % (2 ** 38)
+
+        return hash_value
 
     @staticmethod
     def get_neighbors_only(coord):

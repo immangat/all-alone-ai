@@ -2,6 +2,7 @@ from state_space_gen import StateSpaceGen
 from board import Board
 from player import AIPlayer
 import time
+from IO_handler import IOHandler
 
 class AIAgent(AIPlayer):
     POINT_VALUES = [
@@ -22,45 +23,69 @@ class AIAgent(AIPlayer):
         super().__init__(name, color)
         self.weights = self.get_weights()
         self.transposition_table = {}
+        self.load_transposition_table()
+        self.countTP = 0
+        self.inner_transposition_table = {}
 
     def make_move(self, **kwargs):
         board = kwargs['board']
-        player_color = kwargs['player_color']
+        time_limit = kwargs['time_limit']
         depth = 4
-        return self.get_best_move(board, player_color, depth)
+        return self.get_best_move(board, self.color, depth, time_limit)
 
     def _calculate_move(self, **kwargs):
         pass
 
-    def get_best_move(self, board, current_player, depth, time_limit=None):
+    def get_color(self):
+        return self.color
+
+    def load_transposition_table(self):
+        transposition_table_data = IOHandler.read_transposition_table_from_file()
+        if transposition_table_data is not None:
+            self.transposition_table = transposition_table_data
+
+
+    def get_best_move(self, board, depth, time_limit=None):
+        self.load_transposition_table()
+        print(f"TP length: {len(self.transposition_table)}")
         best_move = None
         best_board = None
-        best_score = -self.INFINITY if current_player == 'b' else self.INFINITY
+        best_score = -self.INFINITY if self.color == 'b' else self.INFINITY
         gen = StateSpaceGen()
-        gen.generate_state_space(board, current_player)
+        gen.generate_state_space(board, self.color)
 
         alpha = -self.INFINITY
         beta = self.INFINITY
 
         start_time = time.time()
 
-        for gen_board in gen.get_boards():
-            newboard = Board()
-            newboard.set_circles(gen_board)
-            score = self.board_evaluation(newboard)
+        ordered_boards = self.state_ordering(gen.get_boards())
 
-            if current_player == 'b':
-                score = self.alpha_beta(newboard, depth - 1, alpha, beta, 'w')
+        for gen_board in ordered_boards:
+            # newboard = Board()
+            # newboard.set_circles(gen_board)
+            # score = self.board_evaluation(newboard)
+
+            hash_key = gen_board.hash_board()
+
+            if hash_key in self.transposition_table:
+                self.countTP += 1
+                score = self.transposition_table[hash_key]
             else:
-                score = self.alpha_beta(newboard, depth - 1, alpha, beta, 'b')
+                if self.color == 'b':
+                    score = self.alpha_beta(gen_board, depth - 1, alpha, beta, 'w')
+                    self.transposition_table[hash_key] = score
+                else:
+                    score = self.alpha_beta(gen_board, depth - 1, alpha, beta, 'b')
+                    self.transposition_table[hash_key] = score
 
-            if (current_player == 'b' and score > best_score) or (current_player == 'w' and score < best_score):
+            if (self.color == 'b' and score > best_score) or (self.color == 'w' and score < best_score):
                 best_score = score
-                best_move = gen.get_moves()[gen.get_index_from_board_string(newboard)]
-                best_board = newboard
+                best_move = gen.get_moves()[gen.get_index_from_board_string(gen_board)]
+                best_board = gen_board
 
             # Update alpha or beta for pruning
-            if current_player == 'b':
+            if self.color == 'b':
                 alpha = max(alpha, best_score)
             else:
                 beta = min(beta, best_score)
@@ -69,6 +94,9 @@ class AIAgent(AIPlayer):
             if beta <= alpha or time.time() - start_time >= time_limit:
                 break
 
+        IOHandler.save_transposition_table(self.transposition_table)
+
+        print(f"TP Usage: {self.countTP}")
         return best_move, best_board
 
     def board_evaluation(self, board):
@@ -88,6 +116,9 @@ class AIAgent(AIPlayer):
         # points for coherence
         black_score += self.calculate_group_score("b", board) * self.weights["b_coherence"]
         white_score += self.calculate_group_score("w", board) * self.weights["w_coherence"]
+
+        # print(f"black score {black_score}")
+        # print(f"white score {white_score}")
 
         return black_score + white_score
 
@@ -146,8 +177,8 @@ class AIAgent(AIPlayer):
     def alpha_beta(self, board, depth, alpha, beta, current_player):
 
         hash_key = board.hash_board()
-        if hash_key in self.transposition_table:
-            return self.transposition_table[hash_key]
+        if hash_key in self.inner_transposition_table:
+            return self.inner_transposition_table[hash_key]
         if depth == 0:
             return self.board_evaluation(board)
 
@@ -162,7 +193,7 @@ class AIAgent(AIPlayer):
                 alpha = max(alpha, value)
                 if beta >= alpha:
                     break  # Beta cut-off
-            self.transposition_table[hash_key] = value
+            self.inner_transposition_table[hash_key] = value
             return value
         else:
             value = self.INFINITY
@@ -173,11 +204,25 @@ class AIAgent(AIPlayer):
                 beta = min(beta, value)
                 if beta <= alpha:
                     break  # Alpha cut-off
-            self.transposition_table[hash_key] = value
+            self.inner_transposition_table[hash_key] = value
             return value
 
-    def state_ordering(self):
-        pass
+    def state_ordering(self, boards):
+        ordered_boards = []
+        for board in boards:
+            # Making the boards
+            new_board = Board()
+            new_board.set_circles(board)
+            # Retrieve the evaluation or frequency of appearance from the transposition table
+            evaluation = self.transposition_table.get(new_board.hash_board(), 0)
+            ordered_boards.append((new_board, evaluation))
+
+        # Sort the boards based on the transposition table results
+        ordered_boards.sort(key=lambda x: x[1], reverse=self.color == 'b')  # Higher evaluations first for Black
+
+        # Extract the ordered boards without evaluation information
+        ordered_boards = [board for board, _ in ordered_boards]
+        return ordered_boards
 
     def actions(self):
         pass
