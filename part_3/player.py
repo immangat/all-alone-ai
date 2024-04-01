@@ -547,6 +547,9 @@ class AIAgent(AIPlayer):
 
 
 class AIAgent2(AIPlayer):
+    """
+    AI agent for testing purposes.
+    """
     POINT_VALUES = [
         -2, -2, -2, -2, -2,
         -2, 0, 0, 0, 0, -2,
@@ -773,7 +776,7 @@ if __name__ == '__main__':
             white_move = white._calculate_move(black_move)
             b = white_move
         time_end = time.time()
-        print(f"time for {count}",time_end - time_start)
+        print(f"time for {count}", time_end - time_start)
         count += 1
     end_of_pattern = time.time()
     print("second pattern: ", end_of_pattern - time_start_of_pattern)
@@ -788,7 +791,7 @@ if __name__ == '__main__':
             white_move = white._calculate_move(black_move)
             b = white_move
         time_end = time.time()
-        print(f"time for {count}",time_end - time_start)
+        print(f"time for {count}", time_end - time_start)
         count += 1
     end_of_pattern = time.time()
     print("third pattern: ", end_of_pattern - time_start_of_pattern)
