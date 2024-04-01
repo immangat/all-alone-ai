@@ -746,13 +746,49 @@ class AIAgent2(AIPlayer):
 if __name__ == '__main__':
     black = AIAgent2("black", "b")
     white = AIAgent2("black", "w")
-    b = Board()
     # b.setup_board(setup_type="Belgian Daisy")
-    b.setup_board()
-    time_start = time.time()
-    for _ in range(30):
-        black_move = black._calculate_move(b)
-        white_move = white._calculate_move(black_move)
-        b = white_move
-    time_end = time.time()
-    print(time_end - time_start)
+    count = 3
+    time_start_of_pattern = time.time()
+    while count <= 40:
+        b = Board()
+        b.setup_board()
+        time_start = time.time()
+        for _ in range(count):
+            black_move = black._calculate_move(b)
+            white_move = white._calculate_move(black_move)
+            b = white_move
+        time_end = time.time()
+        print(f"time for {count}", time_end - time_start)
+        count += 1
+    end_of_pattern = time.time()
+    print("first pattern: ", end_of_pattern - time_start_of_pattern)
+    time_start_of_pattern = time.time()
+    count = 3
+    while count <= 40:
+        b = Board()
+        b.setup_board(setup_type="Belgian Daisy")
+        time_start = time.time()
+        for _ in range(count):
+            black_move = black._calculate_move(b)
+            white_move = white._calculate_move(black_move)
+            b = white_move
+        time_end = time.time()
+        print(f"time for {count}",time_end - time_start)
+        count += 1
+    end_of_pattern = time.time()
+    print("second pattern: ", end_of_pattern - time_start_of_pattern)
+    time_start_of_pattern = time.time()
+    count = 3
+    while count <= 40:
+        b = Board()
+        b.setup_board(setup_type="German Daisy")
+        time_start = time.time()
+        for _ in range(count):
+            black_move = black._calculate_move(b)
+            white_move = white._calculate_move(black_move)
+            b = white_move
+        time_end = time.time()
+        print(f"time for {count}",time_end - time_start)
+        count += 1
+    end_of_pattern = time.time()
+    print("third pattern: ", end_of_pattern - time_start_of_pattern)
