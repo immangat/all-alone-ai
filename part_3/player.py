@@ -11,7 +11,7 @@ from clock import Clock
 from state_space_gen import StateSpaceGen
 from threading import Thread
 
-SEARCH_DEPTH = 20
+SEARCH_DEPTH = 10
 
 
 class Player(ABC):
@@ -336,3 +336,144 @@ class MangatAI(AIPlayer):
         board_score = self.count_board_score(position, maximizing_player)
         marble_islands = self.count_marble_islands(position, maximizing_player)
         return (board_score * marble_islands) + (marbles_remaining * 15)
+
+
+class TestAI(AIPlayer):
+    def __init__(self, name, color):
+        super().__init__(name, color)
+        self.move_already_picked = set()
+
+    def _calculate_move(self, board, start_time, **kwargs):
+
+        player_color = self.color == 'b'
+        max_eval = -math.inf
+        min_eval = math.inf
+        make_move = None
+        self.space_gen.boards = []
+        if player_color:
+            positions, moves = self.get_positions(board, player_color)
+            for i, position in enumerate(positions):
+                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                if eval > max_eval:
+                    if len(self.move_already_picked) < 8:
+                        max_eval = eval
+                        make_move = position
+                        self.move_already_picked.add(str(position))
+                        time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+                    else:
+                        if str(position) not in self.move_already_picked:
+                            max_eval = eval
+                            make_move = position
+                            self.move_already_picked.add(str(position))
+                    # queue.put((make_move, time_for_this_move))
+
+            return make_move
+        else:
+            positions, moves = self.get_positions(board, player_color)
+            for i, position in enumerate(positions):
+                eval = self.minimax(position, SEARCH_DEPTH, math.inf, -math.inf, player_color)
+                if eval < min_eval:
+                    if len(self.move_already_picked) < 8:
+                        max_eval = eval
+                        make_move = position
+                        self.move_already_picked.add(str(position))
+                        time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+                    else:
+                        if str(position) not in self.move_already_picked:
+                            max_eval = eval
+                            make_move = position
+                            self.move_already_picked.pop()
+                            self.move_already_picked.add(str(position))
+            return make_move
+
+
+class MangatAITest(TestAI):
+    def count_marbles_in_position(self, position, maximizing_player):
+        black_count = len(position.get_marbles_by_color('b'))
+        white_count = len(position.get_marbles_by_color('w'))
+        if maximizing_player:
+            return black_count - white_count
+        else:
+            return white_count - black_count
+
+    def _calculate_zone(self, circle):
+        # Basic manhattan distance approximation for zones on a hex grid
+        # Outermost Circle
+        return board_scores[(chr(circle[0] + 64), circle[1])]
+
+    def count_board_score(self, position: Board, maximizing_player):
+
+        marbles = position.get_marbles_by_color(self.color)
+        board_score = 0
+        for marble in marbles:
+            board_score += self._calculate_zone(marble)
+        if maximizing_player:
+            return board_score
+        else:
+            return -board_score
+
+    def count_marble_islands(self, position, maximizing_player):
+        return 1
+
+    def evaluate_position(self, position, maximizing_player):
+        """
+        1. How many marbles (count the opposite number of marbles)
+        2. How close to center (count all the marbles scores based upon where they are)
+        3. How many islands (count the number of islands)
+        1 * 2 * 3
+        """
+        marbles_remaining = self.count_marbles_in_position(position, maximizing_player)
+        board_score = self.count_board_score(position, maximizing_player)
+        marble_islands = self.count_marble_islands(position, maximizing_player)
+        return (board_score * marble_islands) + (marbles_remaining * 15)
+
+
+def file_writing():
+    def playing_game():
+        whitePlayer = MangatAITest("white", "w")
+        blackPlayer = MangatAITest("black", "b")
+        b = Board()
+        b.setup_board("Belgian Daisy")
+
+        # Use a more precise filename based on the start time
+        time_start = time.time()
+        filename = f"D:\\OneDrive - BCIT\\BCIT\\Term 3\\COMP 3981\\project\\mangat_state_space\\inputs\\{time_start}.txt"
+
+        with open(filename, 'w') as file:
+            for _ in range(35):
+                black_move = blackPlayer._calculate_move(b, time.time_ns())
+                file.write(str(black_move) + "\n")  # Use str() for conversion and add newline for readability
+                white_move = whitePlayer._calculate_move(black_move, time.time_ns())
+                file.write(str(white_move) + "\n")
+                b = white_move
+        time_end = time.time()
+        print(time_end - time_start)
+
+    threads = []
+    for _ in range(10):
+        new_thread = Thread(target=playing_game)
+        threads.append(new_thread)
+        new_thread.start()
+    for thread in threads:
+        thread.join()
+
+
+def console_writing():
+    time_start = time.time()
+    whitePlayer = MangatAITest("white", "w")
+    blackPlayer = MangatAITest("black", "b")
+    b = Board()
+    b.setup_board("Belgian Daisy")
+    for _ in range(35):
+        black_move = blackPlayer._calculate_move(b, time.time_ns())
+        print(black_move)  # Use str() for conversion and add newline for readability
+        white_move = whitePlayer._calculate_move(black_move, time.time_ns())
+        print(white_move)
+        b = white_move
+
+    time_end = time.time()
+    print(time_end - time_start)
+
+
+if __name__ == '__main__':
+    console_writing()
