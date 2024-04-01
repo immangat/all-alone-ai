@@ -11,6 +11,7 @@ from uis.moves_remaining_gui import MovesRemainingGUI
 
 RED = (255, 0, 0)
 
+
 class GameWindow:
     MOVE_GUI_WIDTH = 300
     MOVE_GUI_HEIGHT = 500
@@ -58,7 +59,7 @@ class GameWindow:
             object_id="player_1")
 
         player_2_gui = pygame_gui.elements.UIPanel(
-            relative_rect=pygame.Rect((0,0 ), (self.COLUM_LINE_1, self.ROW_LINE_1)),
+            relative_rect=pygame.Rect((0, 0), (self.COLUM_LINE_1, self.ROW_LINE_1)),
             manager=self.manager_ui,
             object_id="player_2")
 
