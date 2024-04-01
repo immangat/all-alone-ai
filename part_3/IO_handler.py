@@ -1,6 +1,9 @@
 import re
 from state_space_gen import StateSpaceGen
 from board import Board
+import json
+
+
 class IOHandler:
 
     def __init__(self):
@@ -27,6 +30,23 @@ class IOHandler:
 
             # Read the second line and set self.board_string
             self.board_string = file.readline().strip().split(',')
+
+    @staticmethod
+    def read_transposition_table_from_file():
+        try:
+            with open("transpositionTable.json", 'r') as file:
+                transposition_table = json.load(file)
+                transposition_table = {int(key): value for key, value in transposition_table.items()}
+                return transposition_table
+        except FileNotFoundError:
+            print("No transposition table found")
+            return None
+
+    @staticmethod
+    def save_transposition_table(transposition_table_data):
+        with open("transpositionTable.json", 'w') as file:
+            json.dump(transposition_table_data, file, indent=None)
+            print("Transposition table saved successfully.")
 
     def get_board_string(self):
         return self.board_string
