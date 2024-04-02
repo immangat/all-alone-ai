@@ -8,7 +8,7 @@ from queue import Empty
 import random
 from board import Board
 from clock import Clock
-from part_3.IO_handler import IOHandler
+from IO_handler import IOHandler
 from state_space_gen import StateSpaceGen
 from threading import Thread
 from IO_handler import IOHandler
@@ -454,7 +454,7 @@ class AIAgent(AIPlayer):
         self.weights = self.get_weights()
         self.transposition_table = {}
         self.inner_transposition_table = {}
-        self.depth = 6
+        self.depth = 4
 
     def _calculate_move(self, board, queue, start_time, **kwargs):
         return self.get_best_move(board, start_time, queue)
@@ -463,13 +463,12 @@ class AIAgent(AIPlayer):
         return self.color
 
     def load_transposition_table(self):
-        transposition_table_data = IOHandler.read_transposition_table_from_file()
+        transposition_table_data = IOHandler.read_transposition_table_from_file(self.color)
         if transposition_table_data is not None:
             self.transposition_table = transposition_table_data
 
     def get_best_move(self, board, start_time, queue):
         self.load_transposition_table()
-        print(f"TP length: {len(self.transposition_table)}")
         best_move = None
         best_board = None
         best_score = -self.INFINITY if self.color == 'b' else self.INFINITY
@@ -482,9 +481,6 @@ class AIAgent(AIPlayer):
         ordered_boards = self.state_ordering(gen.get_boards())
 
         for gen_board in ordered_boards:
-            # newboard = Board()
-            # newboard.set_circles(gen_board)
-            # score = self.board_evaluation(newboard)
 
             hash_key = gen_board.hash_board()
 
@@ -515,7 +511,7 @@ class AIAgent(AIPlayer):
             if beta <= alpha:
                 break
 
-        IOHandler.save_transposition_table(self.transposition_table)
+        IOHandler.save_transposition_table(self.transposition_table, self.color)
 
         print(f"Best move: {best_move}")
         return best_move
@@ -538,9 +534,6 @@ class AIAgent(AIPlayer):
         black_score += self.calculate_group_score("b", board) * self.weights["b_coherence"]
         white_score += self.calculate_group_score("w", board) * self.weights["w_coherence"]
 
-        # print(f"black score {black_score}")
-        # print(f"white score {white_score}")
-
         return black_score + white_score
 
     def calculate_group_score(self, player, board):
@@ -558,6 +551,7 @@ class AIAgent(AIPlayer):
     def dfs_group_size(marble, player, board, visited):
         stack = [marble]
         group_size = 0
+        group_bonus = 0
 
         while stack:
             current_marble = stack.pop()
@@ -567,8 +561,9 @@ class AIAgent(AIPlayer):
                 neighbors = board.get_neighbors_only(current_marble)
                 for neighbor in neighbors:
                     if board.get_marble(neighbor) == player:
+                        group_bonus += 1
                         stack.append(neighbor)
-        return group_size
+        return group_size + group_bonus
 
     @staticmethod
     def get_weights():
@@ -576,14 +571,12 @@ class AIAgent(AIPlayer):
         Using an adapted AI_abalone weight system
         """
         weights = {}
-        weights["b_off"] = -15
-        weights["w_off"] = 15
-        weights["b_pos"] = 3
-        weights["w_pos"] = -3
-        weights["b_coherence"] = 10
-        weights["w_coherence"] = -10
-        # weights["b_mobility"] = 2
-        # weights["w_mobility"] = -2
+        weights["b_off"] = 25
+        weights["w_off"] = -25
+        weights["b_pos"] = 4
+        weights["w_pos"] = -4
+        weights["b_coherence"] = 1
+        weights["w_coherence"] = -1
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):

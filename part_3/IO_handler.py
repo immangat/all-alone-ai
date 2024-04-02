@@ -31,21 +31,24 @@ class IOHandler:
             self.board_string = file.readline().strip().split(',')
 
     @staticmethod
-    def read_transposition_table_from_file(table_name="transpositionTable.json"):
+    def read_transposition_table_from_file(player_color):
+        table_name = f"TranspositionTable{player_color}.json"
         try:
             with open(table_name, 'r') as file:
                 transposition_table = json.load(file)
                 transposition_table = {int(key): value for key, value in transposition_table.items()}
+                print(f"Transposition table for player {player_color} loaded successfully.")
                 return transposition_table
         except FileNotFoundError:
-            print("No transposition table found")
+            print(f"No transposition table found for player {player_color}.")
             return None
 
     @staticmethod
-    def save_transposition_table(transposition_table_data, table_name="transpositionTable.json"):
+    def save_transposition_table(transposition_table_data, player_color):
+        table_name = f"TranspositionTable{player_color}.json"
         with open(table_name, 'w') as file:
             json.dump(transposition_table_data, file, indent=None)
-            print("Transposition table saved successfully.")
+            print(f"Transposition table for player {player_color} saved successfully.")
 
     def get_board_string(self):
         return self.board_string
