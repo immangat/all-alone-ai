@@ -367,7 +367,7 @@ class AIAgent(AIPlayer):
         self.weights = self.get_weights()
         self.transposition_table = {}
         self.inner_transposition_table = {}
-        self.depth = 6
+        self.depth = 4
 
     def _calculate_move(self, board, queue, start_time, **kwargs):
         return self.get_best_move(board, start_time, queue)
@@ -431,6 +431,7 @@ class AIAgent(AIPlayer):
         IOHandler.save_transposition_table(self.transposition_table)
 
         print(f"Best move: {best_move}")
+        print(f"Best score: {best_score}")
         return best_move, best_board
 
     def evaluate_position(self, board, max_player):
