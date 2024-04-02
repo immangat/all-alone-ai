@@ -70,13 +70,13 @@ class Manager:
             self.main_loop()
 
     def is_game_over(self):
-        return True if self.players[0].score == 6 or self.players[1].score == 6 or self.moves_remaining == 0 else False
+        return True if self.players[0].score == 6 or self.players[1].score == 6 or self.total_moves_left == 0 else False
 
     def end_game(self):
         pass
 
     def pause_game(self):
-        print("Game pasued")
+        print("Game paused")
         self.game_paused = not self.game_paused
         pass
 

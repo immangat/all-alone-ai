@@ -52,7 +52,7 @@ class EventHandler:
 
     def on_mouse_click(self, mouse_pos):
         # Check if the click is within the radius of any circle
-        if self.window.manager.current_screen == "game":
+        if self.window.manager.current_screen == "game" and not self.manager.is_game_over():
             self._marbles_clicked(mouse_pos)
 
     def _marbles_clicked(self, mouse_pos):
