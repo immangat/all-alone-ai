@@ -1,7 +1,5 @@
 import pygame
-from pygame_gui.elements import UIButton, UIPanel, UILabel
-
-from player import Player
+from pygame_gui.elements import UILabel
 
 
 class PlayerUi:
@@ -10,7 +8,7 @@ class PlayerUi:
         self.manager_ui = manager_ui
         self.container_width = container.relative_rect.width
         self.container_height = container.relative_rect.height
-        self.player: Player = player
+        self.player = player
         self.theme_string = theme_string
         self.player_num = player_num
         self.time_width = round(self.container_width * 0.2)
