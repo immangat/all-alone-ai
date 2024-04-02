@@ -503,6 +503,8 @@ class AIAgent(AIPlayer):
                 best_score = score
                 best_move = gen.get_moves()[gen.get_index_from_board_string(gen_board)]
                 time_for_this_move = (time.time_ns() - start_time) / 1_000_000
+                if time_for_this_move >= self.time_per_move * 1000:
+                    break
                 queue.put((best_move, time_for_this_move))
                 best_board = gen_board
 
