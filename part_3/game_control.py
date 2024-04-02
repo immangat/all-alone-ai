@@ -246,6 +246,7 @@ class Manager:
             self.current_player.add_ai_time(time_for_ai_move)
             self.ai_found_move = True
             self.next_move = move
+            self.current_player.toggle_clock_ticking()
             self.game_window.moves_left.update_gui()
             self.current_player.ai_search_process.join()
 

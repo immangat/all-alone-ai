@@ -191,7 +191,11 @@ class Player(ABC):
         if not undo:
             current_move_time = self.time_per_move - self.clock.current_time
             self.list_of_moves.append(current_move_time)
+        self.toggle_clock_ticking()
         self.clock.reset_to_full()
+
+    def toggle_clock_ticking(self):
+        self.clock.can_tick = not self.clock.can_tick
 
     def reset_player(self):
         self.list_of_moves = []
@@ -254,7 +258,6 @@ class AIPlayer(Player):
         print("Thread started")
         # self.ai_search_process.join()
         print("Thread done")
-
 
     @abstractmethod
     def _calculate_move(self, board, queue, start_time, **kwargs):
