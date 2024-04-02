@@ -237,7 +237,7 @@ class Manager:
         print("thread alive>>>",self.current_player.ai_search_process.is_alive())
         if ((((time.time_ns() - self.ai_move_start_time) / 1_000_000 >= self.current_player.time_per_move) or
              not self.current_player.ai_search_process.is_alive())):
-            # self.current_player.ai_search_process.terminate()
+            self.current_player.ai_search_process.terminate()
             if self.current_player.queue.empty() and not self.ai_found_move:
                 self.next_move = "AI couldn't find a move"
                 self.game_window.moves_left.update_gui()
@@ -247,7 +247,7 @@ class Manager:
             self.ai_found_move = True
             self.next_move = move
             self.game_window.moves_left.update_gui()
-            self.current_player.ai_search_process.join(timeout=1)
+            # self.current_player.ai_search_process.join(timeout=1)
 
     def main_loop(self):
 

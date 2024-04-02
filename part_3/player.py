@@ -3,8 +3,8 @@ import time
 from abc import ABC, abstractmethod
 from functools import reduce
 # from multiprocessing import Queue
-# from multiprocess import Process, Queue
-from queue import Empty, Queue
+from multiprocess import Process, Queue
+from queue import Empty
 import random
 from board import Board
 from clock import Clock
@@ -245,11 +245,11 @@ class AIPlayer(Player):
 
         def search_and_apply_move(queue, board):
             time_start = time.time_ns()
-            best_move = self._calculate_move(board, queue=self.queue, start_time=time_start)
+            best_move = self._calculate_move(board, queue=queue, start_time=time_start)
             return best_move
 
         # Start the process
-        best_move = self.ai_search_process = Thread(target=search_and_apply_move, args=(self.queue, board))
+        best_move = self.ai_search_process = Process(target=search_and_apply_move, args=(self.queue, board))
         self.ai_search_process.start()
         print("Thread started")
         # self.ai_search_process.join()
@@ -503,8 +503,8 @@ class AIAgent(AIPlayer):
                 best_score = score
                 best_move = gen.get_moves()[gen.get_index_from_board_string(gen_board)]
                 time_for_this_move = (time.time_ns() - start_time) / 1_000_000
-                if time_for_this_move >= self.time_per_move * 1000:
-                    break
+                # if time_for_this_move >= self.time_per_move * 1000:
+                #     break
                 queue.put((best_move, time_for_this_move))
                 best_board = gen_board
 
