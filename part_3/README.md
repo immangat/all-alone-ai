@@ -12,7 +12,7 @@ opponent and win.
 
 ## How to Run the Game
 
-To run the game, execute the `ab-ablone-game.eve` file or in the command console run `ab-ablone-game.exe`.
+To run the game, execute the `all_ablone_ai_game.eve` file or in the command console run `all_ablone_ai_game.eve``.
 
 ## How to build the Game
 
