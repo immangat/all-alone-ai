@@ -3,8 +3,8 @@ import time
 from abc import ABC, abstractmethod
 from functools import reduce
 # from multiprocessing import Queue
-from multiprocess import Process, Queue
-from queue import Empty
+# from multiprocess import Process, Queue
+from queue import Empty, Queue
 import random
 from board import Board
 from clock import Clock
@@ -246,10 +246,15 @@ class AIPlayer(Player):
         def search_and_apply_move(queue, board):
             time_start = time.time_ns()
             best_move = self._calculate_move(board, queue=self.queue, start_time=time_start)
+            return best_move
 
         # Start the process
-        self.ai_search_process = Process(target=search_and_apply_move, args=(self.queue, board))
+        best_move = self.ai_search_process = Thread(target=search_and_apply_move, args=(self.queue, board))
         self.ai_search_process.start()
+        print("Thread started")
+        # self.ai_search_process.join()
+        print("Thread done")
+
 
     @abstractmethod
     def _calculate_move(self, board, queue, start_time, **kwargs):
