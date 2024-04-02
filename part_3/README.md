@@ -12,7 +12,7 @@ opponent and win.
 
 ## How to Run the Game
 
-To run the game, execute the `all_ablone_ai_game.eve` file or in the command console run `all_ablone_ai_game.eve``.
+To run the game, execute the `all_alone_ai_game.exe` file or in the command console run `all_alone_ai_game.exe`.
 
 ## How to build the Game
 
