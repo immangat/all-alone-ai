@@ -8,19 +8,22 @@
 - Vitor Guara
 ___
 
-## Contents
+# Contents
 
-### I &nbsp;&nbsp;&nbsp;&nbsp;Game Board Representation
+## I &nbsp;&nbsp;&nbsp;&nbsp;Game Board Representation
 
-### II &nbsp;&nbsp;&nbsp;State Space Generation
+## II &nbsp;&nbsp;&nbsp;State Space Generation
 
-### III&nbsp;&nbsp;&nbsp;Moving Notation
+## III&nbsp;&nbsp;&nbsp;Moving Notation
 
-### IV&nbsp;&nbsp;Team Member Contribution
+## IV&nbsp;&nbsp;Team Member Contribution
 
-### V&nbsp;&nbsp;&nbsp;&nbsp;References
+## V&nbsp;&nbsp;&nbsp;&nbsp;References
 
-### V&nbsp;&nbsp;&nbsp;&nbsp;Additional Documents
+## V&nbsp;&nbsp;&nbsp;&nbsp;Additional Documents
+
+## V&nbsp;&nbsp;&nbsp;&nbsp;AI player
+
 
 
 
@@ -260,3 +263,86 @@ This will bring up the game menu where you can select the file you want and then
 Search States button, after a few seconds you will find your files in the part_2 folder 
  
 
+## Search Strategy and Performance
+
+### Design and Architecture of the Game-Playing Agent
+
+- **Diagram of a Company**: A visual representation of the architecture and design of the game-playing agent.
+
+### Heuristic Evaluation Function
+
+#### Description of Heuristic
+
+The heuristic function for a board game evaluates the current state of the game board, assigning a numerical value to represent the position's favorability for the player. This is specifically tailored for a game of Abalone, evaluating for either black or white players, or both independently.
+
+##### Weights
+
+Weights are assigned to each part of the evaluation function. These can be adjusted for fine-tuning the agent's performance. Black is considered a maximizing player, and white a minimizing player, with weights for the same part presented in modulus for simplicity.
+
+##### Number of Marbles Off the Grid
+
+Evaluates the number of marbles remaining for each player. Fewer marbles on board benefit the opposing player, with a weight value of 25 assigned for marbles off-grid.
+
+##### Positional Score
+
+Scores are based on marble positions on the grid, with central positions being more favorable. This includes a system of concentric circles scored from inside out. The weight value for this part is 4.
+
+##### Coherence Score
+
+This score reflects how clustered a player's marbles are, indicating board control. It uses DFS to identify groups, adding a bonus for each adjacent marble of the same color. The weight for coherence is 1.
+
+##### Overall Score
+
+The final score is the sum of the above factors for both players, providing the board's evaluation.
+
+### Performance Evaluation
+
+Enhancements aim to improve the search algorithm's efficiency and effectiveness, including alpha-beta pruning, transposition tables, and move ordering.
+
+#### Alpha-Beta Pruning
+
+Optimizes the search tree by eliminating irrelevant branches, reducing the search space.
+
+#### Transposition Table
+
+Stores previously evaluated board positions to prevent redundant evaluations. It's implemented as a dictionary, with positions hashed as integers.
+
+#### Inner Transposition Table
+
+Similar to the main table but stores evaluations at the deepest level, saving time during evaluation processes.
+
+#### Move Ordering
+
+Prioritizes certain moves to improve alpha-beta pruning effectiveness, using the transposition table to order moves by score.
+
+### Justification and Evaluation
+
+Weights and strategies are chosen based on their effectiveness in testing.
+
+#### Metrics
+
+- **Win Rate Against Baselines**: Performance against a basic Random AI.
+- **Execution Time at Depth 5**: Speed of decision-making process.
+- **Board Control**: Maintaining control over key areas of the board.
+- **Number of Pushes and Sumitos Performed**: Measures offensive maneuvers.
+- **Tendency to Keep Clustered Together**: Indicates defensive capabilities.
+- **Maximum Depth Reached Within 10 Seconds**: Depth of search within a time limit.
+- **Ability to React to Knockout Threats from Opponent**: Defensive adaptability.
+- **Ability to Finish Games Within 60 Moves**: Efficiency in concluding games.
+
+### Performance Metrics for GuaraAI
+
+- **Win Rate Against Baselines**: 100%
+- **Execution Time at Depth 5**: 3 seconds
+- **Board Control**: Prioritizes control over aggression.
+- **Number of Pushes and Sumitos Performed**: Acts on high enough scores.
+- **Tendency to Keep Clustered Together**: Maintains strong formation.
+- **Maximum Depth Reached Within 10 Seconds**: Depth of 6.
+- **Ability to React and Defend**: Yes.
+- **Efficiency in Concluding Games**: Yes.
+
+#### Performance Results vs. Other Heuristics
+
+- **GuaraAI vs NicoAI**: 80% win rate.
+- **GuaraAI vs TomekAI**: 90% win rate.
+- **GuaraAI vs MangatAI**: 90% win rate.
