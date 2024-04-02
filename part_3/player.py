@@ -431,7 +431,7 @@ class AIAgent(AIPlayer):
         IOHandler.save_transposition_table(self.transposition_table)
 
         print(f"Best move: {best_move}")
-        return best_move
+        return best_move, best_board
 
     def evaluate_position(self, board, max_player):
         # number_off_grid
@@ -471,6 +471,7 @@ class AIAgent(AIPlayer):
     def dfs_group_size(marble, player, board, visited):
         stack = [marble]
         group_size = 0
+        group_bonus = 0
 
         while stack:
             current_marble = stack.pop()
@@ -480,8 +481,9 @@ class AIAgent(AIPlayer):
                 neighbors = board.get_neighbors_only(current_marble)
                 for neighbor in neighbors:
                     if board.get_marble(neighbor) == player:
+                        group_bonus += 1
                         stack.append(neighbor)
-        return group_size
+        return group_size + group_bonus
 
     @staticmethod
     def get_weights():
@@ -489,14 +491,12 @@ class AIAgent(AIPlayer):
         Using an adapted AI_abalone weight system
         """
         weights = {}
-        weights["b_off"] = -15
-        weights["w_off"] = 15
-        weights["b_pos"] = 3
-        weights["w_pos"] = -3
-        weights["b_coherence"] = 10
-        weights["w_coherence"] = -10
-        # weights["b_mobility"] = 2
-        # weights["w_mobility"] = -2
+        weights["b_off"] = 20
+        weights["w_off"] = -20
+        weights["b_pos"] = 5
+        weights["w_pos"] = -5
+        weights["b_coherence"] = 2
+        weights["w_coherence"] = -2
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):

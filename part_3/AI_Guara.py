@@ -25,7 +25,7 @@ class AIAgent(AIPlayer):
         self.weights = self.get_weights()
         self.transposition_table = {}
         self.load_transposition_table()
-        self.countTP = 0
+        self.depth = 4
         self.inner_transposition_table = {}
 
     def _calculate_move(self, board, queue, start_time, **kwargs):
@@ -40,7 +40,7 @@ class AIAgent(AIPlayer):
         if transposition_table_data is not None:
             self.transposition_table = transposition_table_data
 
-    def get_best_move(self, board, depth, start_time, queue):
+    def get_best_move(self, board, start_time, queue):
         self.load_transposition_table()
         print(f"TP length: {len(self.transposition_table)}")
         best_move = None
@@ -62,21 +62,18 @@ class AIAgent(AIPlayer):
             hash_key = gen_board.hash_board()
 
             if hash_key in self.transposition_table:
-                self.countTP += 1
                 score = self.transposition_table[hash_key]
             else:
                 if self.color == 'b':
-                    score = self.alpha_beta(gen_board, depth - 1, alpha, beta, 'w')
+                    score = self.alpha_beta(gen_board, self.depth - 1, alpha, beta, 'w')
                     self.transposition_table[hash_key] = score
                 else:
-                    score = self.alpha_beta(gen_board, depth - 1, alpha, beta, 'b')
+                    score = self.alpha_beta(gen_board, self.depth - 1, alpha, beta, 'b')
                     self.transposition_table[hash_key] = score
 
             if (self.color == 'b' and score > best_score) or (self.color == 'w' and score < best_score):
                 best_score = score
                 best_move = gen.get_moves()[gen.get_index_from_board_string(gen_board)]
-                time_for_this_move = (time.time_ns() - start_time) / 1_000_000
-                queue.put((best_move, time_for_this_move))
                 best_board = gen_board
 
             # Update alpha or beta for pruning
@@ -91,10 +88,10 @@ class AIAgent(AIPlayer):
 
         IOHandler.save_transposition_table(self.transposition_table)
 
-        print(f"TP Usage: {self.countTP}")
+        print(f"Best move: {best_move}")
         return best_move
 
-    def board_evaluation(self, board):
+    def evaluate_position(self, board, max_player):
         # number_off_grid
         black_score = board.num_marbles_left_by_color("b") * self.weights["b_off"]
         white_score = board.num_marbles_left_by_color("w") * self.weights["w_off"]
@@ -137,12 +134,15 @@ class AIAgent(AIPlayer):
             if marble not in visited:
                 group_size = self.dfs_group_size(marble, player, board, visited)
                 group_score += group_size
+
+        print(f"group_score: {group_score}")
         return group_score
 
     @staticmethod
     def dfs_group_size(marble, player, board, visited):
         stack = [marble]
         group_size = 0
+        group_bonus = 0
 
         while stack:
             current_marble = stack.pop()
@@ -152,8 +152,10 @@ class AIAgent(AIPlayer):
                 neighbors = board.get_neighbors_only(current_marble)
                 for neighbor in neighbors:
                     if board.get_marble(neighbor) == player:
+                        group_bonus += 1
                         stack.append(neighbor)
-        return group_size
+        print(f"Group size: {group_size}, group bonus: {group_bonus}, cluster score: {group_size + group_bonus}")
+        return group_size + group_bonus
 
     def get_weights(self):
         """
@@ -164,10 +166,8 @@ class AIAgent(AIPlayer):
         weights["w_off"] = 15
         weights["b_pos"] = 3
         weights["w_pos"] = -3
-        weights["b_coherence"] = 10
-        weights["w_coherence"] = -10
-        # weights["b_mobility"] = 2
-        # weights["w_mobility"] = -2
+        weights["b_coherence"] = 5
+        weights["w_coherence"] = -5
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):
@@ -176,7 +176,7 @@ class AIAgent(AIPlayer):
         if hash_key in self.inner_transposition_table:
             return self.inner_transposition_table[hash_key]
         if depth == 0:
-            return self.board_evaluation(board)
+            return self.evaluate_position(board, current_player)
 
         gen = StateSpaceGen()
         gen.generate_state_space(board, current_player)
