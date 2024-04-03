@@ -2,7 +2,7 @@ from board import Board
 from AI_Guara import AIAgentTester
 
 
-def runFiller(boardList, depth, moves):
+def runFiller(boardList, depth, turns):
     agent1 = AIAgentTester("b", depth)
     agent2 = AIAgentTester("w", depth)
     for board in boardList:
@@ -11,7 +11,7 @@ def runFiller(boardList, depth, moves):
         secondBoard = Board()
         secondBoard.set_circles(randomFirstMove)
         moveBoard = (None, secondBoard)
-        for move in range(moves):
+        for move in range(turns):
             moveBoard = agent2.get_best_move(moveBoard[1])
             moveBoard = agent1.get_best_move(moveBoard[1])
 
@@ -64,4 +64,4 @@ def board_list_creator():
 
 if __name__ == '__main__':
     boardList = board_list_creator()
-    runFiller(boardList, 7, 80)
+    runFiller(boardList, 1, 80)
