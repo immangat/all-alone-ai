@@ -1,5 +1,7 @@
 from board import Board
 from AI_Guara import AIAgentTester
+from IO_handler import IOHandler
+import json
 
 
 def runFiller(boardList, depth, turns):
@@ -61,7 +63,50 @@ def board_list_creator():
 
     return boardList
 
+def read_table_from_file(file):
+    try:
+        with open(file, 'r') as file:
+            transposition_table = json.load(file)
+            transposition_table = {int(key): value for key, value in transposition_table.items()}
+            print(f"Transposition table for player loaded successfully.")
+            return transposition_table
+    except FileNotFoundError:
+        print(f"No transposition table found for player .")
+        return None
+
+def save_table(transposition_table_data, file):
+    table_name = file
+    with open(table_name, 'w') as file:
+        json.dump(transposition_table_data, file, indent=None)
+        print(f"Transposition table saved successfully.")
 
 if __name__ == '__main__':
-    boardList = board_list_creator()
-    runFiller(boardList, 1, 80)
+    # boardList = board_list_creator()
+    # new_board = Board()
+    # new_board.setup_board("Belgian Daisy")
+    # boardList = []
+    # new_board2 = Board()
+    # new_board2.setup_board("Belgian Daisy")
+    # new_board3 = Board()
+    # new_board3.setup_board("Belgian Daisy")
+    # boardList.append(new_board)
+    # boardList.append(new_board2)
+    # boardList.append(new_board3)
+    # for _ in range(2):
+    #     runFiller(boardList, 5, 80)
+
+    tomek_file_b = "TranspositionTableb.json"
+    mangat_file_b = "TranspositionTableb1.json"
+    vitor_file_b = "TranspositionTableb2.json"
+    third_file_b = "TranspositionTableb3.json"
+    tomek_b_table = read_table_from_file(tomek_file_b)
+    mangat_b_table = read_table_from_file(mangat_file_b)
+    vitor_b_table = read_table_from_file(vitor_file_b)
+    third_file_b = read_table_from_file(third_file_b)
+    tomek_b_table.update(mangat_b_table)
+    tomek_b_table.update(vitor_b_table)
+    tomek_b_table.update(third_file_b)
+    output = "TranspositionTableb.json"
+    save_table(tomek_b_table, output)
+
+

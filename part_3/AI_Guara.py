@@ -41,6 +41,7 @@ class AIAgentTester():
 
     def get_best_move(self, board):
         self.load_transposition_table()
+        print(f"transposition_table: {len(self.transposition_table)}")
         best_move = None
         best_board = None
         best_score = -self.INFINITY if self.color == 'b' else self.INFINITY
