@@ -576,8 +576,8 @@ class AIAgent(AIPlayer):
         Using an adapted AI_abalone weight system
         """
         weights = {}
-        weights["b_off"] = 25
-        weights["w_off"] = -25
+        weights["b_off"] = 40
+        weights["w_off"] = -40
         weights["b_pos"] = 4
         weights["w_pos"] = -4
         weights["b_coherence"] = 1

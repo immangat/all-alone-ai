@@ -1,6 +1,7 @@
 from board import Board
-from AI_Guara import AIAgent
+# from AI_Guara import AIAgent
 from state_space_gen import StateSpaceGen
+import time
 
 import time
 # def display_board(board, width, height):
@@ -189,6 +190,12 @@ if __name__ == '__main__':
     board = Board()
     board.setup_board()
     # gen = StateSpaceGen()
+    # start_time = time.time()
+    # gen.generate_state_space(board, "b")
+    # final_time = time.time()-start_time
+    # print(final_time)
+
+    # gen = StateSpaceGen()
     # gen.generate_state_space(board, "b")
     # agent = AIAgent("Black", "b")
     # print(f"Initial Board: {board}")
@@ -201,18 +208,18 @@ if __name__ == '__main__':
     #     hash = new_board.hash_board()
     #     print(f"Hash {hash}")
 
-    agent = AIAgent("White", "b")
-    agent2 = AIAgent("Black", "w")
-    start = time.process_time()
-    limit = 10000000
-    depth = 6
-    move = agent.get_best_move(board, depth, limit)
-    print(f"{agent.get_color()}:{move[0]}")
-    print(time.process_time() - start)
-    start = time.process_time()
-    move = agent2.get_best_move(move[1], depth, limit)
-    print(f"{agent2.get_color()}:{move[0]}")
-    print(time.process_time() - start)
+    # agent = AIAgent("White", "b")
+    # agent2 = AIAgent("Black", "w")
+    # start = time.process_time()
+    # limit = 10000000
+    # depth = 4
+    # move = agent.get_best_move(board, depth, limit)
+    # print(f"{agent.get_color()}:{move[0]}")
+    # print(time.process_time() - start)
+    # start = time.process_time()
+    # move = agent2.get_best_move(move[1], depth, limit)
+    # print(f"{agent2.get_color()}:{move[0]}")
+    # print(time.process_time() - start)
     # start = time.process_time()
     # player = next_player(player)
     # move = agent.get_best_move(move[1], player, 4, limit)

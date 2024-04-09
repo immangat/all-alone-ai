@@ -2,6 +2,7 @@ from board import Board
 from AI_Guara import AIAgentTester
 from IO_handler import IOHandler
 import json
+import time
 
 
 def runFiller(boardList, depth, turns):
@@ -95,18 +96,27 @@ if __name__ == '__main__':
     # for _ in range(2):
     #     runFiller(boardList, 5, 80)
 
-    tomek_file_b = "TranspositionTableb.json"
-    mangat_file_b = "TranspositionTableb1.json"
-    vitor_file_b = "TranspositionTableb2.json"
-    third_file_b = "TranspositionTableb3.json"
-    tomek_b_table = read_table_from_file(tomek_file_b)
-    mangat_b_table = read_table_from_file(mangat_file_b)
-    vitor_b_table = read_table_from_file(vitor_file_b)
-    third_file_b = read_table_from_file(third_file_b)
-    tomek_b_table.update(mangat_b_table)
-    tomek_b_table.update(vitor_b_table)
-    tomek_b_table.update(third_file_b)
-    output = "TranspositionTableb.json"
-    save_table(tomek_b_table, output)
+    default_board = Board()
+    default_board.setup_board()
+    agent1 = AIAgentTester("b", 4)
+    start = time.time()
+    move= agent1.get_best_move(default_board)
+    end = time.time() - start
+    print(end)
+
+
+    # tomek_file_b = "TranspositionTableb.json"
+    # mangat_file_b = "TranspositionTableb1.json"
+    # vitor_file_b = "TranspositionTableb2.json"
+    # third_file_b = "TranspositionTableb3.json"
+    # tomek_b_table = read_table_from_file(tomek_file_b)
+    # mangat_b_table = read_table_from_file(mangat_file_b)
+    # vitor_b_table = read_table_from_file(vitor_file_b)
+    # third_file_b = read_table_from_file(third_file_b)
+    # tomek_b_table.update(mangat_b_table)
+    # tomek_b_table.update(vitor_b_table)
+    # tomek_b_table.update(third_file_b)
+    # output = "TranspositionTableb.json"
+    # save_table(tomek_b_table, output)
 
 
