@@ -205,14 +205,14 @@ if __name__ == '__main__':
     agent2 = AIAgent("Black", "w")
     start = time.process_time()
     limit = 10000000
-    depth = 6
-    move = agent.get_best_move(board, depth, limit)
+    depth = 4
+    move = agent.get_best_move(board, depth)
     print(f"{agent.get_color()}:{move[0]}")
     print(time.process_time() - start)
-    start = time.process_time()
-    move = agent2.get_best_move(move[1], depth, limit)
-    print(f"{agent2.get_color()}:{move[0]}")
-    print(time.process_time() - start)
+    # start = time.process_time()
+    # move = agent2.get_best_move(move[1], depth)
+    # print(f"{agent2.get_color()}:{move[0]}")
+    # print(time.process_time() - start)
     # start = time.process_time()
     # player = next_player(player)
     # move = agent.get_best_move(move[1], player, 4, limit)

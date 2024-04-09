@@ -17,6 +17,17 @@ class Board:
         (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)
     ]
 
+    EDGE_COORD = [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+                  (2, 1), (2, 6),
+                  (3, 1), (3, 7),
+                  (4, 1), (4, 8),
+                  (5, 1), (5, 9),
+                  (6, 2), (6, 9),
+                  (7, 3), (7, 9),
+                  (8, 4), (8, 9),
+                  (9, 5), (9, 6), (9, 7), (9, 8), (9, 9)]
+
+
     def __init__(self):
         """
         Initialise the board with the empty board
@@ -30,9 +41,6 @@ class Board:
         for key, value in self.circles.items():
             new_circles[key] = value
         return new_circles
-
-
-
 
     def set_circles(self, circles):
         self.circles = circles
@@ -225,6 +233,14 @@ class Board:
 
     def __iter__(self):
         return iter(self.circles)
+
+    def count_marbles(self):
+        count = 0
+        for marble in self.circles.values():
+            if marble is not None:
+                count += 1
+        return count
+
 
     def hash_board(self):
         board_str = ''.join(str(self.circles.get(coord, ' ')) for coord in self.BOARD_COORD)
