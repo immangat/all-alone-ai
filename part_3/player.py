@@ -484,7 +484,7 @@ class AIAgent(AIPlayer):
         beta = self.INFINITY
 
         ordered_boards = self.state_ordering(gen.get_boards())
-
+        queue.put((gen.get_moves()[0], 0))
         for gen_board in ordered_boards:
 
             hash_key = gen_board.hash_board()
@@ -578,8 +578,8 @@ class AIAgent(AIPlayer):
         Using an adapted AI_abalone weight system
         """
         weights = {}
-        weights["b_off"] = 25
-        weights["w_off"] = -25
+        weights["b_off"] = 50
+        weights["w_off"] = -50
         weights["b_pos"] = 4
         weights["w_pos"] = -4
         weights["b_coherence"] = 1
