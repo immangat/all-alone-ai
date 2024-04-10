@@ -374,28 +374,30 @@ class AIAgentTester():
 
     def evaluate_position(self, board, max_player):
         # number_off_grid
-        black_total = board.num_marbles_left_by_color("b") * self.weights["b_off"]
-        white_total = board.num_marbles_left_by_color("w") * self.weights["w_off"] * self.weights["empower_self"]
-        black_score = board.num_marbles_left_by_color("b") * self.weights["b_off"]
-        white_score = board.num_marbles_left_by_color("w") * self.weights["w_off"] * self.weights["empower_self"]
+        black_score = board.num_marbles_left_by_color("b") * self.weights["b_off"] *\
+                      (self.weights["empower_self"] if self.color == "w" else 1)
+        white_score = board.num_marbles_left_by_color("w") * self.weights["w_off"] * \
+                      (self.weights["empower_self"] if self.color == "b" else 1)
 
         # points for position (the closer to the center, the better)
 
         for coord in Board.BOARD_COORD:
             index = Board.BOARD_COORD.index(coord)
             if board.get_marble(coord) == "b":
-                black_score += self.POINT_VALUES[index] * self.weights["b_pos"]
+                black_score += self.POINT_VALUES[index] * self.weights["b_pos"] * \
+                               (self.weights["empower_self"] if self.color == "w" and self.POINT_VALUES[index] < 0 else 1)
             elif board.get_marble(coord) == "w":
                 white_score += self.POINT_VALUES[index] * self.weights["w_pos"] * \
-                               (self.weights["empower_self"] if self.POINT_VALUES[index] < 0 else 1)
+                               (self.weights["empower_self"] if self.color == "b" and self.POINT_VALUES[index] < 0 else 1)
+
 
         # points for coherence
         black_score += self.calculate_group_score("b", board) * self.weights["b_coherence"]
         white_score += self.calculate_group_score("w", board) * self.weights["w_coherence"]
 
-        if white_total != -black_total:
-            print(board)
-            print(f"white {white_total}, black {black_total}")
+        # if white_total != -black_total:
+        #     print(board)
+        #     print(f"white {white_total}, black {black_total}")
         return black_score + white_score
 
     def calculate_group_score(self, player, board):
@@ -439,7 +441,7 @@ class AIAgentTester():
         weights["w_pos"] = -4
         weights["b_coherence"] = 1
         weights["w_coherence"] = -1
-        weights["empower_self"] = 10
+        weights["empower_self"] = 5
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):
@@ -448,10 +450,10 @@ class AIAgentTester():
         if hash_key in self.inner_transposition_table:
             return self.inner_transposition_table[hash_key]
         if depth == 0:
-            if self.color == "b":
-                return self.evaluate_position(board, current_player)
-            elif self.color == "w":
-                return self.nico_heuristic(board)
+            # if self.color == "b":
+            return self.evaluate_position(board, current_player)
+            # elif self.color == "w":
+            #     return self.nico_heuristic(board)
 
         gen = StateSpaceGen()
         gen.generate_state_space(board, current_player)
