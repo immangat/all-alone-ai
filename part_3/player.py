@@ -531,9 +531,11 @@ class AIAgent(AIPlayer):
         for coord in Board.BOARD_COORD:
             index = Board.BOARD_COORD.index(coord)
             if board.get_marble(coord) == "b":
-                black_score += self.POINT_VALUES[index] * self.weights["b_pos"]
+                black_score += self.POINT_VALUES[index] * self.weights["b_pos"] * \
+                (self.weights["empower_self"] if self.color == "w" else 1)
             elif board.get_marble(coord) == "w":
-                white_score += self.POINT_VALUES[index] * self.weights["w_pos"]
+                white_score += self.POINT_VALUES[index] * self.weights["w_pos"] * \
+                (self.weights["empower_self"] if self.color == "b" else 1)
 
         # points for coherence
         black_score += self.calculate_group_score("b", board) * self.weights["b_coherence"]
@@ -576,12 +578,13 @@ class AIAgent(AIPlayer):
         Using an adapted AI_abalone weight system
         """
         weights = {}
-        weights["b_off"] = 25
-        weights["w_off"] = -25
+        weights["b_off"] = -50
+        weights["w_off"] = 50
         weights["b_pos"] = 4
         weights["w_pos"] = -4
         weights["b_coherence"] = 1
         weights["w_coherence"] = -1
+        weights["empower_self"] = 2
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):
@@ -643,15 +646,15 @@ class AIAgent2(AIPlayer):
     AI agent for testing purposes.
     """
     POINT_VALUES = [
-        -2, -2, -2, -2, -2,
-        -2, 0, 0, 0, 0, -2,
-        -2, 0, 1, 1, 1, 0, -2,
-        -2, 0, 1, 3, 3, 1, 0, -2,
+        -2, -1, -1, -1, -2,
+        -1, 0, 0, 0, 0, -1,
+        -1, 0, 1, 1, 1, 0, -1,
+        -1, 0, 1, 3, 3, 1, 0, -1,
         -2, 0, 1, 3, 5, 3, 1, 0, -2,
-        -2, 0, 1, 3, 3, 1, 0, -2,
-        -2, 0, 1, 1, 1, 0, -2,
-        -2, 0, 0, 0, 0, -2,
-        -2, -2, -2, -2, -2
+        -1, 0, 1, 3, 3, 1, 0, -1,
+        -1, 0, 1, 1, 1, 0, -1,
+        -1, 0, 0, 0, 0, -1,
+        -2, -1, -1, -1, -2
     ]
 
     INFINITY = float('inf')
