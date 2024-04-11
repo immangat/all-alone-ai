@@ -1,12 +1,14 @@
+import time
+
 from board import Board
 from AI_Guara import AIAgentTester
 import random
 from state_space_gen import StateSpaceGen
 import json
 
-def simulate_game(board_list, turns):
-    ai_agent1 = AIAgentTester("b")
-    ai_agent2 = AIAgentTester("w")
+def simulate_game(board_list, turns, depth):
+    ai_agent1 = AIAgentTester("b", depth)
+    ai_agent2 = AIAgentTester("w", depth)
 
     for board in board_list:
         gen = StateSpaceGen()
@@ -86,17 +88,21 @@ def save_table(transposition_table_data, file):
 
 if __name__ == "__main__":
 
-    # board_list = board_list_creator()
-    belgian_board = Board()
-    belgian_board.setup_board("Belgian Daisy")
-    default_board = Board()
-    default_board.setup_board()
-    german_board = Board()
-    german_board.setup_board("German Daisy")
-    board_list =[]
-    board_list.append(german_board)
-    board_list.append(default_board)
-    board_list.append(belgian_board)
-    simulate_game(board_list, 80)
+    board_list = board_list_creator()
+    # belgian_board = Board()
+    # belgian_board.setup_board("Belgian Daisy")
+    # aitst = AIAgentTester("b", 6)
+    # start = time.time()
+    # aitst.get_best_move(belgian_board)
+    # print(f"count {(time.time() - start)}")
+    # default_board = Board()
+    # default_board.setup_board()
+    # german_board = Board()
+    # german_board.setup_board("German Daisy")
+    # board_list =[]
+    # board_list.append(german_board)
+    # board_list.append(default_board)
+    # board_list.append(belgian_board)
+    simulate_game(board_list, 80, 5)
 
 

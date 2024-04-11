@@ -229,12 +229,12 @@ class AIAgentTester():
 
     INFINITY = float('inf')
 
-    def __init__(self, color):
+    def __init__(self, color, depth=4):
         self.color = color
         self.weights = self.get_weights()
         self.transposition_table = {}
         self.inner_transposition_table = {}
-        self.depth = (4 if self.color == "b" else 2)
+        self.depth = depth
 
     # def _calculate_move(self, board, queue, start_time, **kwargs):
     #     return self.get_best_move(board, start_time, queue)
