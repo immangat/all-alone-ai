@@ -525,17 +525,21 @@ class AIAgent(AIPlayer):
 
     def evaluate_position(self, board, max_player):
         # number_off_grid
-        black_score = board.num_marbles_left_by_color("b") * self.weights["b_off"]
-        white_score = board.num_marbles_left_by_color("w") * self.weights["w_off"]
+        black_score = board.num_marbles_left_by_color("b") * self.weights["b_off"] *\
+                      (self.weights["empower_self"] if self.color == "w" else 1)
+        white_score = board.num_marbles_left_by_color("w") * self.weights["w_off"] * \
+                      (self.weights["empower_self"] if self.color == "b" else 1)
 
         # points for position (the closer to the center, the better)
 
         for coord in Board.BOARD_COORD:
             index = Board.BOARD_COORD.index(coord)
             if board.get_marble(coord) == "b":
-                black_score += self.POINT_VALUES[index] * self.weights["b_pos"]
+                black_score += self.POINT_VALUES[index] * self.weights["b_pos"] * \
+                               (self.weights["empower_self"] if self.color == "w" and self.POINT_VALUES[index] < 0 else 1)
             elif board.get_marble(coord) == "w":
-                white_score += self.POINT_VALUES[index] * self.weights["w_pos"]
+                white_score += self.POINT_VALUES[index] * self.weights["w_pos"] * \
+                               (self.weights["empower_self"] if self.color == "b" and self.POINT_VALUES[index] < 0 else 1)
 
         # points for coherence
         black_score += self.calculate_group_score("b", board) * self.weights["b_coherence"]
@@ -578,12 +582,13 @@ class AIAgent(AIPlayer):
         Using an adapted AI_abalone weight system
         """
         weights = {}
-        weights["b_off"] = 50
-        weights["w_off"] = -50
+        weights["b_off"] = -50
+        weights["w_off"] = 50
         weights["b_pos"] = 4
         weights["w_pos"] = -4
         weights["b_coherence"] = 1
         weights["w_coherence"] = -1
+        weights["empower_self"] = 3
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):
