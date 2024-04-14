@@ -1,4 +1,4 @@
-# Part 2
+# Part 4
 
 # Ab Alone
 
@@ -12,11 +12,15 @@ opponent and win.
 
 ## How to Run the Game
 
-To run the game, execute the `all_alone_ai_game.exe` file or in the command console run `all_alone_ai_game.exe`.
+Game can be run one of two ways
+
+1. To run the game, execute the `all_alone_ai_game.exe` file or in the command console run `all_alone_ai_game.exe`.
+2. Game can also be run by running `game_control.py` file. This way results in smoother gameplay experience.
 
 ## How to build the Game
 
-To build the game run `pyinstaller --name="name_of_game" --onefile -w --add-data "gui_json/theme.json:gui_json/" game_control.py`
+To build the game
+run `pyinstaller --name="name_of_game" --onefile -w --add-data "gui_json/theme.json:gui_json/" game_control.py`
 
 the build file will need to be moved to folder where the test files are located if state space
 generation needs to be tested
