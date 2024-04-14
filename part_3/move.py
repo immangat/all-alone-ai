@@ -1,7 +1,15 @@
+class Move:
+    """
+       Class representing a move in the game.
 
-class Move():
+       Attributes:
+       - move_type (str): The type of move ('i' for insertion, 's' for sliding).
+       - direction (str): The direction of the move ('R', 'L', 'U', 'D', 'UR', 'UL', 'DR', 'DL').
+       - marbles (list): A list of tuples representing the marbles involved in the move.
+       - sumito (bool): Indicates if the move is a sumito move (default is False).
+       """
 
-    def __init__(self, move_type, direction, marbles, sumito = False):
+    def __init__(self, move_type, direction, marbles, sumito=False):
         self.move_type = move_type
         self.direction = direction
         self.marbles = marbles
