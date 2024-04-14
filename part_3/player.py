@@ -151,7 +151,18 @@ hash_map_for_positions = {
 
 
 class Player(ABC):
+    """
+       Abstract base class for a player in the game.
+    """
+
     def __init__(self, name, color):
+        """
+        Initialize a Player instance.
+
+        Args:
+        - name (str): The name of the player.
+        - color (str): The color of the player ('b' for black, 'w' for white).
+        """
         self.color = color
         self.score = None
         self.time = None
@@ -166,6 +177,9 @@ class Player(ABC):
 
     @abstractmethod
     def make_move(self, **kwargs):
+        """
+            Abstract method for making a move.
+        """
         print("making move kajfkajfkjaf")
 
     def update_score(self, score):
@@ -255,9 +269,16 @@ class AIPlayer(Player):
         # self.ai_search_process.join()
         print("Thread done")
 
-
     @abstractmethod
     def _calculate_move(self, board, queue, start_time, **kwargs):
+        """
+        Abstract method for calculating a move.
+
+        Args:
+        - board: The game board.
+        - queue: The queue for communication.
+        - start_time: The start time for the move calculation.
+        """
         pass
 
     def add_ai_time(self, time_of_ai_move):
@@ -289,6 +310,16 @@ class AIPlayer(Player):
         pass
 
     def get_positions(self, position, maximizing_player):
+        """
+        Get the possible positions and moves for the AI player.
+
+        Args:
+        - position: The game board position.
+        - maximizing_player: Whether the AI player is the maximizing player.
+
+        Returns:
+        - Tuple: A tuple containing the possible positions and moves.
+        """
         player_color = 'b' if maximizing_player else 'w'
         self.space_gen.boards = []
         self.space_gen.moves = []
@@ -532,10 +563,10 @@ class AIAgent(AIPlayer):
             index = Board.BOARD_COORD.index(coord)
             if board.get_marble(coord) == "b":
                 black_score += self.POINT_VALUES[index] * self.weights["b_pos"] * \
-                (self.weights["empower_self"] if self.color == "w" else 1)
+                               (self.weights["empower_self"] if self.color == "w" else 1)
             elif board.get_marble(coord) == "w":
                 white_score += self.POINT_VALUES[index] * self.weights["w_pos"] * \
-                (self.weights["empower_self"] if self.color == "b" else 1)
+                               (self.weights["empower_self"] if self.color == "b" else 1)
 
         # points for coherence
         black_score += self.calculate_group_score("b", board) * self.weights["b_coherence"]
@@ -544,6 +575,16 @@ class AIAgent(AIPlayer):
         return black_score + white_score
 
     def calculate_group_score(self, player, board):
+        """
+        Calculate the group score.
+
+        Args:
+        - player (str): The player color ('b' or 'w').
+        - board: The game board.
+
+        Returns:
+        - The group score.
+        """
         marbles = board.get_marbles_by_color(player)
         visited = set()
         group_score = 0
@@ -556,6 +597,18 @@ class AIAgent(AIPlayer):
 
     @staticmethod
     def dfs_group_size(marble, player, board, visited):
+        """
+        Perform a depth-first search to determine the group size.
+
+        Args:
+        - marble: The marble to start the search from.
+        - player: The player color ('b' or 'w').
+        - board: The game board.
+        - visited: The set of visited marbles.
+
+        Returns:
+        - The group size.
+        """
         stack = [marble]
         group_size = 0
         group_bonus = 0
@@ -588,6 +641,19 @@ class AIAgent(AIPlayer):
         return weights
 
     def alpha_beta(self, board, depth, alpha, beta, current_player):
+        """
+      Perform the alpha-beta pruning algorithm.
+
+      Args:
+      - board: The game board.
+      - depth (int): The depth of the search.
+      - alpha (float): The alpha value for alpha-beta pruning.
+      - beta (float): The beta value for alpha-beta pruning.
+      - current_player (str): The current player color ('b' or 'w').
+
+      Returns:
+      - The evaluation of the position.
+      """
 
         hash_key = board.hash_board()
         if hash_key in self.inner_transposition_table:

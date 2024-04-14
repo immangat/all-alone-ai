@@ -14,6 +14,32 @@ import copy
 
 
 class Manager:
+    """
+    The central management class for the game.
+
+    Attributes:
+    - game_window (GameWindow): The game window instance.
+    - board_state (str): The current state of the game board.
+    - is_running (bool): Flag indicating if the game is running.
+    - board (Board): The game board instance.
+    - game_paused (bool): Flag indicating if the game is paused.
+    - clock (Clock): The game clock instance.
+    - players (list): List of Player instances (HumanPlayer or AIPlayer).
+    - current_player (Player): The current player.
+    - current_screen (str): The current screen of the game ("menu" or "game").
+    - menu_screen (MenuScreen): The menu screen instance.
+    - states (States): The game states instance.
+    - gen (StateSpaceGen): The state space generator instance.
+    - board_type (str): The type of game board.
+    - total_move_limit (int): The total move limit for the game.
+    - total_moves_left (int): The total moves left in the game.
+    - time_limit_per_move_p1 (int): Time limit per move for player 1.
+    - time_limit_per_move_p2 (int): Time limit per move for player 2.
+    - next_move (str): The next move to be executed.
+    - ai_move_start_time (int): The start time of the AI move.
+    - ai_found_move (bool): Flag indicating if AI found a move.
+    - first_move_done (bool): Flag indicating if the first move has been made.
+    """
     __instance = None
 
     def __init__(self):
@@ -234,7 +260,7 @@ class Manager:
             self.first_move_done = True
         if self.ai_found_move:
             return
-        print("thread alive>>>",self.current_player.ai_search_process.is_alive())
+        print("thread alive>>>", self.current_player.ai_search_process.is_alive())
         if ((((time.time_ns() - self.ai_move_start_time) / 1_000_000 >= self.current_player.time_per_move) or
              not self.current_player.ai_search_process.is_alive())):
             # self.current_player.ai_search_process.terminate()

@@ -13,6 +13,35 @@ RED = (255, 0, 0)
 
 
 class GameWindow:
+    """
+        The game window class responsible for managing the game window and UI elements.
+
+        Attributes:
+        - MOVE_GUI_WIDTH (int): Width of the move GUI.
+        - MOVE_GUI_HEIGHT (int): Height of the move GUI.
+        - MOVE_GUI_MARGIN (int): Margin of the move GUI.
+        - BUTTONS_GUI_WIDTH (int): Width of the buttons GUI.
+        - BUTTONS_GUI_HEIGHT (int): Height of the buttons GUI.
+        - BUTTONS_GUI_MARGIN (int): Margin of the buttons GUI.
+        - width (int): Width of the game window.
+        - height (int): Height of the game window.
+        - display_surface (pygame.Surface): The display surface of the game window.
+        - background (pygame.Surface): The background surface of the game window.
+        - manager (Manager): The game manager instance.
+        - event_handler (EventHandler): The event handler instance.
+        - marble_radius (int): Radius of the marbles.
+        - highlighted_marbles (list): List of coordinates of highlighted marbles.
+        - manager_ui (pygame_gui.UIManager): The UI manager for pygame_gui.
+        - type (str): The type of the game window ("game" or "menu").
+        - clock (pygame.time.Clock): The game clock instance.
+        - player_1_gui (PlayerUi): The player 1 UI instance.
+        - player_2_gui (PlayerUi): The player 2 UI instance.
+        - COLUM_LINE_1 (int): Column line 1 position for grid layout.
+        - ROW_LINE_1 (int): Row line 1 position for grid layout.
+        - ROW_LINE_2 (int): Row line 2 position for grid layout.
+        - ROW_LINE_3 (int): Row line 3 position for grid layout.
+        - ROW_LINE_4 (int): Row line 4 position for grid layout.
+        """
     MOVE_GUI_WIDTH = 300
     MOVE_GUI_HEIGHT = 500
     MOVE_GUI_MARGIN = 10
@@ -186,26 +215,3 @@ class GameWindow:
                            (0, 0, 0))
         self.display_surface.blit(text, (0, 0))
         pygame.display.update((0, 0, text.get_width() + 10, text.get_height() + 1))
-
-    # Not implemented for now due to processing power losses
-    # def load_marble_sprites(self):
-    #
-    #     empty_space_color = (127, 127, 127)  # Color for empty spaces
-    #
-    #     for row, col in self.manager.board.BOARD_COORD:
-    #         color = self.manager.board.get_circle(row, col)
-    #
-    #         position = self.board_to_pixel((row, col))  # Convert board coords to pixel coords
-    #
-    #         # if color == 'b':
-    #         #     black_marble_sprite = MySprite('assets/black_marble.png', position, (65, 65))
-    #         #     self.sprites.add(black_marble_sprite)  # Add to the sprite group
-    #         #
-    #         # elif color == 'w':
-    #         #     white_marble_sprite = MySprite('assets/marble_white.png', position, (50, 50))
-    #         #     self.sprites.add(white_marble_sprite)  # Add to the sprite group
-    #
-    #         else:  # For empty spaces, draw a gray circle directly onto the board
-    #             pygame.draw.circle(self.display_surface, empty_space_color, position, self.marble_radius)
-    #     self.sprites.draw(self.display_surface)
-    #     pygame.display.flip()  # Update the display after drawing the empty spaces

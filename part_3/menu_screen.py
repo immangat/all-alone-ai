@@ -12,6 +12,15 @@ from IO_handler import IOHandler
 
 
 class MenuScreen:
+    """
+        Class representing the main menu screen of the game.
+
+        Attributes:
+        - width (int): The width of the menu screen.
+        - height (int): The height of the menu screen.
+        - manager (GameManager): The game manager controlling the game flow.
+        """
+
     def __init__(self, width: int, height: int, manager):
         if getattr(sys, 'frozen', False):
             application_path = os.path.dirname(sys.executable)
